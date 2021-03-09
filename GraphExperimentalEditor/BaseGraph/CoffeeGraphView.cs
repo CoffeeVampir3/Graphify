@@ -5,7 +5,6 @@ using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
-using VisualNovelFramework.EditorExtensions;
 
 namespace GraphFramework.Editor
 {
@@ -41,7 +40,7 @@ namespace GraphFramework.Editor
         /// TODO::
         private void DEBUG__LOAD_GRAPH()
         {
-            editorGraph = CoffeeAssetDatabase.FindAssetsOfType<BetaEditorGraph>().FirstOrDefault();
+            editorGraph = AssetExtensions.FindAssetsOfType<BetaEditorGraph>().FirstOrDefault();
             Undo.ClearAll();
             BuildGraph();
         }

@@ -3,7 +3,6 @@ using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
-using VisualNovelFramework.EditorExtensions;
 using Object = UnityEngine.Object;
 
 namespace GraphFramework.Editor
@@ -58,20 +57,6 @@ namespace GraphFramework.Editor
         private SerializedGraph delayedLoadedGraph = null;
         public void LoadGraph(SerializedGraph graph)
         {
-            return;
-            //var editorGraph = GraphLoader.LoadGraph(graphView, graph);
-            //if (editorGraph == null) 
-                //return;
-            
-            if (serializedGraphSelector != null)
-            {
-                serializedGraphSelector.SetValueWithoutNotify(graph);
-                currentGraphGUID = graph.GetCoffeeGUID();
-            }
-            else
-            {
-                delayedLoadedGraph = graph;
-            }
         }
 
         private void LoadGraphEvent(ChangeEvent<Object> evt)
@@ -93,33 +78,6 @@ namespace GraphFramework.Editor
             var currentGraph = serializedGraphSelector.value as SerializedGraph;
             if (currentGraph == null) 
                 return;
-        }
-
-        /// <summary>
-        /// TODO:: Test Code:
-        /// </summary>
-        protected void DuplicateGraph()
-        {
-            var currentGraph = serializedGraphSelector.value as SerializedGraph;
-            if (currentGraph == null) 
-                return;
-
-            var p = AssetDatabase.GetAssetPath(currentGraph);
-            var nP = p.Replace(".asset", "");
-            nP += "2.asset";
-            AssetDatabase.CopyAsset(p, nP);
-            AssetDatabase.SaveAssets();
-            AssetDatabase.ImportAsset(nP);
-
-            var q= AssetDatabase.LoadAllAssetsAtPath(nP);
-
-            foreach (var k in q)
-            {
-                if (k is HasCoffeeGUID cguid)
-                {
-                    cguid.SetCoffeeGUID(Guid.NewGuid().ToString());
-                }
-            }
         }
 
         private void Debug__FoldoutAllItems()
@@ -153,14 +111,11 @@ namespace GraphFramework.Editor
             if (delayedLoadedGraph != null)
             {
                 serializedGraphSelector.SetValueWithoutNotify(delayedLoadedGraph);
-                currentGraphGUID = delayedLoadedGraph.GetCoffeeGUID();
                 delayedLoadedGraph = null;
             }
             
             toolbar.Add(new Button( SaveGraph ) 
                 {text = "Save"});
-            toolbar.Add(new Button( DuplicateGraph ) 
-                {text = "Duplicate Test"});
             toolbar.Add(new Button( RevertGraphToVersionOnDisk ) 
                 {text = "Boop"});
             toolbar.Add(new Button( Debug__FoldoutAllItems ) 

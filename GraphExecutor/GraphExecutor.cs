@@ -8,7 +8,7 @@ namespace GraphFramework.GraphExecutor
     /// mode this class also creates our editor/graph link.
     /// </summary>
     [Serializable]
-    public partial class GraphExecutor
+    public class GraphExecutor
     {
         [SerializeField]
         public SerializedGraph targetGraph;

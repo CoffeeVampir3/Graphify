@@ -3,8 +3,6 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
-using VisualNovelFramework.EditorExtensions;
-using VisualNovelFramework.Serialization;
 
 namespace GraphFramework.Editor
 {
@@ -45,8 +43,7 @@ namespace GraphFramework.Editor
         
         public static GraphSettings CreateOrGetSettings(CoffeeGraphView graphView)
         {
-            var allSettings =
-                CoffeeAssetDatabase.FindAssetsOfType<GraphSettings>();
+            var allSettings = AssetExtensions.FindAssetsOfType<GraphSettings>();
 
             System.Type graphViewType = graphView.GetType();
             var graphSettings = allSettings.FirstOrDefault(

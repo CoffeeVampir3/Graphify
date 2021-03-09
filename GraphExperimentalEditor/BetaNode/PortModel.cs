@@ -2,7 +2,6 @@
 using System.Reflection;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using VisualNovelFramework.Serialization;
 
 namespace GraphFramework.Editor
 {

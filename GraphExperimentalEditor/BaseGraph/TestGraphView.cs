@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-using UnityEditor.Experimental.GraphView;
-using UnityEngine;
+﻿using UnityEditor.Experimental.GraphView;
 
 namespace GraphFramework.Editor
 {
@@ -15,7 +13,6 @@ namespace GraphFramework.Editor
         public override void OnCreateGraphGUI()
         {
             CreateGrid();
-            Debug.Log(Assembly.GetCallingAssembly().GetName());
         }
     }
 }

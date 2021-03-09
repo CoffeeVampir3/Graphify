@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using UnityEngine;
 
 //This is so we can make sure nobody does dumb modifications to links by accident.
-[assembly: InternalsVisibleTo("GraphEditorAPI")]
+[assembly: InternalsVisibleTo("GraphEditor")]
 namespace GraphFramework
 {
     /// <summary>
