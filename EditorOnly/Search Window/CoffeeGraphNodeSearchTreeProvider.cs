@@ -21,9 +21,17 @@ namespace GraphFramework.Editor
                     in nodeList 
                     let attr = 
                         node.GetCustomAttributes(typeof(RegisterNodeToView), false)[0] as RegisterNodeToView 
-                    where attr.registeredGraphView.IsAssignableFrom(graphViewType) 
+                    where IsAssignableFrom(attr, graphViewType)
                     select node)
                 .ToList();
+        }
+
+        private static bool IsAssignableFrom(RegisterNodeToView rnva, Type graphViewType)
+        {
+            var resolvedType = Type.GetType("GraphFramework.Editor." + rnva.registeredGraphViewTypeName);
+            if (resolvedType != null) return resolvedType.IsAssignableFrom(graphViewType);
+            Debug.Log("Could not resolve a graph named: " + rnva.registeredGraphViewTypeName);
+            return false;
         }
         
         #region Node Search Tree Parser

@@ -23,7 +23,7 @@ namespace GraphFramework.Editor
 
         public bool OnSelectEntry(SearchTreeEntry SearchTreeEntry, SearchWindowContext context)
         {
-            //graphView.CreateNode(SearchTreeEntry.userData as Type, context.screenMousePosition);
+            graphView.CreateNewNode(SearchTreeEntry.userData as System.Type, context.screenMousePosition);
             return true;
         }
     }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace VisualNovelFramework.GraphFramework.Attributes
+namespace GraphFramework.Attributes
 {
     public class Out : Attribute
     {

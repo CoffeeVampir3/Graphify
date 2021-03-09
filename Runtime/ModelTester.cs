@@ -1,9 +1,10 @@
 ﻿using Sirenix.OdinInspector;
 using UnityEngine;
-using VisualNovelFramework.GraphFramework.Attributes;
+using GraphFramework.Attributes;
 
 namespace GraphFramework
 {
+    [RegisterNodeToView("TestGraphView", "Wow/Node")]
     public class ModelTester : RuntimeNode
     {
         [In, SerializeField]

@@ -5,7 +5,7 @@ using System.Reflection;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using VisualNovelFramework.GraphFramework.Attributes;
+using GraphFramework.Attributes;
 
 namespace GraphFramework.Editor
 {
@@ -35,10 +35,10 @@ namespace GraphFramework.Editor
 
         #region Creation & Cloning
         
-        public static NodeModel InstantiateModel(BetaEditorGraph editorGraph)
+        public static NodeModel InstantiateModel(BetaEditorGraph editorGraph, Type runtimeDataType)
         {
             var model = new NodeModel();
-            model.CreateRuntimeData(editorGraph, typeof(ModelTester));
+            model.CreateRuntimeData(editorGraph, runtimeDataType);
             model.CreatePortModels();
             return model;
         }

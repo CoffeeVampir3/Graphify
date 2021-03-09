@@ -1,4 +1,4 @@
-﻿using VisualNovelFramework.GraphFramework.Attributes;
+﻿using GraphFramework.Attributes;
 
 namespace GraphFramework
 {

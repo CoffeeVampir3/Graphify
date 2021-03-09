@@ -12,6 +12,7 @@ namespace GraphFramework.Editor
     {
         protected readonly GraphSettings settings;
         protected readonly CoffeeSearchWindow searchWindow;
+        public CoffeeGraphWindow parentWindow;
         protected BetaEditorGraph editorGraph;
 
         //Keeps track of all NodeView's and their relation to their model.
@@ -26,16 +27,24 @@ namespace GraphFramework.Editor
         /// calculated. (Internally, this is called after a GeometryChangedEvent)
         /// </summary>
         public abstract void OnCreateGraphGUI();
+        
+        public void CreateNewNode(Type runtimeDataType, Vector2 atPosition)
+        {
+            var model = NodeModel.InstantiateModel(editorGraph, runtimeDataType);
+            
+            Vector2 spawnPosition = parentWindow.rootVisualElement.ChangeCoordinatesTo(
+                parentWindow.rootVisualElement.parent,
+                atPosition - parentWindow.position.position);
+
+            spawnPosition = contentViewContainer.WorldToLocal(spawnPosition);
+            Rect spawnRect = new Rect(spawnPosition.x - 75, spawnPosition.y - 75, 150, 150);
+            model.Position = spawnRect;
+            CreateNewNode(model);
+        }
 
         //TODO::
 
         #region DeleteThis
-
-        public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
-        {
-            evt.menu.AppendAction("Debug Node Model", CreateNewNode);
-            base.BuildContextualMenu(evt);
-        }
 
         /// TODO::
         private void DEBUG__LOAD_GRAPH()
@@ -43,12 +52,6 @@ namespace GraphFramework.Editor
             editorGraph = AssetExtensions.FindAssetsOfType<BetaEditorGraph>().FirstOrDefault();
             Undo.ClearAll();
             BuildGraph();
-        }
-
-        private void CreateNewNode(DropdownMenuAction dma)
-        {
-            Vector2 pos = GetViewRelativePosition(dma.eventInfo.localMousePosition);
-            CreateNewNode(pos);
         }
 
         #endregion
@@ -221,14 +224,6 @@ namespace GraphFramework.Editor
             Undo.RegisterCreatedObjectUndo(model.RuntimeData, "graphChanges");
             Undo.RecordObject(editorGraph, "graphChanges");
             editorGraph.nodeModels.Add(model);
-        }
-        
-        private void CreateNewNode(Vector2 atPosition)
-        {
-            var model = NodeModel.InstantiateModel(editorGraph);
-            Rect spawnRect = new Rect(atPosition.x - 75, atPosition.y - 75, 150, 150);
-            model.Position = spawnRect;
-            CreateNewNode(model);
         }
 
         private void CreateEdgeFromModel(EdgeModel model)

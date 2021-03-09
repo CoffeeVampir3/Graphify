@@ -30,6 +30,7 @@ namespace GraphFramework.Editor
             };
             
             graphView.StretchToParentSize();
+            graphView.parentWindow = this;
             rootVisualElement.Add(graphView);
             graphView.RegisterCallback<GeometryChangedEvent>(OnGeometryChangedInitialization);
         }

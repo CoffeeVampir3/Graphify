@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace VisualNovelFramework.GraphFramework.Attributes
+namespace GraphFramework.Attributes
 {
     /// <summary>
     /// When using the default BaseNodeUI layout system, this will automatically set a field to
