@@ -18,6 +18,9 @@ namespace GraphFramework.Editor
         public List<PortModel> inputPorts = new List<PortModel>();
         [SerializeReference]
         public List<PortModel> outputPorts = new List<PortModel>();
+        //This makes stacking things really really easy.
+        [SerializeReference] 
+        public StackModel stackedOn = null;
         
         [SerializeField] 
         public bool isRoot = false;

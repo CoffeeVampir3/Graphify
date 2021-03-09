@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace GraphFramework.Editor
@@ -11,8 +10,6 @@ namespace GraphFramework.Editor
         protected string nodeTitle = "Untitled.";
         [SerializeField] 
         protected Rect position = Rect.zero;
-        [SerializeReference] 
-        protected internal List<NodeModel> stackedNodeModels;
 
         [NonSerialized] 
         private StackView view;

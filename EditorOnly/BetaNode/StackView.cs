@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.Animations;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -23,34 +24,24 @@ namespace GraphFramework.Editor
 
         /// <summary>
         /// Keeps track of the first and last node in the stack whenever the
-        /// stack order is changed.
+        /// stack order is changed, updating the nodes CSS as appropriate.
         /// </summary>
         private void OnStackOrderChanged(GeometryChangedEvent geoChange)
         {
-            if (!stackModel.stackedNodeModels.Any())
-                return;
-
-            for (var index = 0; index < stackModel.stackedNodeModels.Count; index++)
+            var visualElements = Children().ToArray();
+            for (var index = 0; index < visualElements.Length; index++)
             {
-                var nodeModel = stackModel.stackedNodeModels[index];
-                var node = nodeModel.View;
-
+                var child = visualElements[index];
+                child.RemoveFromClassList("firstInStack");
+                child.RemoveFromClassList("lastInStack");
                 if (index == 0)
                 {
                     //Node is first
-                    node.RemoveFromClassList("lastInStack");
-                    node.AddToClassList("firstInStack");
-                } else if (index == stackModel.stackedNodeModels.Count - 1)
+                    child.AddToClassList("firstInStack");
+                } else if (index == visualElements.Length - 1)
                 {
                     //Node is last
-                    node.RemoveFromClassList("firstInStack");
-                    node.AddToClassList("lastInStack");
-                }
-                else
-                {
-                    //Node is not special
-                    node.RemoveFromClassList("firstInStack");
-                    node.RemoveFromClassList("lastInStack");
+                    child.AddToClassList("lastInStack");
                 }
             }
             UnregisterCallback<GeometryChangedEvent>(OnStackOrderChanged);
@@ -64,14 +55,12 @@ namespace GraphFramework.Editor
             var selectables = selection as ISelectable[] ?? selection.ToArray();
             foreach (var s in selectables)
             {
-                if (!(s is NodeView view)) continue;
-                if (parentGraphView.viewToModel.TryGetValue(view, out var model))
-                {
-                    stackModel.stackedNodeModels.Add(model as NodeModel);
-                }
+                if (!(s is NodeView view) ||
+                    !parentGraphView.viewToModel.TryGetValue(view, out var mModel) ||
+                    !(mModel is NodeModel model)) continue;
+                model.stackedOn = stackModel;
             }
-
-            Debug.Log("Added.");
+            
             RegisterCallback<GeometryChangedEvent>(OnStackOrderChanged);
             return base.DragPerform(evt, selectables, dropTarget, dragSource);
         }
@@ -85,23 +74,32 @@ namespace GraphFramework.Editor
             ge.RemoveFromClassList("firstInStack");
             ge.RemoveFromClassList("lastInStack");
 
-            if (ge is NodeView view)
+            if (ge is NodeView view &&
+                parentGraphView.viewToModel.TryGetValue(view, out var mModel) &&
+                mModel is NodeModel model)
             {
-                if (parentGraphView.viewToModel.TryGetValue(view, out var model))
-                {
-                    stackModel.stackedNodeModels.Remove(model as NodeModel);
-                    Debug.Log("Removed.");
-                }
+                model.stackedOn = null;
             }
             base.OnStartDragging(ge);
+        }
+        
+        /// <summary>
+        /// Stacks a node onto this node.
+        /// </summary>
+        public void StackOn(NodeModel model, NodeView view)
+        {
+            model.stackedOn = stackModel;
+            AddElement(view);
+            //graphView.OnStackChanged(this, node, true);
+            RegisterCallback<GeometryChangedEvent>(OnStackOrderChanged);
         }
 
         public void OnDirty()
         {
+            var label = this.Q<Label>();
             title = stackModel.NodeTitle;
+            label.text = stackModel.NodeTitle;
             SetPosition(stackModel.Position);
-            RefreshExpandedState();
-            RefreshPorts();
         }
         
         public void Display()

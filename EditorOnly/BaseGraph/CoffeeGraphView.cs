@@ -213,10 +213,11 @@ namespace GraphFramework.Editor
         private void CreateNodeFromModel(NodeModel model)
         {
             NodeView nv = model.CreateView();
-            model.NodeTitle = "wow!";
-            model.RuntimeData.name = "wow!";
             AddElement(nv);
             viewToModel.Add(nv, model);
+
+            //If our model was stacked... well, stack it again.
+            model.stackedOn?.View?.StackOn(model, nv);
         }
 
         private void CreateStackFromModel(StackModel model)
@@ -230,6 +231,8 @@ namespace GraphFramework.Editor
         private void CreateNewNode(NodeModel model)
         {
             CreateNodeFromModel(model);
+            model.NodeTitle = model.RuntimeData.GetType().Name;
+            model.RuntimeData.name = model.RuntimeData.GetType().Name;
 
             Undo.RegisterCreatedObjectUndo(model.RuntimeData, "graphChanges");
             Undo.RecordObject(editorGraph, "graphChanges");
