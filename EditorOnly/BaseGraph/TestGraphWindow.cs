@@ -5,7 +5,7 @@ namespace GraphFramework.Editor
 {
     public class TestGraphWindow : CoffeeGraphWindow
     {
-        [MenuItem("VNFramework/Test Graph")]
+        [MenuItem("Graphs/Test Graph")]
         public static void OpenGraph()
         {
             var window = GetWindow<TestGraphWindow>();
