@@ -1,0 +1,55 @@
+#title {
+    background-color: rgba(34, 40, 49, .8);
+}
+
+#contents > #top > #input,
+#contents > #top > #output,
+#contents > #top > #actualOutput,
+#extension,
+.unity-object-field-display {
+    background-color: rgba(57, 62, 70, .8);
+}
+
+#extension .unity-button {
+    align-self: center;
+}
+
+.unity-button {
+    background-color: rgba(0, 173, 181, .3);
+}
+
+.unity-button:hover {
+    background-color: rgba(0, 173, 181, .7);
+}
+
+.unity-property-field,
+.unity-base-field__input,
+.unity-base-field {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.currentNode #title {
+    background-color: rgba(128, 1, 17, .6);
+}
+
+#output .port,
+#input .port
+{
+    --port-color: rgba(200, 200, 200, 0.5) !important;
+}
+
+.stack-child-element #input {
+    display: none;
+}
+
+.firstInStack #input {
+    display: flex;
+}
+
+.stack-child-element #output {
+    display: none;
+}
+
+.lastInStack #output {
+    display: flex;
+}

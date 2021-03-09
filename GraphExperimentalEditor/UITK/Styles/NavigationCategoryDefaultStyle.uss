@@ -1,0 +1,7 @@
+#unity-checkmark {
+    visibility: hidden;
+}
+
+.stacked {
+    padding-left: 20px;
+}

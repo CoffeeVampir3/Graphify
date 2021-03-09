@@ -1,0 +1,10 @@
+.list-base,
+.mainContainer,
+#content,
+#contentContainer {
+    flex: 1;
+}
+
+#addButton {
+    visibility: hidden;
+}

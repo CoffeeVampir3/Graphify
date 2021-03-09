@@ -1,0 +1,5 @@
+.stack-node > #borderItem {
+    border-color: rgba(0, 173, 181, .157);
+    border-width: 2px;
+    border-radius: 22px;
+}
