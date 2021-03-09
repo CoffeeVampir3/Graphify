@@ -33,7 +33,7 @@ namespace GraphFramework.Editor
             this.capacity = capacity;
             this.portValueType = new SerializableType(portType);
             this.serializedValueFieldInfo = new SerializedFieldInfo(fieldInfo);
-            portGUID = Guid.NewGuid().ToString();
+            this.portGUID = Guid.NewGuid().ToString();
         }
     }
 }

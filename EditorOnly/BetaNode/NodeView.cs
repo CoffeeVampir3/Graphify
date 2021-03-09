@@ -5,12 +5,12 @@ using UnityEditor.UIElements;
 
 namespace GraphFramework.Editor
 {
-    public class NodeView : Node
+    public class NodeView : Node, MovableView
     {
         private readonly NodeModel nodeModel;
-        private Dictionary<Port, PortModel> portToModel = new Dictionary<Port, PortModel>();
+        private readonly Dictionary<Port, PortModel> portToModel = new Dictionary<Port, PortModel>();
         //Lookup via string because undo/redo creates a different copy.
-        private Dictionary<string, Port> modelToPort = new Dictionary<string, Port>();
+        private readonly Dictionary<string, Port> modelToPort = new Dictionary<string, Port>();
 
         public NodeView(NodeModel model)
         {

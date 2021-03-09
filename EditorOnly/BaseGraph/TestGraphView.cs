@@ -10,7 +10,7 @@ namespace GraphFramework.Editor
             Insert(0, grid);
         }
 
-        public override void OnCreateGraphGUI()
+        protected internal override void OnCreateGraphGUI()
         {
             CreateGrid();
         }

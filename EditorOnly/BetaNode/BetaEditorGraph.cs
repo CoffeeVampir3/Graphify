@@ -10,6 +10,8 @@ namespace GraphFramework.Editor
         private string coffeeGuid;
         [SerializeReference] 
         public List<NodeModel> nodeModels = new List<NodeModel>();
+        [SerializeReference]
+        public List<StackModel> stackModels = new List<StackModel>();
         [SerializeReference] 
         public List<EdgeModel> edgeModels = new List<EdgeModel>();
         [SerializeReference] 

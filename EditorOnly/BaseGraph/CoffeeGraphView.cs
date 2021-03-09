@@ -10,23 +10,23 @@ namespace GraphFramework.Editor
 {
     public abstract class CoffeeGraphView : GraphView
     {
+        protected internal CoffeeGraphWindow parentWindow;
         protected readonly GraphSettings settings;
         protected readonly CoffeeSearchWindow searchWindow;
-        public CoffeeGraphWindow parentWindow;
         protected BetaEditorGraph editorGraph;
 
         //Keeps track of all NodeView's and their relation to their model.
-        private readonly Dictionary<NodeView, NodeModel> viewToModel =
-            new Dictionary<NodeView, NodeModel>();
+        protected internal readonly Dictionary<MovableView, MovableModel> viewToModel =
+            new Dictionary<MovableView, MovableModel>();
         //Keeps track of all edges and their relation to their model.
-        private readonly Dictionary<Edge, EdgeModel> edgeToModel =
+        protected readonly Dictionary<Edge, EdgeModel> edgeToModel =
             new Dictionary<Edge, EdgeModel>();
 
         /// <summary>
         /// Called once the graph view is resized to the editor window and all geometry has been
         /// calculated. (Internally, this is called after a GeometryChangedEvent)
         /// </summary>
-        public abstract void OnCreateGraphGUI();
+        protected internal abstract void OnCreateGraphGUI();
         
         public void CreateNewNode(Type runtimeDataType, Vector2 atPosition)
         {
@@ -125,7 +125,9 @@ namespace GraphFramework.Editor
             {
                 //Create a new copy
                 if (!(GetElementByGuid(viewGuid) is NodeView nv)) continue;
-                var model = viewToModel[nv];
+                var model = viewToModel[nv] as NodeModel;
+                //It is not possible this is null as we looked up using a node view and will get a node model.
+                // ReSharper disable once PossibleNullReferenceException
                 var clone = model.Clone(editorGraph);
                 oldModelToCopiedModel.Add(model, clone);
                 CreateNewNode(clone);
@@ -217,6 +219,14 @@ namespace GraphFramework.Editor
             viewToModel.Add(nv, model);
         }
 
+        private void CreateStackFromModel(StackModel model)
+        {
+            StackView sv = model.CreateView(this);
+            model.NodeTitle = "stacky!";
+            AddElement(sv);
+            viewToModel.Add(sv, model);
+        }
+
         private void CreateNewNode(NodeModel model)
         {
             CreateNodeFromModel(model);
@@ -255,6 +265,11 @@ namespace GraphFramework.Editor
         {
             if (editorGraph.nodeModels == null)
                 return;
+
+            foreach (var model in editorGraph.stackModels.ToArray())
+            {
+                CreateStackFromModel(model);
+            }
 
             foreach (var model in editorGraph.nodeModels.ToArray())
             {
@@ -402,39 +417,6 @@ namespace GraphFramework.Editor
             DeleteConnectionByGuid(model.outputConnectionGuid);
         }
 
-        private void ProcessElementMoves(ref List<GraphElement> elements)
-        {
-            foreach (var elem in elements)
-            {
-                if (!(elem is NodeView view)) continue;
-                if (!viewToModel.TryGetValue(view, out var model)) continue;
-                model.UpdatePosition();
-            }
-        }
-
-        private void ProcessElementRemovals(ref List<GraphElement> elements)
-        {
-            //Saves the current undo group.
-            var index = Undo.GetCurrentGroup();
-            foreach (var elem in elements)
-            {
-                switch (elem)
-                {
-                    case NodeView view:
-                        if (viewToModel.TryGetValue(view, out var nodeModel))
-                            DeleteNode(nodeModel);
-                        break;
-                    case Edge edge:
-                        if (edgeToModel.TryGetValue(edge, out var edgeModel))
-                            DeleteEdge(edge, edgeModel);
-                        break;
-                }
-            }
-
-            //Crushes all the delete operations into one undo operation.
-            Undo.CollapseUndoOperations(index);
-        }
-
         private bool TryCreateConnection(Edge edge,
             NodeModel inModel, NodeModel outModel,
             PortModel inputPort, PortModel outputPort)
@@ -475,17 +457,57 @@ namespace GraphFramework.Editor
         {
             if (edge.input.node is NodeView inView &&
                 edge.output.node is NodeView outView &&
-                viewToModel.TryGetValue(inView, out inModel) &&
-                viewToModel.TryGetValue(outView, out outModel) &&
-                inModel.View.TryGetPortToModel(edge.input, out inputPort) &&
-                outModel.View.TryGetPortToModel(edge.output, out outputPort))
-                return true;
+                viewToModel.TryGetValue(inView, out var movableIn) &&
+                viewToModel.TryGetValue(outView, out var movableOut))
+            {
+                inModel = movableIn as NodeModel;
+                outModel = movableOut as NodeModel;
+                //Cannot be null, the view was a NodeView so the model will be a NodeModel
+                // ReSharper disable once PossibleNullReferenceException
+                if(inModel.View.TryGetPortToModel(edge.input, out inputPort) &&
+                   // ReSharper disable once PossibleNullReferenceException
+                   outModel.View.TryGetPortToModel(edge.output, out outputPort))
+                        return true;
+            }
 
             inModel = null;
             outModel = null;
             inputPort = null;
             outputPort = null;
             return false;
+        }
+        
+        private void ProcessElementMoves(ref List<GraphElement> elements)
+        {
+            foreach (var elem in elements)
+            {
+                if (!(elem is MovableView view)) continue;
+                if (!viewToModel.TryGetValue(view, out var model)) continue;
+                model.UpdatePosition();
+            }
+        }
+
+        private void ProcessElementRemovals(ref List<GraphElement> elements)
+        {
+            //Saves the current undo group.
+            var index = Undo.GetCurrentGroup();
+            foreach (var elem in elements)
+            {
+                switch (elem)
+                {
+                    case NodeView view:
+                        if (viewToModel.TryGetValue(view, out var nodeModel))
+                            DeleteNode(nodeModel as NodeModel);
+                        break;
+                    case Edge edge:
+                        if (edgeToModel.TryGetValue(edge, out var edgeModel))
+                            DeleteEdge(edge, edgeModel);
+                        break;
+                }
+            }
+
+            //Crushes all the delete operations into one undo operation.
+            Undo.CollapseUndoOperations(index);
         }
 
         private void ProcessEdgesToCreate(ref List<Edge> addedEdges)

@@ -10,7 +10,7 @@ using GraphFramework.Attributes;
 namespace GraphFramework.Editor
 {
     [Serializable]
-    public class NodeModel
+    public class NodeModel : MovableModel
     {
         [SerializeReference]
         public RuntimeNode RuntimeData;
