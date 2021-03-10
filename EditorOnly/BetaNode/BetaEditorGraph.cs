@@ -6,8 +6,6 @@ namespace GraphFramework.Editor
     [CreateAssetMenu]
     public class BetaEditorGraph : ScriptableObject
     {
-        [SerializeField]
-        private string coffeeGuid;
         [SerializeReference] 
         public List<NodeModel> nodeModels = new List<NodeModel>();
         [SerializeReference]
@@ -15,6 +13,8 @@ namespace GraphFramework.Editor
         [SerializeReference] 
         public List<EdgeModel> edgeModels = new List<EdgeModel>();
         [SerializeReference] 
-        public List<Link> connections = new List<Link>();
+        public List<Link> links = new List<Link>();
+        [SerializeField] 
+        public SerializableType graphWindowType;
     }
 }

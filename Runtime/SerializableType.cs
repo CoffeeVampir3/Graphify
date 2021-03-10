@@ -31,7 +31,7 @@ namespace GraphFramework
 
         public void OnAfterDeserialize()
         {
-            type = Type.GetType(serializedTypeName) ?? null;
+            type = Type.GetType(serializedTypeName);
         }
     }
 }

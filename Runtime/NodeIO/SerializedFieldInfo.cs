@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace GraphFramework
 {
-    //TODO:: "When" unity supports roslyn code generation this can be removed entirely.
     [Serializable]
     public class SerializedFieldInfo
     {

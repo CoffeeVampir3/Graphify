@@ -1,6 +1,4 @@
 ﻿using System;
-using UnityEditor.Experimental.GraphView;
-using UnityEngine;
 
 namespace GraphFramework
 {
@@ -8,8 +6,8 @@ namespace GraphFramework
     public class RegisterNodeToView : Attribute
     {
         //Using a string is not ideal but since this is cross assembly we can't reference the type.
-        public string registeredGraphViewTypeName = null;
-        public string registeredPath = null;
+        public readonly string registeredGraphViewTypeName = null;
+        public readonly string registeredPath = null;
         /// <summary>
         /// The type name (as a string) of the graph you want to register to, and the path
         /// you'd like the node to be listed as. Ex: "Math Functions/Add Node"

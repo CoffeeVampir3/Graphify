@@ -107,13 +107,37 @@ namespace GraphFramework.Editor
             while (it.NextVisible(false));
         }
 
-        public void OnDirty()
+        private void Clean()
         {
             title = nodeModel.NodeTitle;
             expanded = nodeModel.IsExpanded;
             SetPosition(nodeModel.Position);
             RefreshExpandedState();
-            RefreshPorts();
+            cleanImpending = false;
+        }
+
+        //Gives us a maximum refresh rate of 250MS, resulting in a minor performance boost with
+        //basically no cost.
+        private bool cleanImpending = false;
+        private bool firstClean = true;
+        private void RequestClean()
+        {
+            //This is so when the graph first loads we have a shortcut, otherwise
+            //we'd get teleporting nodes on initialization!
+            if (firstClean)
+            {
+                RefreshPorts();
+                Clean();
+                firstClean = false;
+            }
+            if (cleanImpending) return;
+            cleanImpending = true;
+            schedule.Execute(Clean).StartingIn(250);
+        }
+
+        public void OnDirty()
+        {
+            RequestClean();
         }
 
         public void Display()

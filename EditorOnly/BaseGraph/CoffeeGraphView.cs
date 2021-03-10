@@ -16,17 +16,55 @@ namespace GraphFramework.Editor
         protected BetaEditorGraph editorGraph;
 
         //Keeps track of all NodeView's and their relation to their model.
+        //Shared with StackView which only reads the collection.
         protected internal readonly Dictionary<MovableView, MovableModel> viewToModel =
             new Dictionary<MovableView, MovableModel>();
         //Keeps track of all edges and their relation to their model.
         protected readonly Dictionary<Edge, EdgeModel> edgeToModel =
             new Dictionary<Edge, EdgeModel>();
+        //
+        protected internal readonly Dictionary<RuntimeNode, NodeView> runtimeNodeToView =
+            new Dictionary<RuntimeNode, NodeView>();
 
         /// <summary>
+        /// A callback used once the graph loads, add your GUI widgets and stuff here.
         /// Called once the graph view is resized to the editor window and all geometry has been
         /// calculated. (Internally, this is called after a GeometryChangedEvent)
         /// </summary>
         protected internal abstract void OnCreateGraphGUI();
+
+        internal void OnGraphLoaded()
+        {
+            DEBUG__LOAD_GRAPH();
+            OnCreateGraphGUI();
+        }
+
+        /// <summary>
+        /// A callback when the graph is closed.
+        /// </summary>
+        /// <param name="panelEvent"></param>
+        protected internal virtual void OnGraphClosed(DetachFromPanelEvent panelEvent)
+        {
+            //Cleans up junk that undo can leave behind in very specific edge cases.
+            void CleanUndoRemnants()
+            {
+                var serializedAssets = AssetDatabase.LoadAllAssetRepresentationsAtPath(
+                    AssetDatabase.GetAssetPath(editorGraph));
+                var runtimeNodes = new HashSet<RuntimeNode>();
+                foreach (var model in editorGraph.nodeModels)
+                {
+                    runtimeNodes.Add(model.RuntimeData);
+                }
+                foreach (var asset in serializedAssets)
+                {
+                    if (!(asset is RuntimeNode modelRuntimeNode)) continue;
+                    if (runtimeNodes.Contains(modelRuntimeNode)) continue;
+                    AssetDatabase.RemoveObjectFromAsset(modelRuntimeNode);
+                }
+            }
+            CleanUndoRemnants();
+            AssetDatabase.SaveAssets();
+        }
         
         public void CreateNewNode(Type runtimeDataType, Vector2 atPosition)
         {
@@ -50,8 +88,27 @@ namespace GraphFramework.Editor
         private void DEBUG__LOAD_GRAPH()
         {
             editorGraph = AssetExtensions.FindAssetsOfType<BetaEditorGraph>().FirstOrDefault();
+            editorGraph.graphWindowType = new SerializableType(parentWindow.GetType());
             Undo.ClearAll();
             BuildGraph();
+        }
+
+        protected internal void RuntimeNodeVisited(RuntimeNode node)
+        {
+            if (!runtimeNodeToView.TryGetValue(node, out var view))
+                return;
+            
+            Debug.Log("Added to: " + view.title);
+            view.AddToClassList("CurrentNode");
+        }
+        
+        protected internal void RuntimeNodeExited(RuntimeNode node)
+        {
+            if (!runtimeNodeToView.TryGetValue(node, out var view))
+                return;
+            
+            Debug.Log("Removed from: " + view.title);
+            view.RemoveFromClassList("CurrentNode");
         }
 
         #endregion
@@ -77,8 +134,6 @@ namespace GraphFramework.Editor
 
             searchWindow = ScriptableObject.CreateInstance<CoffeeSearchWindow>();
             InitializeSearchWindow();
-
-            DEBUG__LOAD_GRAPH();
 
             graphViewChanged = OnGraphViewChanged;
         }
@@ -123,30 +178,33 @@ namespace GraphFramework.Editor
             var oldModelToCopiedModel = new Dictionary<NodeModel, NodeModel>();
             foreach (var viewGuid in box.viewGuids)
             {
-                //Create a new copy
                 if (!(GetElementByGuid(viewGuid) is NodeView nv)) continue;
                 var model = viewToModel[nv] as NodeModel;
-                //It is not possible this is null as we looked up using a node view and will get a node model.
-                // ReSharper disable once PossibleNullReferenceException
+                //It is not possible this is null as we looked up using a node view and therefore the result
+                //is guaranteed to be a node model.
+                //ReSharper disable once PossibleNullReferenceException
+                //Creates a copy of the model and adds it to the graph, simple.
                 var clone = model.Clone(editorGraph);
                 oldModelToCopiedModel.Add(model, clone);
                 CreateNewNode(clone);
                 AddToSelection(clone.View);
             }
             
+            
             foreach (var edgeGuid in box.edgeGuids)
             {
+                //Resolve the original edge into its model components
                 Edge originalEdge = GetEdgeByGuid(edgeGuid);
                 ResolveEdge(originalEdge,
                     out var inModel, out var outModel,
                     out var inPort, out var outPort);
                 
-                NodeModel targetInModel;
-                NodeModel targetOutModel;
                 PortModel targetInPort;
                 PortModel targetOutPort;
-                
-                if (!oldModelToCopiedModel.TryGetValue(inModel, out targetInModel))
+
+                //Resolve if the target of this edge's input is something we copied or
+                //if it existed previously.
+                if (!oldModelToCopiedModel.TryGetValue(inModel, out var targetInModel))
                 {
                     targetInModel = inModel;
                     targetInPort = inPort;
@@ -159,7 +217,9 @@ namespace GraphFramework.Editor
                     targetInPort = targetInModel.inputPorts[pIndex];
                 }
                 
-                if (!oldModelToCopiedModel.TryGetValue(outModel, out targetOutModel))
+                //Resolve if the target of this edge's output is something we copied or
+                //if it existed previously.
+                if (!oldModelToCopiedModel.TryGetValue(outModel, out var targetOutModel))
                 {
                     targetOutModel = outModel;
                     targetOutPort = outPort;
@@ -178,15 +238,15 @@ namespace GraphFramework.Editor
                     continue;
                 }
                 
-                Edge actualEdge = new Edge {input = realInPort, output = realOutPort};
-                if (TryCreateConnection(actualEdge, 
+                Edge newEdge = new Edge {input = realInPort, output = realOutPort};
+                if (TryCreateConnection(newEdge, 
                     targetInModel, targetOutModel, 
                     targetInPort, targetOutPort))
                 {
-                    actualEdge.input.Connect(actualEdge);
-                    actualEdge.output.Connect(actualEdge);
-                    AddElement(actualEdge);
-                    AddToSelection(actualEdge);
+                    newEdge.input.Connect(newEdge);
+                    newEdge.output.Connect(newEdge);
+                    AddElement(newEdge);
+                    AddToSelection(newEdge);
                 }
             }
         }
@@ -215,6 +275,7 @@ namespace GraphFramework.Editor
             NodeView nv = model.CreateView();
             AddElement(nv);
             viewToModel.Add(nv, model);
+            runtimeNodeToView.Add(model.RuntimeData, nv);
 
             //If our model was stacked... well, stack it again.
             model.stackedOn?.View?.StackOn(model, nv);
@@ -233,7 +294,6 @@ namespace GraphFramework.Editor
             CreateNodeFromModel(model);
             model.NodeTitle = model.RuntimeData.GetType().Name;
             model.RuntimeData.name = model.RuntimeData.GetType().Name;
-
             Undo.RegisterCreatedObjectUndo(model.RuntimeData, "graphChanges");
             Undo.RecordObject(editorGraph, "graphChanges");
             editorGraph.nodeModels.Add(model);
@@ -258,7 +318,7 @@ namespace GraphFramework.Editor
 
         private void BindConnections()
         {
-            foreach (var conn in editorGraph.connections)
+            foreach (var conn in editorGraph.links)
             {
                 conn.BindRemote();
             }
@@ -298,73 +358,74 @@ namespace GraphFramework.Editor
         /// This operation is quite expensive, but this ensures their can be no synchronization
         /// loss between the graph and the ValuePorts.
         /// </summary>
-        // NOTE:: It may be possible to cheapen this operation significantly by keeping track
-        // of dirtied nodes, but the undo system makes this very difficult.
+        //NOTE:: Ugly because it's been slightly optimized.
         private void PostUndoSyncNodePortConnections()
         {
             //Map guid->connection since we're going to be doing lots of lookups and
             //this is a more efficient data format.
-            var graphKnownGuidToConnection = new Dictionary<string, Link>();
-            List<Link> untraversedConnections = new List<Link>(editorGraph.connections);
-            bool anyConnectionsRemoved = false;
-            foreach (var conn in editorGraph.connections)
+            var graphKnownGuidToLink = new Dictionary<string, Link>();
+            var untraversedLinks = new List<Link>(editorGraph.links);
+            var traversedLinks = new List<Link>(editorGraph.links.Count);
+            bool anyLinksRemoved = false;
+            for (var i = 0; i < editorGraph.links.Count; i++)
             {
-                graphKnownGuidToConnection.Add(conn.GUID, conn);
+                var link = editorGraph.links[i];
+                graphKnownGuidToLink.Add(link.GUID, link);
             }
 
-            foreach (var node in editorGraph.nodeModels)
+            for (var modelIndex = 0; modelIndex < editorGraph.nodeModels.Count; modelIndex++)
             {
-                void DeleteUndoneConnections(PortModel port)
+                var node = editorGraph.nodeModels[modelIndex];
+                //Deletes links that the undo operation we just performed ideally would of deleted,
+                //but it's not capable of doing that, so we do it manually.
+                void DeleteUndoneLinks(PortModel port)
                 {
                     var localPortInfo = port.serializedValueFieldInfo.FieldFromInfo;
                     if (!(localPortInfo.GetValue(node.RuntimeData) is ValuePort valuePort))
                         return;
                     for (int i = valuePort.links.Count - 1; i >= 0; i--)
                     {
-                        var conn = valuePort.links[i];
-                        if (graphKnownGuidToConnection.ContainsKey(conn.GUID))
+                        var link = valuePort.links[i];
+                        if (graphKnownGuidToLink.ContainsKey(link.GUID))
                         {
                             //We found a port containing this connection, so we mark it traversed.
-                            untraversedConnections.Remove(conn);
+                            traversedLinks.Add(link);
                             continue;
                         }
 
                         //The graph doesn't know about this connection, so it's undone. Remove it
                         //from the value port.
-                        valuePort.links.Remove(conn);
-                        anyConnectionsRemoved = true;
+                        valuePort.links.Remove(link);
+                        anyLinksRemoved = true;
                     }
                 }
 
-                foreach (var port in node.inputPorts)
+                for (var index = 0; index < node.inputPorts.Count; index++)
                 {
-                    DeleteUndoneConnections(port);
+                    DeleteUndoneLinks(node.inputPorts[index]);
                 }
 
-                foreach (var port in node.outputPorts)
+                for (var index = 0; index < node.outputPorts.Count; index++)
                 {
-                    DeleteUndoneConnections(port);
+                    DeleteUndoneLinks(node.outputPorts[index]);
                 }
             }
 
-            if (anyConnectionsRemoved || untraversedConnections.Count <= 0)
+            if (anyLinksRemoved || untraversedLinks.Count <= 0)
                 return;
 
             //If we didin't remove any connections, we're going to probe for restored connections
             //by checking to see if there's any connections we didin't traverse. If any exist,
             //those connections are the "redone" connections.
-            foreach (var conn in untraversedConnections)
+            var unaccountedForLinks = untraversedLinks.Except(traversedLinks);
+            foreach (var conn in unaccountedForLinks)
             {
                 //Their should be no side effects to binding more than once.
                 conn.BindRemote();
-                bool existsAlready = false;
                 ValuePort localPort = conn.GetLocalPort();
                 //We need to be careful not to add the same connection twice
-                foreach (var localConn in localPort.links)
-                {
-                    if (localConn.GUID == conn.GUID)
-                        existsAlready = true;
-                }
+                bool existsAlready = localPort.links.Any(
+                    localConn => localConn.GUID == conn.GUID);
 
                 if (existsAlready) continue;
                 localPort.links.Add(conn);
@@ -381,29 +442,27 @@ namespace GraphFramework.Editor
             if (editorGraph == null) return;
             PostUndoSyncNodePortConnections();
             BuildGraph();
-            AssetDatabase.SaveAssets();
-            AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(editorGraph));
         }
 
         #endregion
 
         #region Graph Changes Processing
 
+        //This is called by the change processor, so the graph actually handles the VE removal.
         private void DeleteNode(NodeModel model)
         {
-            //Register the state of the saved assets, because we're about to "implicitly" delete some.
-            Undo.RegisterImporterUndo(AssetDatabase.GetAssetPath(model.RuntimeData), "graphChanges");
             Undo.DestroyObjectImmediate(model.RuntimeData);
+            runtimeNodeToView.Remove(model.RuntimeData);
             editorGraph.nodeModels.Remove(model);
         }
 
         private void DeleteConnectionByGuid(string guid)
         {
-            for (int j = editorGraph.connections.Count - 1; j >= 0; j--)
+            for (int j = editorGraph.links.Count - 1; j >= 0; j--)
             {
-                Link currentLink = editorGraph.connections[j];
+                Link currentLink = editorGraph.links[j];
                 if (currentLink.GUID != guid) continue;
-                editorGraph.connections.Remove(currentLink);
+                editorGraph.links.Remove(currentLink);
                 return;
             }
         }
@@ -446,8 +505,8 @@ namespace GraphFramework.Editor
 
             edgeToModel.Add(edge, modelEdge);
             editorGraph.edgeModels.Add(modelEdge);
-            editorGraph.connections.Add(localConnection);
-            editorGraph.connections.Add(remoteConnection);
+            editorGraph.links.Add(localConnection);
+            editorGraph.links.Add(remoteConnection);
             return true;
         }
 
@@ -501,11 +560,11 @@ namespace GraphFramework.Editor
                     case NodeView view:
                         if (viewToModel.TryGetValue(view, out var nodeModel))
                             DeleteNode(nodeModel as NodeModel);
-                        break;
+                        continue;
                     case Edge edge:
                         if (edgeToModel.TryGetValue(edge, out var edgeModel))
                             DeleteEdge(edge, edgeModel);
-                        break;
+                        continue;
                 }
             }
 

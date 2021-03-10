@@ -3,7 +3,6 @@ using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
-using Object = UnityEngine.Object;
 
 namespace GraphFramework.Editor
 {
@@ -33,52 +32,19 @@ namespace GraphFramework.Editor
             graphView.parentWindow = this;
             rootVisualElement.Add(graphView);
             graphView.RegisterCallback<GeometryChangedEvent>(OnGeometryChangedInitialization);
+            graphView.RegisterCallback<DetachFromPanelEvent>(graphView.OnGraphClosed);
         }
 
         private void OnGeometryChangedInitialization(GeometryChangedEvent e)
         {
             GenerateToolbar();
-            graphView.OnCreateGraphGUI();
+            graphView.OnGraphLoaded();
             graphView.UnregisterCallback<GeometryChangedEvent>(OnGeometryChangedInitialization);
         }
 
         private void OnDisable()
         {
             rootVisualElement.Clear();
-        }
-
-        protected void SaveGraph()
-        {
-            //GraphSaver.SerializeGraph(graphView, currentGraphGUID, this.GetType());
-        }
-
-        //TODO:: oof. Maybe this is neccesary? The order of initialization
-        //does not appear to be fixed, so we need to account for both cases?
-        //Loading the toolbar from XML from file would be a solution here.
-        private SerializedGraph delayedLoadedGraph = null;
-        public void LoadGraph(SerializedGraph graph)
-        {
-        }
-
-        private void LoadGraphEvent(ChangeEvent<Object> evt)
-        {
-            var graph = evt.newValue as SerializedGraph;
-
-            if (graph == null)
-            {
-                return;
-            }
-            LoadGraph(graph);
-        }
-
-        protected void RevertGraphToVersionOnDisk()
-        {
-            if (serializedGraphSelector == null)
-                return;
-
-            var currentGraph = serializedGraphSelector.value as SerializedGraph;
-            if (currentGraph == null) 
-                return;
         }
 
         private void Debug__FoldoutAllItems()
@@ -100,6 +66,16 @@ namespace GraphFramework.Editor
                 node.RefreshExpandedState();
             }
         }
+
+        public void VisitRuntimeNode(RuntimeNode node)
+        {
+            graphView?.RuntimeNodeVisited(node);
+        }
+        
+        public void ExitRuntimeNode(RuntimeNode node)
+        {
+            graphView?.RuntimeNodeExited(node);
+        }
         
         private ObjectField serializedGraphSelector = null;
         private void GenerateToolbar()
@@ -107,18 +83,7 @@ namespace GraphFramework.Editor
             var toolbar = new Toolbar();
             
             serializedGraphSelector = new ObjectField {objectType = typeof(SerializedGraph)};
-            serializedGraphSelector.RegisterValueChangedCallback(LoadGraphEvent);
 
-            if (delayedLoadedGraph != null)
-            {
-                serializedGraphSelector.SetValueWithoutNotify(delayedLoadedGraph);
-                delayedLoadedGraph = null;
-            }
-            
-            toolbar.Add(new Button( SaveGraph ) 
-                {text = "Save"});
-            toolbar.Add(new Button( RevertGraphToVersionOnDisk ) 
-                {text = "Boop"});
             toolbar.Add(new Button( Debug__FoldoutAllItems ) 
                 {text = "Foldout all Items"});
             toolbar.Add(new Button( Debug__ExpandAllItems ) 

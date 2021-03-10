@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using UnityEditor.Animations;
 using UnityEditor.Experimental.GraphView;
-using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace GraphFramework.Editor
@@ -90,7 +88,6 @@ namespace GraphFramework.Editor
         {
             model.stackedOn = stackModel;
             AddElement(view);
-            //graphView.OnStackChanged(this, node, true);
             RegisterCallback<GeometryChangedEvent>(OnStackOrderChanged);
         }
 

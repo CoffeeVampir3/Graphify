@@ -1,23 +1,24 @@
 ﻿#if UNITY_EDITOR
 using System;
+using System.Linq;
 using System.Reflection;
+using GraphFramework.Editor;
 using UnityEditor;
 using UnityEngine;
 
-/*
-namespace VisualNovelFramework.GraphFramework.GraphExecutor
+namespace GraphFramework.GraphExecutor
 {
     public partial class GraphExecutor
     {
         private EditorWindow linkedEditorWindow;
+        private BetaEditorGraph editorGraphData;
         
         //We need this reflection because unity does not have a typed version of
         //HasOpenInstances so we need make generic.
         static readonly MethodInfo hasOpenInstancesMethod = 
             typeof(EditorWindow).GetMethod(nameof(EditorWindow.HasOpenInstances), 
                 BindingFlags.Static | BindingFlags.Public);
-
-
+        
         private MethodInfo genericHasInstancesOpen = null;
         private bool IsEditorWindowOpen(Type t)
         {
@@ -45,7 +46,7 @@ namespace VisualNovelFramework.GraphFramework.GraphExecutor
             //Short circuit if we're already linked.
             if (editorGraphData != null && linkedEditorWindow != null)
             {
-                if (IsEditorWindowOpen(editorGraphData.editorWindowType.type)) 
+                if (IsEditorWindowOpen(editorGraphData.graphWindowType.type)) 
                     return true;
                 
                 linkedEditorWindow = null;
@@ -54,31 +55,33 @@ namespace VisualNovelFramework.GraphFramework.GraphExecutor
             
             if (editorGraphData == null)
             {
-                editorGraphData = CoffeeAssetDatabase.
-                    FindAssetWithCoffeeGUID<EditorGraphData>(targetGraph.GetCoffeeGUID());
+                editorGraphData = AssetExtensions.FindAssetsOfType<BetaEditorGraph>().FirstOrDefault();
             }
 
-            if (!IsEditorWindowOpen(editorGraphData.editorWindowType.type))
+            if (editorGraphData == null || 
+                !IsEditorWindowOpen(editorGraphData.graphWindowType.type))
             {
                 return false;
             }
 
             linkedEditorWindow = 
-                    EditorWindow.GetWindow(editorGraphData.editorWindowType.type);
+                    EditorWindow.GetWindow(editorGraphData.graphWindowType.type);
             
             return editorGraphData != null && linkedEditorWindow != null;
         }
         
         public void EditorLinkedRuntimeNodeVisited(RuntimeNode node)
         {
-            if (linkedEditorWindow is CoffeeGraphWindow cg)
-            {
-                //cg.RuntimeNodeVisited(node);
-                Debug.Log("Visited node: " + node.name);
-            }
+            if (!(linkedEditorWindow is CoffeeGraphWindow cg)) return;
+            cg.VisitRuntimeNode(node);
+        }
+
+        public void EditorLinkedRuntimeNodeExited(RuntimeNode node)
+        {
+            if (!(linkedEditorWindow is CoffeeGraphWindow cg)) return;
+            cg.ExitRuntimeNode(node);
         }
     }
 }
-*/
 
 #endif

@@ -8,12 +8,12 @@ namespace GraphFramework
     /// Reflection that allows us to save the relationship between actual value field and value port.
     /// </summary>
     [System.Serializable]
-    internal class LinkBinder
+    internal sealed class LinkBinder
     {
         [SerializeReference]
-        public RuntimeNode node;
+        internal RuntimeNode node;
         [SerializeReference]
-        private SerializedFieldInfo portField;
+        internal SerializedFieldInfo portField;
 
         internal LinkBinder(RuntimeNode remote,
             SerializedFieldInfo field)
@@ -23,7 +23,7 @@ namespace GraphFramework
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ValuePort Bind()
+        internal ValuePort Bind()
         {
             var remotePortInfo = portField.FieldFromInfo;
             ValuePort port = remotePortInfo.GetValue(node) as ValuePort;
@@ -48,15 +48,15 @@ namespace GraphFramework
         public RuntimeNode linkedTo;
         [SerializeReference] 
         private LinkBinder remoteLinkBinder;
-        //This is only used by the editor, it is possible to factor this out but difficult.
-        //The few byte overhead at runtime should not be much of an issue.
+        //This is only used by the editor, but is quite difficult to factor out and only saves
+        //a few bytes per link.
         [SerializeReference] 
         private LinkBinder localLinkBinder;
         [SerializeReference] 
         public string GUID;
         //This is the field we bind at runtime, which acts as a pointer to our data values.
         [NonSerialized]
-        private ValuePort distantEndValueKey;
+        protected internal ValuePort distantEndValueKey;
 
         public Link(RuntimeNode localSide, SerializedFieldInfo localPortField,
             RuntimeNode remoteSide, SerializedFieldInfo remotePortField)
@@ -66,7 +66,7 @@ namespace GraphFramework
             remoteLinkBinder = new LinkBinder(remoteSide, remotePortField);
             GUID = Guid.NewGuid().ToString();
         }
-        
+
         //Not cached because caching is not safe here, ensure this is called once at runtime only.
         /// <summary>
         /// Creates the value key binding from serialization.
@@ -104,7 +104,7 @@ namespace GraphFramework
         /// Attempts to resolve the connection value. If the type *might* not be what you expect,
         /// use TryGetValue.
         /// </summary>
-        public T GetValue<T>()
+        public T GetValueAs<T>()
         {
             if (distantEndValueKey is ValuePort<T> valuePort)
             {

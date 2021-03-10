@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
@@ -15,7 +16,8 @@ namespace GraphFramework
     [Serializable]
     public abstract class ValuePort
     {
-        [HideInInspector, SerializeReference] 
+        [SerializeReference]
+        [HideInInspector]
         internal List<Link> links = new List<Link>();
 
         /// <summary>
@@ -60,7 +62,7 @@ namespace GraphFramework
         /// </summary>
         public T FirstValue()
         {
-            return links.Count > 0 ? links[0].GetValue<T>() : default;
+            return links.Count > 0 ? links[0].GetValueAs<T>() : default;
         }
 
         /// <summary>
@@ -70,13 +72,21 @@ namespace GraphFramework
         {
             return links.Count > 0 ? links[0].GetNode() : null;
         }
+        
+        /// <summary>
+        /// Returns the first link or null.
+        /// </summary>
+        public Link FirstLink()
+        {
+            return links.Count > 0 ? links[0] : null;
+        }
 
         /// <summary>
         /// Returns the value of the link at the given index or default.
         /// </summary>
         public T ValueOf(int index)
         {
-            return links.Count > index ? links[index].GetValue<T>() : default;
+            return links.Count > index ? links[index].GetValueAs<T>() : default;
         }
         
         /// <summary>

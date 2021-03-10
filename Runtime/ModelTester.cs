@@ -1,5 +1,4 @@
-﻿using Sirenix.OdinInspector;
-using UnityEngine;
+﻿using UnityEngine;
 using GraphFramework.Attributes;
 
 namespace GraphFramework
@@ -9,17 +8,21 @@ namespace GraphFramework
     {
         [In, SerializeField]
         public ValuePort<string> stringValue = new ValuePort<string>();
-        [In, SerializeField] 
-        private ValuePort<Flow> flowPortIn = new ValuePort<Flow>();
         [Out, SerializeField]
         public ValuePort<string> stringValue2 = new ValuePort<string>();
-        [Out, SerializeField] 
-        private ValuePort<Flow> flowPortOut = new ValuePort<Flow>();
 
-        [Button]
-        public void DoThing()
+        public override RuntimeNode OnEvaluate()
         {
-            stringValue.FirstValue();
+            if (!stringValue2.IsLinked()) return null;
+            foreach (var link in stringValue2.Links)
+            {
+                //Debugging Only, graph will initialize this.
+                link.BindRemote();
+                //Debug.Log(link.GetValueAs<string>());
+            }
+            //Debugging Only, graph will initialize this.
+            stringValue2.FirstLink().BindRemote();
+            return stringValue2.FirstNode();
         }
     }
 }
