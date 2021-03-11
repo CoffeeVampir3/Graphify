@@ -20,6 +20,8 @@ namespace GraphFramework.GraphExecutor
                 BindingFlags.Static | BindingFlags.Public);
         
         private MethodInfo genericHasInstancesOpen = null;
+        //Unity didin't provide a function to do this, so we make a generic delegate for our
+        //window type's HasOpenInstances -- then we cache that delegate.
         private bool IsEditorWindowOpen(Type t)
         {
             if (genericHasInstancesOpen != null) 
@@ -37,10 +39,13 @@ namespace GraphFramework.GraphExecutor
 
             return (bool)genericHasInstancesOpen.Invoke(null, null);
         }
-        /// <summary>
-        /// This is run every call and not cached because linking can be volatile,
-        /// the window state can change at any moment and we cannot assume it's open.
-        /// </summary>
+        
+        // This is run every call and not cached because linking can be volatile,
+        // the window state can change at any moment and we cannot assume it's open.
+       /// <summary>
+       /// Checks to see if the editor window for out particular graph type is open.
+       /// </summary>
+       /// <returns>True if graph is open</returns>
         public bool IsEditorLinkedToGraphWindow()
         {
             //Short circuit if we're already linked.

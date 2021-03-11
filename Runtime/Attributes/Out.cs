@@ -1,8 +1,12 @@
-﻿using System;
+﻿using UnityEngine.Scripting;
 
 namespace GraphFramework.Attributes
 {
-    public class Out : Attribute
+    //Using preserve attribute so we don't get this stripped out in IL2CPP compilations
+    /// <summary>
+    /// Defines a ValuePort as an output.
+    /// </summary>
+    public class Out : PreserveAttribute
     {
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using Sirenix.OdinInspector;
+using UnityEngine;
 
 namespace GraphFramework.GraphExecutor
 {
@@ -11,66 +12,51 @@ namespace GraphFramework.GraphExecutor
     public partial class GraphExecutor
     {
         public RuntimeNode currentNode = null;
+        public RuntimeNode nextNode = null;
         public RuntimeNode previousNode = null;
-        public bool firstStep = true;
+        //Allows you to look at specific graphs operating, rather than all of them at once.
+        public bool shouldLinkEditor = false;
 
-        private bool inEditor = false;
-        private Func<bool> isEditorLinkedStub = null;
-        private Action<RuntimeNode> runtimeNodeVisitedEditor = null;
-        private Action<RuntimeNode> runtimeNodeExitedEditor = null;
-        
-        //When this object is created, if we're in the unity editor we create our linker
-        //functions, otherwise this amounts to a single bool overhead.
-        protected GraphExecutor()
-        {
-            #if UNITY_EDITOR
-            inEditor = true;
-            isEditorLinkedStub = IsEditorLinkedToGraphWindow;
-            runtimeNodeVisitedEditor = EditorLinkedRuntimeNodeVisited;
-            runtimeNodeExitedEditor = EditorLinkedRuntimeNodeExited;
-            #endif
-        }
-
+        //Gateway into the editor-only code, this branch is compiled out at runtime.
         public void EvaluateEditor()
         {
-            if (!inEditor || !isEditorLinkedStub.Invoke()) return;
+            Debug.Log(shouldLinkEditor);
+            if (!shouldLinkEditor || 
+                !IsEditorLinkedToGraphWindow()) return;
             if (previousNode != null)
-                runtimeNodeExitedEditor.Invoke(previousNode);
-            runtimeNodeVisitedEditor.Invoke(currentNode);
+                EditorLinkedRuntimeNodeExited(previousNode);
+            if(currentNode != null)
+                EditorLinkedRuntimeNodeVisited(currentNode);
         }
 
         //TODO:: Odin dependency for testing only.
         [Button]
         public void Reset()
         {
-            currentNode = null;
             previousNode = null;
-            firstStep = true;
+            currentNode = null;
+            nextNode = null;
         }
-
+        
         /// <summary>
         /// Evaluates the current node and walks the graph to whatever node is returned by
         /// the evaluated node.
         /// </summary>
         public void WalkNode()
         {
-            if (!firstStep)
-            {
-                previousNode = currentNode;
-                if (currentNode != null)
-                {
-                    currentNode = currentNode.OnEvaluate();
-                }
+            if (nextNode != null)
+                currentNode = nextNode;
+            RuntimeNode tempPrev = currentNode;
+            nextNode = currentNode.OnEvaluate();
             
-                EvaluateEditor();
-                return;
-            }
-            
-            //This lets us evaluate the current node (usually root) without walking forward
-            //for the first step.
-            currentNode.OnEvaluate();
+            //This is our gateway into editor code, using this method we can get 100% of the
+            //editor linker branch to compile out.
+            #if UNITY_EDITOR
             EvaluateEditor();
-            firstStep = false;
+            #endif
+            //We set previous node AFTER calling evaluate editor, effectively evaluate editor
+            //checks the *previous previous* node.
+            previousNode = tempPrev;
         }
     }
 }

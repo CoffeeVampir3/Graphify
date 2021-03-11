@@ -25,6 +25,35 @@ namespace GraphFramework.Editor
         //
         protected internal readonly Dictionary<RuntimeNode, NodeView> runtimeNodeToView =
             new Dictionary<RuntimeNode, NodeView>();
+        
+        #region Initialization and Finalization
+        
+        protected CoffeeGraphView()
+        {
+            settings = GraphSettings.CreateOrGetSettings(this);
+            styleSheets.Add(settings.graphViewStyle);
+
+            SetupZoom(ContentZoomer.DefaultMinScale, ContentZoomer.DefaultMaxScale);
+            this.AddManipulator(new ContentDragger());
+            this.AddManipulator(new SelectionDragger());
+            this.AddManipulator(new RectangleSelector());
+
+            //These callbacks are derived from graphView.
+            //Callback on cut/copy.
+            serializeGraphElements = OnSerializeGraphElements;
+            //Callback on paste.
+            unserializeAndPaste = OnPaste;
+            //Callback on "changes" particularly -- Edge creation, node movement, and deleting.
+            graphViewChanged = OnGraphViewChanged;
+            
+            //This is called on anything being undone in the graph, including field changes.
+            //This operation can get quite expensive for bigger graphs, but there's currently
+            //no alternative to this due to the inflexibility of the undo system.
+            Undo.undoRedoPerformed += UndoPerformed;
+
+            searchWindow = ScriptableObject.CreateInstance<CoffeeSearchWindow>();
+            InitializeSearchWindow();
+        }
 
         /// <summary>
         /// A callback used once the graph loads, add your GUI widgets and stuff here.
@@ -66,21 +95,9 @@ namespace GraphFramework.Editor
                 CleanUndoRemnants();
             AssetDatabase.SaveAssets();
         }
+
+        #endregion
         
-        public void CreateNewNode(Type runtimeDataType, Vector2 atPosition)
-        {
-            var model = NodeModel.InstantiateModel(editorGraph, runtimeDataType);
-            
-            Vector2 spawnPosition = parentWindow.rootVisualElement.ChangeCoordinatesTo(
-                parentWindow.rootVisualElement.parent,
-                atPosition - parentWindow.position.position);
-
-            spawnPosition = contentViewContainer.WorldToLocal(spawnPosition);
-            Rect spawnRect = new Rect(spawnPosition.x - 75, spawnPosition.y - 75, 150, 150);
-            model.Position = spawnRect;
-            CreateNewNode(model);
-        }
-
         //TODO::
 
         #region DeleteThis
@@ -111,31 +128,24 @@ namespace GraphFramework.Editor
         }
 
         #endregion
+
+        #region Public API
         
-        protected CoffeeGraphView()
+        public void CreateNewNode(Type runtimeDataType, Vector2 atPosition)
         {
-            settings = GraphSettings.CreateOrGetSettings(this);
-            styleSheets.Add(settings.graphViewStyle);
+            var model = NodeModel.InstantiateModel(editorGraph, runtimeDataType);
+            
+            Vector2 spawnPosition = parentWindow.rootVisualElement.ChangeCoordinatesTo(
+                parentWindow.rootVisualElement.parent,
+                atPosition - parentWindow.position.position);
 
-            SetupZoom(ContentZoomer.DefaultMinScale, ContentZoomer.DefaultMaxScale);
-            this.AddManipulator(new ContentDragger());
-            this.AddManipulator(new SelectionDragger());
-            this.AddManipulator(new RectangleSelector());
-
-            //These callbacks are derived from graphView.
-            //Callback on cut/copy.
-            serializeGraphElements = OnSerializeGraphElements;
-            //Callback on paste.
-            unserializeAndPaste = OnPaste;
-            //Callback on "changes" particularly on element delete.
-
-            Undo.undoRedoPerformed += UndoPerformed;
-
-            searchWindow = ScriptableObject.CreateInstance<CoffeeSearchWindow>();
-            InitializeSearchWindow();
-
-            graphViewChanged = OnGraphViewChanged;
+            spawnPosition = contentViewContainer.WorldToLocal(spawnPosition);
+            Rect spawnRect = new Rect(spawnPosition.x - 75, spawnPosition.y - 75, 150, 150);
+            model.Position = spawnRect;
+            CreateNewNode(model);
         }
+        
+        #endregion
         
         #region Copy and Paste
 
@@ -237,7 +247,7 @@ namespace GraphFramework.Editor
                     continue;
                 }
                 
-                Edge newEdge = new Edge {input = realInPort, output = realOutPort};
+                Edge newEdge = CreateNewEdge(realInPort, realOutPort);
                 if (TryCreateConnection(newEdge, 
                     targetInModel, targetOutModel, 
                     targetInPort, targetOutPort))
@@ -251,18 +261,6 @@ namespace GraphFramework.Editor
         }
         
         #endregion
-
-        private void ClearGraph()
-        {
-            foreach (var elem in graphElements)
-            {
-                RemoveElement(elem);
-            }
-
-            runtimeNodeToView.Clear();
-            viewToModel.Clear();
-            edgeToModel.Clear();
-        }
 
         #region Graph Building
 
@@ -299,6 +297,27 @@ namespace GraphFramework.Editor
             editorGraph.nodeModels.Add(model);
         }
 
+        private static void AddEdgeClasses(Edge edge)
+        {
+            edge.AddToClassList("edgierEdge");
+        }
+
+        private static Edge CreateNewEdge(Port inputPort, Port outputPort)
+        {
+            Edge edge = new Edge {input = inputPort, output = outputPort};
+            AddEdgeClasses(edge);
+            return edge;
+        }
+
+        private void CreateConnectedEdge(EdgeModel model, Port inputPort, Port outputPort)
+        {
+            Edge edge = CreateNewEdge(inputPort, outputPort);
+            edge.input.Connect(edge);
+            edge.output.Connect(edge);
+            AddElement(edge);
+            edgeToModel.Add(edge, model);
+        }
+
         private void CreateEdgeFromModel(EdgeModel model)
         {
             if (model.inputModel?.View == null || model.outputModel?.View == null ||
@@ -309,11 +328,7 @@ namespace GraphFramework.Editor
                 return;
             }
 
-            Edge edge = new Edge {input = inputPort, output = outputPort};
-            edge.input.Connect(edge);
-            edge.output.Connect(edge);
-            AddElement(edge);
-            edgeToModel.Add(edge, model);
+            CreateConnectedEdge(model, inputPort, outputPort);
         }
 
         private void BindConnections()
@@ -324,6 +339,18 @@ namespace GraphFramework.Editor
             }
         }
 
+        private void ClearGraph()
+        {
+            foreach (var elem in graphElements)
+            {
+                RemoveElement(elem);
+            }
+
+            runtimeNodeToView.Clear();
+            viewToModel.Clear();
+            edgeToModel.Clear();
+        }
+        
         private void BuildGraph()
         {
             if (editorGraph.nodeModels == null)
@@ -587,6 +614,10 @@ namespace GraphFramework.Editor
                     //We failed to create a connection so discard this edge, otherwise it's confusing
                     //to the user if an edge is created when a connection isin't.
                     addedEdges.Remove(edge);
+                }
+                else
+                {
+                    AddEdgeClasses(edge);
                 }
             }
         }
