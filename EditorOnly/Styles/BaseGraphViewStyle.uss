@@ -1,0 +1,97 @@
+GridBackground {
+    --grid-background-color: rgba(20, 20, 20, .8);
+    --line-color: rgba(192, 192, 192, 0.1);
+    --thick-line-color: rgba(192, 192, 192, .1);
+    --spacing: 25;
+}
+
+.unity-toolbar {
+    background-color: rgba(30, 30, 30, 0);
+}
+
+.unity-button {
+    background-color: rgba(0, 173, 181, .5);
+}
+
+.unity-button:hover {
+    background-color: rgba(0, 173, 181, .88);
+}
+
+.edge {
+    --selected-edge-color: #44C0FF;
+    --ghost-edge-color: #555555;
+    --edge-color: #929292;
+    --edge-width: 1;
+    --layer:1;
+}
+
+.node.CurrentNode #title {
+    background-color: rgba(128, 1, 17, .6);
+}
+
+.node #title {
+    background-color: rgba(35, 35, 45, .8);
+    justify-content: center;
+}
+
+.node #title > .unity-label {
+    font-size: 12px;
+    -unity-font-style: bold;
+}
+
+#node-border > #contents > #top > #input,
+#node-border > #contents > #top > #output,
+#extension {
+    background-color: rgba(55, 55, 55, .7);
+}
+
+.unity-base-field .unity-base-field__input {
+    border-radius: 5px;
+    border-width: 2px;
+    border-top-width: 1px;
+    min-width: 70px;
+}
+
+.unity-base-field__input.unity-property-field__input {
+    padding-left: 4px;
+    background-color: rgba(22, 22, 22, .4);
+}
+
+.unity-base-field__input.unity-property-field__input.unity-base-text-field__input {
+    white-space: normal;
+    -unity-overflow-clip-box: content-box;
+    max-width: 140px;
+}
+
+.unity-base-field__input,
+.unity-base-field {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+#output .port,
+#input .port
+{
+    --port-color: rgb(61, 28, 74);
+}
+
+#output .port.typeString,
+#input .port.typeString
+{
+    --port-color: rgb(150, 86, 23);
+}
+
+.stack-child-element #input {
+    display: none;
+}
+
+.firstInStack #input {
+    display: flex;
+}
+
+.stack-child-element #output {
+    display: none;
+}
+
+.lastInStack #output {
+    display: flex;
+}

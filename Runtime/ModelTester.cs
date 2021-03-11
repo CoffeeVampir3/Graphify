@@ -13,12 +13,12 @@ namespace GraphFramework
 
         public override RuntimeNode OnEvaluate()
         {
-            if (!stringValue2.IsLinked()) return null;
+            if (!stringValue2.IsLinked()) return this;
             foreach (var link in stringValue2.Links)
             {
                 //Debugging Only, graph will initialize this.
                 link.BindRemote();
-                //Debug.Log(link.GetValueAs<string>());
+                Debug.Log("Value of link: " + link.GetValueAs<string>());
             }
             //Debugging Only, graph will initialize this.
             stringValue2.FirstLink().BindRemote();

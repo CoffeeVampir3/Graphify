@@ -62,7 +62,8 @@ namespace GraphFramework.Editor
                     AssetDatabase.RemoveObjectFromAsset(modelRuntimeNode);
                 }
             }
-            CleanUndoRemnants();
+            if(editorGraph != null) 
+                CleanUndoRemnants();
             AssetDatabase.SaveAssets();
         }
         
@@ -98,7 +99,6 @@ namespace GraphFramework.Editor
             if (!runtimeNodeToView.TryGetValue(node, out var view))
                 return;
             
-            Debug.Log("Added to: " + view.title);
             view.AddToClassList("CurrentNode");
         }
         
@@ -107,7 +107,6 @@ namespace GraphFramework.Editor
             if (!runtimeNodeToView.TryGetValue(node, out var view))
                 return;
             
-            Debug.Log("Removed from: " + view.title);
             view.RemoveFromClassList("CurrentNode");
         }
 
@@ -260,6 +259,7 @@ namespace GraphFramework.Editor
                 RemoveElement(elem);
             }
 
+            runtimeNodeToView.Clear();
             viewToModel.Clear();
             edgeToModel.Clear();
         }

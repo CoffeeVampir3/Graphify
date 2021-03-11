@@ -15,7 +15,7 @@ namespace GraphFramework.GraphExecutor
         
         //We need this reflection because unity does not have a typed version of
         //HasOpenInstances so we need make generic.
-        static readonly MethodInfo hasOpenInstancesMethod = 
+        private static readonly MethodInfo hasOpenInstancesMethod = 
             typeof(EditorWindow).GetMethod(nameof(EditorWindow.HasOpenInstances), 
                 BindingFlags.Static | BindingFlags.Public);
         
@@ -39,7 +39,7 @@ namespace GraphFramework.GraphExecutor
         }
         /// <summary>
         /// This is run every call and not cached because linking can be volatile,
-        /// the state can change at any moment.
+        /// the window state can change at any moment and we cannot assume it's open.
         /// </summary>
         public bool IsEditorLinkedToGraphWindow()
         {

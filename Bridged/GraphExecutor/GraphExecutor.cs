@@ -1,5 +1,5 @@
 ﻿using System;
-using UnityEngine;
+using Sirenix.OdinInspector;
 
 namespace GraphFramework.GraphExecutor
 {
@@ -10,8 +10,9 @@ namespace GraphFramework.GraphExecutor
     [Serializable]
     public partial class GraphExecutor
     {
-        [SerializeField]
         public RuntimeNode currentNode = null;
+        public RuntimeNode previousNode = null;
+        public bool firstStep = true;
 
         private bool inEditor = false;
         private Func<bool> isEditorLinkedStub = null;
@@ -30,22 +31,46 @@ namespace GraphFramework.GraphExecutor
             #endif
         }
 
-        [SerializeField]
-        private RuntimeNode previousNode = null;
+        public void EvaluateEditor()
+        {
+            if (!inEditor || !isEditorLinkedStub.Invoke()) return;
+            if (previousNode != null)
+                runtimeNodeExitedEditor.Invoke(previousNode);
+            runtimeNodeVisitedEditor.Invoke(currentNode);
+        }
+
+        //TODO:: Odin dependency for testing only.
+        [Button]
+        public void Reset()
+        {
+            currentNode = null;
+            previousNode = null;
+            firstStep = true;
+        }
+
+        /// <summary>
+        /// Evaluates the current node and walks the graph to whatever node is returned by
+        /// the evaluated node.
+        /// </summary>
         public void WalkNode()
         {
-            if (inEditor && isEditorLinkedStub.Invoke())
+            if (!firstStep)
             {
-                if(previousNode != null)
-                    runtimeNodeExitedEditor.Invoke(previousNode);
-                runtimeNodeVisitedEditor.Invoke(currentNode);
+                previousNode = currentNode;
+                if (currentNode != null)
+                {
+                    currentNode = currentNode.OnEvaluate();
+                }
+            
+                EvaluateEditor();
+                return;
             }
             
-            previousNode = currentNode;
-            if (currentNode != null)
-            {
-                currentNode = currentNode.OnEvaluate();
-            }
+            //This lets us evaluate the current node (usually root) without walking forward
+            //for the first step.
+            currentNode.OnEvaluate();
+            EvaluateEditor();
+            firstStep = false;
         }
     }
 }
