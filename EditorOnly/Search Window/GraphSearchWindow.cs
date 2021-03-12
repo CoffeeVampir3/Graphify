@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace GraphFramework.Editor
 {
-    public class CoffeeSearchWindow : ScriptableObject, ISearchWindowProvider
+    public class GraphSearchWindow : ScriptableObject, ISearchWindowProvider
     {
         private CoffeeGraphView graphView;
 
@@ -15,15 +15,15 @@ namespace GraphFramework.Editor
 
         public List<SearchTreeEntry> CreateSearchTree(SearchWindowContext context)
         {
-            var tree = CoffeeGraphNodeSearchTreeProvider.
+            var tree = GraphNodeSearchTreeProvider.
                 CreateNodeSearchTreeFor(graphView.GetType());
 
             return tree;
         }
 
-        public bool OnSelectEntry(SearchTreeEntry SearchTreeEntry, SearchWindowContext context)
+        public bool OnSelectEntry(SearchTreeEntry searchTreeEntry, SearchWindowContext context)
         {
-            graphView.CreateNewNode(SearchTreeEntry.userData as System.Type, context.screenMousePosition);
+            graphView.CreateNewNode(searchTreeEntry.name, searchTreeEntry.userData as System.Type, context.screenMousePosition);
             return true;
         }
     }

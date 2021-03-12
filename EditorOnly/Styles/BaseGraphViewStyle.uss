@@ -82,7 +82,7 @@ GridBackground {
 #output .port,
 #input .port
 {
-    --port-color: rgb(61, 28, 74);
+    --port-color: rgba(149, 172, 12, 1);
 }
 
 #output .port.typeString,

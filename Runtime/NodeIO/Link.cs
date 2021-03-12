@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 namespace GraphFramework
 {
@@ -21,19 +23,38 @@ namespace GraphFramework
             node = remote;
             portField = field;
         }
+        
+        #if !ENABLE_IL2CPP
+        //A faster alternative to reflection, and a better all around solution but does not 
+        //work for IL2CPP users due to using Il.Emit.
+        private static Dictionary<(Type, string), Func<RuntimeNode, ValuePort>> fastGetters =
+            new Dictionary<(Type, string), Func<RuntimeNode, ValuePort>>();
+        #endif
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal ValuePort Bind()
         {
             var remotePortInfo = portField.FieldFromInfo;
-            ValuePort port = remotePortInfo.GetValue(node) as ValuePort;
 
-#if UNITY_EDITOR
-            if (remotePortInfo == null || port == null) {
-                throw new ArgumentException("Unable to instantiate a port from field named: " + portField?.FieldName + "" +
-                                            " . Field was likely renamed or removed.");
+            if (remotePortInfo == null)
+            {
+                Debug.LogError(
+                    "Attempted to regenerate a port but the field has been renamed or removed, previously known as: " + portField.FieldName);
+                return null;
             }
-#endif
+
+            #if ENABLE_IL2CPP
+            ValuePort port = remotePortInfo.GetValue(node) as ValuePort;
+            #else
+            //See comment for fastGetters
+            if (!fastGetters.TryGetValue((node.GetType(), portField.FieldName), out var fastGetter))
+            {
+                fastGetter = CreateFastGetter.Create<RuntimeNode, ValuePort>(remotePortInfo);
+                fastGetters.Add((node.GetType(), portField.FieldName), fastGetter);
+            }
+            ValuePort port = fastGetter(node);
+            #endif
+            
             return port;
         }
     }
@@ -57,6 +78,8 @@ namespace GraphFramework
         //This is the field we bind at runtime, which acts as a pointer to our data values.
         [NonSerialized]
         protected internal ValuePort distantEndValueKey;
+        [NonSerialized] 
+        private bool valueBound = false;
 
         public Link(RuntimeNode localSide, SerializedFieldInfo localPortField,
             RuntimeNode remoteSide, SerializedFieldInfo remotePortField)
@@ -66,8 +89,7 @@ namespace GraphFramework
             remoteLinkBinder = new LinkBinder(remoteSide, remotePortField);
             GUID = Guid.NewGuid().ToString();
         }
-
-        //Not cached because caching is not safe here, ensure this is called once at runtime only.
+        
         /// <summary>
         /// Creates the value key binding from serialization.
         /// </summary>
@@ -91,8 +113,14 @@ namespace GraphFramework
         /// </summary>
         public bool TryGetValue<T>(out T value)
         {
+            //Lazy binding, this is the most optimal strategy as we will not attempt to create
+            //tons of binding data all at once, and the binding we do create gets cached incrementally
+            //as a result.
+            if(!valueBound)
+                BindRemote();
             if (!(distantEndValueKey is ValuePort<T> valuePort))
             {
+                //No error because this was a try get.
                 value = default;
                 return false;
             }
@@ -106,10 +134,18 @@ namespace GraphFramework
         /// </summary>
         public T GetValueAs<T>()
         {
+            //Lazy binding, this is the most optimal strategy as we will not attempt to create
+            //tons of binding data all at once, and the binding we do create gets cached incrementally
+            //as a result.
+            if(!valueBound)
+                BindRemote();
             if (distantEndValueKey is ValuePort<T> valuePort)
             {
                 return valuePort.portValue;
             }
+
+            //This should be an error, as GetValueAs should not be trying to get an illegal type.
+            Debug.LogError("Attempted to resolve value port on " + remoteLinkBinder.node + " with field name: " + remoteLinkBinder.portField + " but it was not able to be resolved. Likely a mismatched type.");
             return default;
         }
 

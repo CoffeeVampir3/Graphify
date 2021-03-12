@@ -27,21 +27,21 @@ namespace GraphFramework.Editor
             }
             return fieldList;
         }
-        
-        public static System.Type[] GetGenericClassConstructorArguments(
-            this System.Type candidateType,
-            System.Type openGenericType)
+
+        public static System.Type[] GetGenericClassConstructorArguments(this System.Type candidateType, System.Type openGenericType)
         {
-            //We've found our target class.
-            if (candidateType.IsGenericType && 
-                candidateType.GetGenericTypeDefinition() == openGenericType)
-                return candidateType.GetGenericArguments();
-            
-            //Keep looking
-            System.Type baseType = candidateType.BaseType;
-            return baseType != null 
-                ? baseType.GetGenericClassConstructorArguments(openGenericType) 
-                : null;
+            while (true)
+            {
+                //We've found our target class.
+                if (candidateType.IsGenericType && 
+                    candidateType.GetGenericTypeDefinition() == openGenericType) 
+                    return candidateType.GetGenericArguments();
+
+                //Keep looking
+                System.Type baseType = candidateType.BaseType;
+                if (baseType == null) return null;
+                candidateType = baseType;
+            }
         }
     }
 }

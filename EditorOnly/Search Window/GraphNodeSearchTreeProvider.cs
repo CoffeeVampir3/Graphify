@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using GraphFramework.Attributes;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -11,29 +12,30 @@ namespace GraphFramework.Editor
     /// Helper class to provide the node search tree for our graph view using RegisterNodeToView
     /// attribute.
     /// </summary>
-    public static class CoffeeGraphNodeSearchTreeProvider
+    public static class GraphNodeSearchTreeProvider
     {
         private static IEnumerable<Type> GetNodesRegisteredToView(Type graphViewType)
         {
-            var nodeList = TypeCache.GetTypesWithAttribute<RegisterNodeToView>();
+            var nodeList = TypeCache.GetTypesWithAttribute<RegisterToGraph>();
+            var controllerType = GraphRegistrationResolver.GetRegisteredGraphController(graphViewType);
+            if (controllerType == null)
+            {
+                Debug.LogError("Graph does not have a registered controller!");
+                return null;
+            }
 
+            //Simple, iterates through every registered node and, if they're registered to
+            //our graph, or a type our graph derives from, add it to the list of registered
+            //nodes and return that list.
             return (from node 
                     in nodeList 
                     let attr = 
-                        node.GetCustomAttributes(typeof(RegisterNodeToView), false)[0] as RegisterNodeToView 
-                    where IsAssignableFrom(attr, graphViewType)
+                        node.GetCustomAttributes(typeof(RegisterToGraph), false)[0] as RegisterToGraph 
+                    where attr.registeredGraphType.IsAssignableFrom(controllerType)
                     select node)
                 .ToList();
         }
 
-        private static bool IsAssignableFrom(RegisterNodeToView rnva, Type graphViewType)
-        {
-            var resolvedType = Type.GetType("GraphFramework.Editor." + rnva.registeredGraphViewTypeName);
-            if (resolvedType != null) return resolvedType.IsAssignableFrom(graphViewType);
-            Debug.Log("Could not resolve a graph named: " + rnva.registeredGraphViewTypeName);
-            return false;
-        }
-        
         #region Node Search Tree Parser
 
         private static Dictionary<(string, int), SearchTreeGroupEntry> dirToGroup;
@@ -66,12 +68,18 @@ namespace GraphFramework.Editor
             entryList.Add(nEntry);
         }
 
+        private static readonly Dictionary<Type, List<SearchTreeEntry>> cachedSearchTrees =
+            new Dictionary<Type, List<SearchTreeEntry>>();
         private static Texture2D indentationIcon;
         /// <summary>
         /// Returns a search tree of our registered nodes for the given graph view type.
+        /// This tree is cached by this function for performance.
         /// </summary>
         public static List<SearchTreeEntry> CreateNodeSearchTreeFor(Type graphViewType)
         {
+            if (cachedSearchTrees.TryGetValue(graphViewType, out var tree))
+                return tree;
+            
             var nodeList = GetNodesRegisteredToView(graphViewType);
             dirToGroup = new Dictionary<(string directory, int depth), SearchTreeGroupEntry>();
             groupToEntry = new Dictionary<SearchTreeGroupEntry, List<SearchTreeEntry>>();
@@ -93,7 +101,7 @@ namespace GraphFramework.Editor
             foreach (var item in nodeList)
             {
                 var attr = item.
-                    GetCustomAttributes(typeof(RegisterNodeToView), false)[0] as RegisterNodeToView;
+                    GetCustomAttributes(typeof(RegisterToGraph), false)[0] as RegisterToGraph;
 
                 Debug.Assert(attr != null, nameof(attr) + " != null");
                 var split = attr.registeredPath.Split('/');
@@ -134,7 +142,8 @@ namespace GraphFramework.Editor
                     searchTree.AddRange(entries);
                 }
             }
-
+            
+            cachedSearchTrees.Add(graphViewType, searchTree);
             return searchTree;
         }
         

@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
 //This is so we can make sure nobody does dumb modifications to links by accident.
+//We share the internals instead of facades because it makes more sense to give the graph
+//full control over this class.
 [assembly: InternalsVisibleTo("GraphEditor")]
 namespace GraphFramework
 {
@@ -16,9 +17,9 @@ namespace GraphFramework
     [Serializable]
     public abstract class ValuePort
     {
-        [SerializeReference]
-        [HideInInspector]
-        internal List<Link> links = new List<Link>();
+        //Internals shared with graph editor.
+        [SerializeReference, HideInInspector]
+        protected internal List<Link> links = new List<Link>();
 
         /// <summary>
         /// The list of links this port has.
@@ -42,6 +43,9 @@ namespace GraphFramework
         }
     }
 
+    /// <summary>
+    /// A port with a backing value.
+    /// </summary>
     [Serializable]
     public class ValuePort<T> : ValuePort
     {

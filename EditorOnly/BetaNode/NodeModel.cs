@@ -18,10 +18,8 @@ namespace GraphFramework.Editor
         public List<PortModel> inputPorts = new List<PortModel>();
         [SerializeReference]
         public List<PortModel> outputPorts = new List<PortModel>();
-        //This makes stacking things really really easy.
         [SerializeReference] 
         public StackModel stackedOn = null;
-        
         [SerializeField] 
         public bool isRoot = false;
         [SerializeField] 
@@ -38,15 +36,15 @@ namespace GraphFramework.Editor
 
         #region Creation & Cloning
         
-        public static NodeModel InstantiateModel(BetaEditorGraph editorGraph, Type runtimeDataType)
+        public static NodeModel InstantiateModel(string initialName, EditorGraphModel editorGraphModel, Type runtimeDataType)
         {
-            var model = new NodeModel();
-            model.CreateRuntimeData(editorGraph, runtimeDataType);
-            model.CreatePortModels();
+            var model = new NodeModel {nodeTitle = initialName};
+            model.CreateRuntimeData(editorGraphModel, runtimeDataType);
+            model.CreatePortModelsFromReflection();
             return model;
         }
 
-        public NodeModel Clone(BetaEditorGraph editorGraph)
+        public NodeModel Clone(EditorGraphModel editorGraphModel)
         {
             NodeModel model = new NodeModel
             {
@@ -55,38 +53,70 @@ namespace GraphFramework.Editor
                 position = position, 
                 isExpanded = isExpanded
             };
-            model.CreateRuntimeDataClone(editorGraph, RuntimeData);
+            model.CreateRuntimeDataClone(editorGraphModel, RuntimeData);
             model.RuntimeData.name = RuntimeData.name;
-            model.CreatePortModels(true);
+            model.CreatePortModelsFromReflection(true);
             return model;
         }
 
-        public void CreateRuntimeData(BetaEditorGraph editorGraph, Type runtimeDataType)
+        public void CreateRuntimeData(EditorGraphModel editorGraphModel, Type runtimeDataType)
         {
             RuntimeData = ScriptableObject.CreateInstance(runtimeDataType) as RuntimeNode;
-            AssetDatabase.AddObjectToAsset(RuntimeData, editorGraph);
-            EditorUtility.SetDirty(editorGraph);
+            
+            Debug.Assert(RuntimeData != null, nameof(RuntimeData) + " runtime data type was somehow null, something horrible has happened please report a bug.");
+            RuntimeData.name = nodeTitle;
+            AssetDatabase.AddObjectToAsset(RuntimeData, editorGraphModel);
+            EditorUtility.SetDirty(editorGraphModel);
         }
         
-        public void CreateRuntimeDataClone(BetaEditorGraph editorGraph, RuntimeNode toCopy)
+        public void CreateRuntimeDataClone(EditorGraphModel editorGraphModel, RuntimeNode toCopy)
         {
             RuntimeData = ScriptableObject.Instantiate(toCopy);
-            AssetDatabase.AddObjectToAsset(RuntimeData, editorGraph);
-            EditorUtility.SetDirty(editorGraph);
+            AssetDatabase.AddObjectToAsset(RuntimeData, editorGraphModel);
+            EditorUtility.SetDirty(editorGraphModel);
         }
+        
+        #region Ports
 
-        public PortModel CreatePortModel(FieldInfo field, Direction dir)
+        protected internal PortModel CreatePortModel(FieldInfo field, Direction dir)
         {
+            //This extracts the <T> type from the given ValuePort<T>.
             var portValueType = field.FieldType.
                 GetGenericClassConstructorArguments(typeof(ValuePort<>));
             return new PortModel(Orientation.Horizontal, dir, 
                 Port.Capacity.Multi, portValueType.FirstOrDefault(), field);
         }
 
-        public void CreatePortModels(bool clearCopy = false)
+        //(typeof(RuntimeData), typeof(DirectionAttribute))
+        //Reflection data cache for (node, dir), List of ports to generate.
+        private static readonly Dictionary<(Type, Type), List<FieldInfo>> dataTypeToInfoFields
+            = new Dictionary<(Type, Type), List<FieldInfo>>();
+
+        /// <summary>
+        /// Cached wrapper around GetLocalFieldWithAttribute
+        /// </summary>
+        private List<FieldInfo> GetFieldInfoFor<attr>(Type runtimeDataType)
+            where attr : Attribute
         {
-            var oFields = RuntimeData.GetType().GetLocalFieldsWithAttribute<Out>();
-            var iFields = RuntimeData.GetType().GetLocalFieldsWithAttribute<In>();
+            var index = (runtimeDataType, typeof(attr));
+            if (dataTypeToInfoFields.TryGetValue(index, out var fields))
+            {
+                return fields;
+            }
+
+            fields = runtimeDataType.GetLocalFieldsWithAttribute<attr>();
+            dataTypeToInfoFields.Add(index, fields);
+            return fields;
+        }
+        
+        /// <summary>
+        /// Analyses the reflection data and creates the appropriate ports based on it automagically.
+        /// </summary>
+        /// <param name="clearCopy">Copied models should use true, clears all port links if true.</param>
+        protected internal void CreatePortModelsFromReflection(bool clearCopy = false)
+        {
+            var oFields = GetFieldInfoFor<Out>(RuntimeData.GetType());
+            var iFields = GetFieldInfoFor<In>(RuntimeData.GetType());
 
             foreach (var field in iFields)
             {
@@ -112,8 +142,13 @@ namespace GraphFramework.Editor
         
         #endregion
         
+        #endregion
+        
         #region Data Model Controller
 
+        /// <summary>
+        /// Creates a NodeView from this model's data.
+        /// </summary>
         public NodeView CreateView()
         {
             view = new NodeView(this);
@@ -184,14 +219,20 @@ namespace GraphFramework.Editor
             }
         }
 
-        public bool CanPortConnectTo(PortModel myInputPort, 
+        /// <summary>
+        /// Returns true if a link can be made to the given OutputModel's OutputPort.
+        /// </summary>
+        public bool CanPortLinkTo(PortModel myInputPort, 
             NodeModel outputModel, PortModel outputPort)
         {
             return TryResolveValuePortFromModels(myInputPort, out _) 
                    && outputModel.TryResolveValuePortFromModels(outputPort, out _);
         }
 
-        public void DeletePortConnectionByGuid(PortModel inPort, string guid)
+        /// <summary>
+        /// Deletes the link on the given port via GUID.
+        /// </summary>
+        public void DeletePortLinkByGuid(PortModel inPort, string guid)
         {
             if (!TryResolveValuePortFromModels(inPort, out var valuePort))
                 return;
@@ -205,7 +246,12 @@ namespace GraphFramework.Editor
             }
         }
 
-        public Link ConnectPortTo(PortModel myInputPort, NodeModel outputModel, PortModel outputPort)
+        /// <summary>
+        /// Creates a link between this node's given input port and the target NodeModel's
+        /// output port.
+        /// </summary>
+        /// <returns>The created link</returns>
+        public Link LinkPortTo(PortModel myInputPort, NodeModel outputModel, PortModel outputPort)
         {
             var localConnection = new Link(RuntimeData, myInputPort.serializedValueFieldInfo,
                 outputModel.RuntimeData, outputPort.serializedValueFieldInfo);
@@ -213,7 +259,6 @@ namespace GraphFramework.Editor
             //Guaranteed to be cached if CanPortConnectTo returned true.
             var inputValuePort = cachedValuePorts[myInputPort];
             inputValuePort.links.Add(localConnection);
-            localConnection.BindRemote();
             return localConnection;
         }
         

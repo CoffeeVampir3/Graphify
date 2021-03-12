@@ -3,6 +3,7 @@ using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Object = UnityEngine.Object;
 
 namespace GraphFramework.Editor
 {
@@ -76,14 +77,55 @@ namespace GraphFramework.Editor
         {
             graphView?.RuntimeNodeExited(node);
         }
+
+        private const string debugSavePath = "Assets/!TestTrashbin/wombograph.asset";
+        /// <summary>
+        /// Creates a new EditorGraphModel and Graph Controller.
+        /// </summary>
+        public virtual void CreateNewGraph()
+        {
+            var registeredGraphControllerType = graphView.GetRegisteredGraphController();
+            var model = EditorGraphModel.CreateNew(debugSavePath, GetType(),
+                registeredGraphControllerType);
+
+            if (model == null)
+                return;
+            
+            serializedGraphSelector.SetValueWithoutNotify(model);
+            graphView.LoadGraph(model);
+        }
+
+        private void OnObjectSelectorValueChanged(ChangeEvent<Object> evt)
+        {
+            if (evt.newValue == null)
+            {
+                graphView.UnloadGraph();
+                return;
+            }
+            
+            if (!(evt.newValue is GraphController gc)) return;
+            
+            var graphGuid = gc.AssetGuid;
+            var editorGraph = AssetExtensions.FindAssetWithGUID<EditorGraphModel>(graphGuid);
+            if (editorGraph == null)
+            {
+                Debug.LogError("Was unable to find a matching editor graph for graph controller named: " + gc.name);
+                return;
+            }
+            
+            graphView.LoadGraph(editorGraph);
+        }
         
         private ObjectField serializedGraphSelector = null;
         private void GenerateToolbar()
         {
             var toolbar = new Toolbar();
             
-            serializedGraphSelector = new ObjectField {objectType = typeof(SerializedGraph)};
-
+            serializedGraphSelector = new ObjectField {objectType = typeof(GraphController)};
+            serializedGraphSelector.RegisterValueChangedCallback(OnObjectSelectorValueChanged);
+            
+            toolbar.Add(new Button( CreateNewGraph ) 
+                {text = "Create New Graph"});
             toolbar.Add(new Button( Debug__FoldoutAllItems ) 
                 {text = "Foldout all Items"});
             toolbar.Add(new Button( Debug__ExpandAllItems ) 

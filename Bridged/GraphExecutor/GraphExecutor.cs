@@ -1,6 +1,5 @@
 ﻿using System;
 using Sirenix.OdinInspector;
-using UnityEngine;
 
 namespace GraphFramework.GraphExecutor
 {
@@ -11,6 +10,8 @@ namespace GraphFramework.GraphExecutor
     [Serializable]
     public partial class GraphExecutor
     {
+        public GraphController graphController;
+        
         public RuntimeNode currentNode = null;
         public RuntimeNode nextNode = null;
         public RuntimeNode previousNode = null;
@@ -20,7 +21,6 @@ namespace GraphFramework.GraphExecutor
         //Gateway into the editor-only code, this branch is compiled out at runtime.
         public void EvaluateEditor()
         {
-            Debug.Log(shouldLinkEditor);
             if (!shouldLinkEditor || 
                 !IsEditorLinkedToGraphWindow()) return;
             if (previousNode != null)

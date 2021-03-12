@@ -1,13 +1,11 @@
 ﻿using GraphFramework.Attributes;
+using UnityEngine;
 
 namespace GraphFramework
 {
     public class RuntimeProperty<T> : RuntimeNode
     {
-        [Out] 
-        protected ValuePort<T> propertyPortValue = new ValuePort<T>();
-
-        //[SerializeField]
-        //private T propertyValue;
+        [Out, SerializeField] 
+        protected ValuePort<T> propertyValue = new ValuePort<T>();
     }
 }

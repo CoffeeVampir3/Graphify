@@ -1,29 +1,23 @@
 ﻿using System;
 
-namespace GraphFramework
+namespace GraphFramework.Attributes
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public class RegisterNodeToView : Attribute
+    public class RegisterToGraph : Attribute
     {
         //Using a string is not ideal but since this is cross assembly we can't reference the type.
-        public readonly string registeredGraphViewTypeName = null;
+        public readonly Type registeredGraphType = null;
         public readonly string registeredPath = null;
-        /// <summary>
-        /// The type name (as a string) of the graph you want to register to, and the path
-        /// you'd like the node to be listed as. Ex: "Math Functions/Add Node"
-        /// </summary>
-        public RegisterNodeToView(string registerToGraphViewTypeName, string nodePath)
+
+        public RegisterToGraph(Type registerTo, string nodePath)
         {
-            registeredGraphViewTypeName = registerToGraphViewTypeName;
+            registeredGraphType = registerTo;
             registeredPath = nodePath;
         }
-        /// <summary>
-        /// The type name (as a string) of the graph you want to register to, this
-        /// registers the node under no path, used for root nodes and specialty nodes.
-        /// </summary>
-        public RegisterNodeToView(string registerToGraphViewTypeName)
+
+        public RegisterToGraph(Type registerTo)
         {
-            registeredGraphViewTypeName = registerToGraphViewTypeName;
+            registeredGraphType = registerTo;
             registeredPath = "";
         }
     }

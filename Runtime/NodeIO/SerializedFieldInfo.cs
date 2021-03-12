@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace GraphFramework
 {
+    /// <summary>
+    /// Allows us to serialize a field info for use at some later point.
+    /// </summary>
     [Serializable]
     public class SerializedFieldInfo
     {

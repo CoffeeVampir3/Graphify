@@ -1,7 +1,9 @@
-﻿using UnityEditor.Experimental.GraphView;
+﻿using GraphFramework.EditorOnly.Attributes;
+using UnityEditor.Experimental.GraphView;
 
 namespace GraphFramework.Editor
 {
+    [RegisterGraphController(typeof(TestGraphController))]
     public class TestGraphView : CoffeeGraphView
     {
         private void CreateGrid()
