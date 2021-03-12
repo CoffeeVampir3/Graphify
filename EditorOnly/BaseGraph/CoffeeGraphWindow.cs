@@ -106,7 +106,7 @@ namespace GraphFramework.Editor
             if (!(evt.newValue is GraphController gc)) return;
             
             var graphGuid = gc.AssetGuid;
-            var editorGraph = AssetExtensions.FindAssetWithGUID<EditorGraphModel>(graphGuid);
+            var editorGraph = AssetHelper.FindAssetWithGUID<EditorGraphModel>(graphGuid);
             if (editorGraph == null)
             {
                 Debug.LogError("Was unable to find a matching editor graph for graph controller named: " + gc.name);

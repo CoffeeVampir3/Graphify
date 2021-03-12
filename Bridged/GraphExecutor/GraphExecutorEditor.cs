@@ -60,7 +60,7 @@ namespace GraphFramework.GraphExecutor
             
             if (editorGraphModelData == null)
             {
-                editorGraphModelData = AssetExtensions.FindAssetsOfType<EditorGraphModel>().FirstOrDefault();
+                editorGraphModelData = AssetHelper.FindAssetsOf<EditorGraphModel>().FirstOrDefault();
             }
 
             if (editorGraphModelData == null || 

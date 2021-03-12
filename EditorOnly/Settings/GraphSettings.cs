@@ -13,10 +13,6 @@ namespace GraphFramework.Editor
         [SerializeField, HideInInspector] 
         private bool isDefault = false;
         public StyleSheet graphViewStyle;
-        public StyleSheet nodeStyle;
-        public StyleSheet stackNodeStyle;
-        public StyleSheet blackboardStyle;
-        public StyleSheet blackboardCategoryStyle;
 
         private static GraphSettings CreateGraphSettings(System.Type graphViewType, List<GraphSettings> allSettings)
         {
@@ -43,7 +39,7 @@ namespace GraphFramework.Editor
         
         public static GraphSettings CreateOrGetSettings(CoffeeGraphView graphView)
         {
-            var allSettings = AssetExtensions.FindAssetsOfType<GraphSettings>();
+            var allSettings = AssetHelper.FindAssetsOf<GraphSettings>();
 
             System.Type graphViewType = graphView.GetType();
             var graphSettings = allSettings.FirstOrDefault(

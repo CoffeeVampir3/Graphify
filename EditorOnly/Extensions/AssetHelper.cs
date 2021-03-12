@@ -4,9 +4,12 @@ using UnityEngine;
 
 namespace GraphFramework.Editor
 {
-    public static class AssetExtensions
+    public static class AssetHelper
     {
-        public static List<T> FindAssetsOfType<T>() where T : UnityEngine.Object
+        /// <summary>
+        /// Finds all assets of type T, accounts for subnesting.
+        /// </summary>
+        public static List<T> FindAssetsOf<T>() where T : UnityEngine.Object
         {
             var searchStr = "t:" + typeof(T).Name;
             var charGuids = AssetDatabase.FindAssets(searchStr);
@@ -27,8 +30,8 @@ namespace GraphFramework.Editor
         }
         
         /// <summary>
-        ///     Searches for an asset with the provided asset GUID
-        ///     This search accounts for sub-nested assets.
+        /// Searches for an asset with the provided asset GUID
+        /// This search accounts for sub-nested assets.
         /// </summary>
         public static T FindAssetWithGUID<T>(string coffeeGUID) where T : Object, HasAssetGuid
         {
