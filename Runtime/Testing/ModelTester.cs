@@ -3,7 +3,7 @@ using GraphFramework.Attributes;
 
 namespace GraphFramework
 {
-    [RegisterToGraph(typeof(TestGraphController), "Wow/Node")]
+    [RegisterNode(typeof(TestGraphController), "Wow/Node")]
     public class ModelTester : RuntimeNode
     {
         [In, SerializeField]

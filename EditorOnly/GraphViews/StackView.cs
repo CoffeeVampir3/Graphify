@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.Experimental.GraphView;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace GraphFramework.Editor
@@ -17,7 +18,14 @@ namespace GraphFramework.Editor
         
         protected override bool AcceptsElement(GraphElement element, ref int proposedIndex, int maxIndex)
         {
-            return true;
+            if (element is NodeView view &&
+                parentGraphView.viewToModel.TryGetValue(view, out var mModel) &&
+                mModel is NodeModel model)
+            {
+                return stackModel.IsTypeAllowed(model.RuntimeData.GetType());
+            }
+            
+            return false;
         }
 
         /// <summary>
@@ -32,11 +40,13 @@ namespace GraphFramework.Editor
                 var child = visualElements[index];
                 child.RemoveFromClassList("firstInStack");
                 child.RemoveFromClassList("lastInStack");
+                //Can be both first and last.
                 if (index == 0)
                 {
                     //Node is first
                     child.AddToClassList("firstInStack");
-                } else if (index == visualElements.Length - 1)
+                } 
+                if (index == visualElements.Length - 1)
                 {
                     //Node is last
                     child.AddToClassList("lastInStack");

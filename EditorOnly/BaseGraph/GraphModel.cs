@@ -14,7 +14,7 @@ namespace GraphFramework.Editor
     {
         [SerializeField] 
         public SerializableType graphWindowType;
-        [field: SerializeField, HideInInspector]
+        [field: SerializeField]
         public string AssetGuid { set; get; }
         
         [SerializeReference] 
@@ -27,9 +27,11 @@ namespace GraphFramework.Editor
         protected internal List<Link> links = new List<Link>();
         [SerializeReference]
         protected internal GraphController serializedGraphController;
+        [SerializeReference] 
+        protected internal NodeModel rootNodeModel;
 
         public static GraphModel CreateNew(string savePath, 
-            Type editorWindowType, Type graphControllerType)
+            Type editorWindowType, CoffeeGraphView graphView)
         {
             if (AssetDatabase.LoadAllAssetsAtPath(savePath).Length != 0)
             {
@@ -37,8 +39,12 @@ namespace GraphFramework.Editor
                 return null;
             }
             
+            var graphControllerType = graphView.GetRegisteredGraphController();
+            var graphViewType = graphView.GetType();
+
             GraphModel graphModel = CreateInstance<GraphModel>();
             graphModel.AssetGuid = Guid.NewGuid().ToString();
+            graphModel.name = "Editor Model";
 
             graphModel.serializedGraphController = CreateInstance(graphControllerType) as GraphController;
             if (graphModel.serializedGraphController == null)
@@ -48,16 +54,37 @@ namespace GraphFramework.Editor
                 return null;
             }
             
+            var rootType = NodeRegistrationResolver.GetRegisteredRootNodeType(graphViewType);
+            if (rootType == null)
+            {
+                Debug.LogError("Attempted to create a root node but none were registered to graph: " + graphViewType.Name);
+                return null;
+            }
+
             //Important note these two graphs must share the same GUID as they're linked
             //to eachother using this GUID.
             graphModel.serializedGraphController.AssetGuid = graphModel.AssetGuid;
             graphModel.graphWindowType = new SerializableType(editorWindowType);
             
-            AssetDatabase.CreateAsset(graphModel.serializedGraphController, savePath);
-            graphModel.name = graphModel.serializedGraphController.name + " Editor Model";
-            AssetDatabase.AddObjectToAsset(graphModel, graphModel.serializedGraphController);
-            AssetDatabase.SaveAssets();
+            EditorUtility.SetDirty(graphModel);
+            EditorUtility.SetDirty(graphModel.serializedGraphController);
 
+            try
+            {
+                AssetDatabase.StartAssetEditing();
+                AssetDatabase.CreateAsset(graphModel.serializedGraphController, 
+                    savePath);
+                AssetDatabase.AddObjectToAsset(graphModel,
+                    savePath);
+                graphModel.rootNodeModel = NodeModel.InstantiateModel("Root Node", graphModel, rootType);
+                graphModel.serializedGraphController.rootNode = graphModel.rootNodeModel.RuntimeData;
+                EditorUtility.SetDirty(graphModel.rootNodeModel.RuntimeData);
+            }
+            finally
+            {
+                AssetDatabase.StopAssetEditing();
+            }
+            AssetDatabase.SaveAssets();
             return graphModel;
         }
     }

@@ -42,6 +42,7 @@ namespace GraphFramework.Editor
             {
                 Port p = AddPort(portModel.orientation, portModel.direction, 
                     portModel.capacity, portModel.portValueType.type);
+                p.portName = portModel.portName;
 
                 portToModel.Add(p, portModel);
                 modelToPort.Add(portModel.portGUID, p);
@@ -50,6 +51,7 @@ namespace GraphFramework.Editor
             {
                 Port p = AddPort(portModel.orientation, portModel.direction, 
                     portModel.capacity, portModel.portValueType.type);
+                p.portName = portModel.portName;
                 
                 portToModel.Add(p, portModel);
                 modelToPort.Add(portModel.portGUID, p);
@@ -111,7 +113,11 @@ namespace GraphFramework.Editor
         {
             title = nodeModel.NodeTitle;
             expanded = nodeModel.IsExpanded;
-            SetPosition(nodeModel.Position);
+            
+            //We don't want to change our position if the node is stacked.
+            if(nodeModel.stackedOn == null)
+                SetPosition(nodeModel.Position);
+            
             RefreshExpandedState();
             cleanImpending = false;
         }

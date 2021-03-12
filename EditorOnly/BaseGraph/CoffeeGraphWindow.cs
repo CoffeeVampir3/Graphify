@@ -84,9 +84,8 @@ namespace GraphFramework.Editor
         /// </summary>
         protected virtual void CreateNewGraph()
         {
-            var registeredGraphControllerType = graphView.GetRegisteredGraphController();
-            var model = GraphModel.CreateNew(debugSavePath, GetType(),
-                registeredGraphControllerType);
+            var model = GraphModel.CreateNew(debugSavePath, GetType(), 
+                graphView);
 
             if (model == null)
                 return;

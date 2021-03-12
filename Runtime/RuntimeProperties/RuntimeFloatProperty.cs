@@ -2,6 +2,6 @@
 
 namespace GraphFramework
 {
-    [RegisterToGraph(typeof(GraphController), "Properties/Float")]
+    [RegisterNode(typeof(GraphController), "Properties/Float")]
     public class RuntimeFloatProperty : RuntimeProperty<float> { }
 }

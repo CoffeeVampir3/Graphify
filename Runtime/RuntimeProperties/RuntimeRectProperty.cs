@@ -3,6 +3,6 @@ using UnityEngine;
 
 namespace GraphFramework
 {
-    [RegisterToGraph(typeof(GraphController), "Properties/Rect")]
+    [RegisterNode(typeof(GraphController), "Properties/Rect")]
     public class RuntimeRectProperty : RuntimeProperty<Rect> { }
 }

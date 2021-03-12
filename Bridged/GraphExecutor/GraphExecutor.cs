@@ -1,5 +1,4 @@
 ﻿using System;
-using Sirenix.OdinInspector;
 
 namespace GraphFramework.GraphExecutor
 {
@@ -29,15 +28,6 @@ namespace GraphFramework.GraphExecutor
                 EditorLinkedRuntimeNodeVisited(currentNode);
         }
 
-        //TODO:: Odin dependency for testing only.
-        [Button]
-        public void Reset()
-        {
-            previousNode = null;
-            currentNode = null;
-            nextNode = null;
-        }
-        
         /// <summary>
         /// Evaluates the current node and walks the graph to whatever node is returned by
         /// the evaluated node.

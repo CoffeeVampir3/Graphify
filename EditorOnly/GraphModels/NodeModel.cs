@@ -21,8 +21,6 @@ namespace GraphFramework.Editor
         [SerializeReference] 
         public StackModel stackedOn = null;
         [SerializeField] 
-        public bool isRoot = false;
-        [SerializeField] 
         private string nodeTitle = "Untitled.";
         [SerializeField] 
         private Rect position = Rect.zero;
@@ -41,6 +39,7 @@ namespace GraphFramework.Editor
             var model = new NodeModel {nodeTitle = initialName};
             model.CreateRuntimeData(graphModel, runtimeDataType);
             model.CreatePortModelsFromReflection();
+            
             return model;
         }
 
@@ -48,7 +47,6 @@ namespace GraphFramework.Editor
         {
             NodeModel model = new NodeModel
             {
-                isRoot = false, 
                 nodeTitle = nodeTitle, 
                 position = position, 
                 isExpanded = isExpanded

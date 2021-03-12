@@ -93,6 +93,9 @@ namespace GraphFramework.Editor
                 {
                     if (!(asset is RuntimeNode modelRuntimeNode)) continue;
                     if (runtimeNodes.Contains(modelRuntimeNode)) continue;
+                    //The root node is not in graphModel.nodeModels so we need to account
+                    //for it.
+                    if (modelRuntimeNode is RootNode) continue;
                     AssetDatabase.RemoveObjectFromAsset(modelRuntimeNode);
                 }
             }
@@ -102,8 +105,6 @@ namespace GraphFramework.Editor
         }
 
         #endregion
-
-        #region Internal Overloadable API
 
         /// <summary>
         /// Loads the provided GraphModel.
@@ -147,8 +148,6 @@ namespace GraphFramework.Editor
             view.RemoveFromClassList("CurrentNode");
         }
 
-        #endregion
-
         #region Public API
         
         /// <summary>
@@ -170,6 +169,25 @@ namespace GraphFramework.Editor
             CreateNewNode(model);
         }
         
+        /// <summary>
+        /// Creates a new node on the graph.
+        /// </summary>
+        /// <param name="runtimeDataType">The runtime data type.</param>
+        /// <param name="atPosition">Editor screen space(?) position.</param>
+        public void CreateNewStack(string nodeName, Type[] allowedTypes, Vector2 atPosition)
+        {
+            var model = StackModel.InstantiateModel(nodeName, allowedTypes);
+            
+            Vector2 spawnPosition = parentWindow.rootVisualElement.ChangeCoordinatesTo(
+                parentWindow.rootVisualElement.parent,
+                atPosition - parentWindow.position.position);
+
+            spawnPosition = contentViewContainer.WorldToLocal(spawnPosition);
+            Rect spawnRect = new Rect(spawnPosition.x - 75, spawnPosition.y - 75, 150, 150);
+            model.Position = spawnRect;
+            CreateNewStack(model);
+        }
+
         #endregion
         
         #region Copy and Paste
@@ -306,11 +324,25 @@ namespace GraphFramework.Editor
             model.stackedOn?.View?.StackOn(model, nv);
         }
 
+        private void CreateNodeFromModelAsRoot(NodeModel model)
+        {
+            CreateNodeFromModel(model);
+            //Removes the capability of our root node to be deleted or copied.
+            model.View.capabilities &= ~(Capabilities.Deletable | Capabilities.Copiable);
+        }
+
         private void CreateStackFromModel(StackModel model)
         {
             StackView sv = model.CreateView(this);
             AddElement(sv);
             viewToModel.Add(sv, model);
+        }
+
+        private void CreateNewStack(StackModel model)
+        {
+            CreateStackFromModel(model);
+            Undo.RecordObject(graphModel, "graphChanges");
+            graphModel.stackModels.Add(model);
         }
 
         private void CreateNewNode(NodeModel model)
@@ -371,11 +403,13 @@ namespace GraphFramework.Editor
         {
             if (graphModel.nodeModels == null)
                 return;
-            
+
             foreach (var model in graphModel.stackModels.ToArray())
             {
                 CreateStackFromModel(model);
             }
+            
+            CreateNodeFromModelAsRoot(graphModel.rootNodeModel);
 
             foreach (var model in graphModel.nodeModels.ToArray())
             {

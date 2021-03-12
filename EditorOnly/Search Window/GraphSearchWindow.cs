@@ -31,8 +31,21 @@ namespace GraphFramework.Editor
         /// </summary>
         public bool OnSelectEntry(SearchTreeEntry searchTreeEntry, SearchWindowContext context)
         {
-            graphView.CreateNewNode(searchTreeEntry.name, searchTreeEntry.userData as System.Type, context.screenMousePosition);
-            return true;
+            if (!(searchTreeEntry.userData is System.Type nodeType)) return false;
+            
+            if (typeof(RuntimeNode).IsAssignableFrom(nodeType))
+            {
+                graphView.CreateNewNode(searchTreeEntry.name, nodeType, context.screenMousePosition);
+                return true;
+            }
+            
+            //TODO:: This is a pretty shit implementation RN
+            //Register Stack registers to a GraphController.
+            if (!typeof(GraphController).IsAssignableFrom(nodeType)) return false;
+            
+            graphView.CreateNewStack(searchTreeEntry.name, null, context.screenMousePosition);
+            return true; 
+
         }
     }
 }

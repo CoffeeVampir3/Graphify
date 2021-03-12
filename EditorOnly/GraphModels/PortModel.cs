@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
@@ -17,6 +18,8 @@ namespace GraphFramework.Editor
         [SerializeReference] 
         public SerializableType portValueType = null;
         [SerializeReference] 
+        public string portName;
+        [SerializeReference] 
         public SerializedFieldInfo serializedValueFieldInfo;
         //Lookup is done via GUID because undo/redo creates a different copy.
         [SerializeReference] 
@@ -33,6 +36,7 @@ namespace GraphFramework.Editor
             this.capacity = capacity;
             this.portValueType = new SerializableType(portType);
             this.serializedValueFieldInfo = new SerializedFieldInfo(fieldInfo);
+            this.portName = ObjectNames.NicifyVariableName(fieldInfo.Name);
             this.portGUID = Guid.NewGuid().ToString();
         }
     }

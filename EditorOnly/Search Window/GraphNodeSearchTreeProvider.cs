@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using GraphFramework.Attributes;
-using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
@@ -14,33 +12,6 @@ namespace GraphFramework.Editor
     /// </summary>
     public static class GraphNodeSearchTreeProvider
     {
-        //*Technically* the nodes register to a graph controller but this bridges between
-        //the two objects.
-        /// <summary>
-        /// Returns a list of all nodes registered to the provided graph view type.
-        /// </summary>
-        private static IReadOnlyCollection<Type> GetNodesRegisteredToView(Type graphViewType)
-        {
-            var nodeList = TypeCache.GetTypesWithAttribute<RegisterToGraph>();
-            var controllerType = GraphRegistrationResolver.GetRegisteredGraphController(graphViewType);
-            if (controllerType == null)
-            {
-                Debug.LogError("Graph does not have a registered controller!");
-                return null;
-            }
-
-            //Simple, iterates through every registered node and, if they're registered to
-            //our graph, or a type our graph derives from, add it to the list of registered
-            //nodes and return that list.
-            return (from node 
-                    in nodeList 
-                    let attr = 
-                        node.GetCustomAttributes(typeof(RegisterToGraph), false)[0] as RegisterToGraph 
-                    where attr.registeredGraphType.IsAssignableFrom(controllerType)
-                    select node)
-                .ToList();
-        }
-
         #region Node Search Tree Parser
 
         private static readonly Dictionary<(string, int), SearchTreeGroupEntry> dirToGroup =
@@ -59,7 +30,8 @@ namespace GraphFramework.Editor
             return searchGroup;
         }
 
-        private static void CreateEntry(Type entryNodeType, SearchTreeGroupEntry parent, string entryName, int depth)
+        private static void CreateEntry(GraphRegisterable registerable,
+            Type entryNodeType, SearchTreeGroupEntry parent, string entryName, int depth)
         {
             if (!groupToEntry.TryGetValue(parent, out var entryList))
             {
@@ -67,12 +39,11 @@ namespace GraphFramework.Editor
                 groupToEntry.Add(parent, entryList);
             }
 
-            SearchTreeEntry nEntry = new SearchTreeEntry(new GUIContent(entryName, indentationIcon))
+            var entry = new SearchTreeEntry(new GUIContent(entryName, indentationIcon))
             {
                 level = depth, userData = entryNodeType
             };
-
-            entryList.Add(nEntry);
+            entryList.Add(entry);
         }
 
         private static readonly Dictionary<Type, List<SearchTreeEntry>> cachedSearchTrees =
@@ -87,7 +58,13 @@ namespace GraphFramework.Editor
             if (cachedSearchTrees.TryGetValue(graphViewType, out var tree))
                 return tree;
             
-            var nodeList = GetNodesRegisteredToView(graphViewType);
+            var nodeList = NodeRegistrationResolver.
+                GetItemsRegisteredToGraph<RegisterNode>(graphViewType);
+            var stackList = NodeRegistrationResolver.
+                GetItemsRegisteredToGraph<RegisterStack>(graphViewType);
+            
+            nodeList.AddRange(stackList);
+            
             var allGroups = new List<SearchTreeGroupEntry>();
 
             dirToGroup.Clear();
@@ -108,7 +85,7 @@ namespace GraphFramework.Editor
             foreach (var item in nodeList)
             {
                 var attr = item.
-                    GetCustomAttributes(typeof(RegisterToGraph), false)[0] as RegisterToGraph;
+                    GetCustomAttributes(typeof(GraphRegisterable), true)[0] as GraphRegisterable;
 
                 Debug.Assert(attr != null, nameof(attr) + " != null");
                 var split = attr.registeredPath.Split('/');
@@ -123,7 +100,7 @@ namespace GraphFramework.Editor
                     //Last entry case, this is our leaf.
                     if (i == split.Length - 1)
                     {
-                        CreateEntry(item, lastGroup, cur, i+1);
+                        CreateEntry(attr, item, lastGroup, cur, i+1);
                         break;
                     }
                     
