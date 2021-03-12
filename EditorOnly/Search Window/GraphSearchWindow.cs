@@ -13,6 +13,10 @@ namespace GraphFramework.Editor
             graphView = parentGraphView;
         }
 
+        /// <summary>
+        /// Creates a search true using the reflection data provided by RegisterToGraph
+        /// attribute.
+        /// </summary>
         public List<SearchTreeEntry> CreateSearchTree(SearchWindowContext context)
         {
             var tree = GraphNodeSearchTreeProvider.

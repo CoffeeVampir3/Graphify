@@ -11,7 +11,7 @@ namespace GraphFramework.GraphExecutor
     public partial class GraphExecutor
     {
         private EditorWindow linkedEditorWindow;
-        private EditorGraphModel editorGraphModelData;
+        private GraphModel graphModelData;
         
         //We need this reflection because unity does not have a typed version of
         //HasOpenInstances so we need make generic.
@@ -49,30 +49,30 @@ namespace GraphFramework.GraphExecutor
         public bool IsEditorLinkedToGraphWindow()
         {
             //Short circuit if we're already linked.
-            if (editorGraphModelData != null && linkedEditorWindow != null)
+            if (graphModelData != null && linkedEditorWindow != null)
             {
-                if (IsEditorWindowOpen(editorGraphModelData.graphWindowType.type)) 
+                if (IsEditorWindowOpen(graphModelData.graphWindowType.type)) 
                     return true;
                 
                 linkedEditorWindow = null;
                 return false;
             }
             
-            if (editorGraphModelData == null)
+            if (graphModelData == null)
             {
-                editorGraphModelData = AssetHelper.FindAssetsOf<EditorGraphModel>().FirstOrDefault();
+                graphModelData = AssetHelper.FindAssetsOf<GraphModel>().FirstOrDefault();
             }
 
-            if (editorGraphModelData == null || 
-                !IsEditorWindowOpen(editorGraphModelData.graphWindowType.type))
+            if (graphModelData == null || 
+                !IsEditorWindowOpen(graphModelData.graphWindowType.type))
             {
                 return false;
             }
 
             linkedEditorWindow = 
-                    EditorWindow.GetWindow(editorGraphModelData.graphWindowType.type);
+                    EditorWindow.GetWindow(graphModelData.graphWindowType.type);
             
-            return editorGraphModelData != null && linkedEditorWindow != null;
+            return graphModelData != null && linkedEditorWindow != null;
         }
         
         public void EditorLinkedRuntimeNodeVisited(RuntimeNode node)

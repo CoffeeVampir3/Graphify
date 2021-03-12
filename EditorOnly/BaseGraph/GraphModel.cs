@@ -10,7 +10,7 @@ namespace GraphFramework.Editor
     /// utilities.
     /// </summary>
     [CreateAssetMenu]
-    public class EditorGraphModel : ScriptableObject, HasAssetGuid
+    public class GraphModel : ScriptableObject, HasAssetGuid
     {
         [SerializeField] 
         public SerializableType graphWindowType;
@@ -28,7 +28,7 @@ namespace GraphFramework.Editor
         [SerializeReference]
         protected internal GraphController serializedGraphController;
 
-        public static EditorGraphModel CreateNew(string savePath, 
+        public static GraphModel CreateNew(string savePath, 
             Type editorWindowType, Type graphControllerType)
         {
             if (AssetDatabase.LoadAllAssetsAtPath(savePath).Length != 0)
@@ -37,11 +37,11 @@ namespace GraphFramework.Editor
                 return null;
             }
             
-            EditorGraphModel editorGraphModel = CreateInstance<EditorGraphModel>();
-            editorGraphModel.AssetGuid = Guid.NewGuid().ToString();
+            GraphModel graphModel = CreateInstance<GraphModel>();
+            graphModel.AssetGuid = Guid.NewGuid().ToString();
 
-            editorGraphModel.serializedGraphController = CreateInstance(graphControllerType) as GraphController;
-            if (editorGraphModel.serializedGraphController == null)
+            graphModel.serializedGraphController = CreateInstance(graphControllerType) as GraphController;
+            if (graphModel.serializedGraphController == null)
             {
                 Debug.LogError("Failed to create a new graph controller for editor window type " +
                                editorWindowType?.Name + " named " + graphControllerType?.Name);
@@ -50,15 +50,15 @@ namespace GraphFramework.Editor
             
             //Important note these two graphs must share the same GUID as they're linked
             //to eachother using this GUID.
-            editorGraphModel.serializedGraphController.AssetGuid = editorGraphModel.AssetGuid;
-            editorGraphModel.graphWindowType = new SerializableType(editorWindowType);
+            graphModel.serializedGraphController.AssetGuid = graphModel.AssetGuid;
+            graphModel.graphWindowType = new SerializableType(editorWindowType);
             
-            AssetDatabase.CreateAsset(editorGraphModel.serializedGraphController, savePath);
-            editorGraphModel.name = editorGraphModel.serializedGraphController.name + " Editor Model";
-            AssetDatabase.AddObjectToAsset(editorGraphModel, editorGraphModel.serializedGraphController);
+            AssetDatabase.CreateAsset(graphModel.serializedGraphController, savePath);
+            graphModel.name = graphModel.serializedGraphController.name + " Editor Model";
+            AssetDatabase.AddObjectToAsset(graphModel, graphModel.serializedGraphController);
             AssetDatabase.SaveAssets();
 
-            return editorGraphModel;
+            return graphModel;
         }
     }
 }

@@ -82,10 +82,10 @@ namespace GraphFramework.Editor
         /// <summary>
         /// Creates a new EditorGraphModel and Graph Controller.
         /// </summary>
-        public virtual void CreateNewGraph()
+        protected virtual void CreateNewGraph()
         {
             var registeredGraphControllerType = graphView.GetRegisteredGraphController();
-            var model = EditorGraphModel.CreateNew(debugSavePath, GetType(),
+            var model = GraphModel.CreateNew(debugSavePath, GetType(),
                 registeredGraphControllerType);
 
             if (model == null)
@@ -106,7 +106,7 @@ namespace GraphFramework.Editor
             if (!(evt.newValue is GraphController gc)) return;
             
             var graphGuid = gc.AssetGuid;
-            var editorGraph = AssetHelper.FindAssetWithGUID<EditorGraphModel>(graphGuid);
+            var editorGraph = AssetHelper.FindAssetWithGUID<GraphModel>(graphGuid);
             if (editorGraph == null)
             {
                 Debug.LogError("Was unable to find a matching editor graph for graph controller named: " + gc.name);

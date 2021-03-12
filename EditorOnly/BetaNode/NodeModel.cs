@@ -36,15 +36,15 @@ namespace GraphFramework.Editor
 
         #region Creation & Cloning
         
-        public static NodeModel InstantiateModel(string initialName, EditorGraphModel editorGraphModel, Type runtimeDataType)
+        public static NodeModel InstantiateModel(string initialName, GraphModel graphModel, Type runtimeDataType)
         {
             var model = new NodeModel {nodeTitle = initialName};
-            model.CreateRuntimeData(editorGraphModel, runtimeDataType);
+            model.CreateRuntimeData(graphModel, runtimeDataType);
             model.CreatePortModelsFromReflection();
             return model;
         }
 
-        public NodeModel Clone(EditorGraphModel editorGraphModel)
+        public NodeModel Clone(GraphModel graphModel)
         {
             NodeModel model = new NodeModel
             {
@@ -53,27 +53,27 @@ namespace GraphFramework.Editor
                 position = position, 
                 isExpanded = isExpanded
             };
-            model.CreateRuntimeDataClone(editorGraphModel, RuntimeData);
+            model.CreateRuntimeDataClone(graphModel, RuntimeData);
             model.RuntimeData.name = RuntimeData.name;
             model.CreatePortModelsFromReflection(true);
             return model;
         }
 
-        public void CreateRuntimeData(EditorGraphModel editorGraphModel, Type runtimeDataType)
+        public void CreateRuntimeData(GraphModel graphModel, Type runtimeDataType)
         {
             RuntimeData = ScriptableObject.CreateInstance(runtimeDataType) as RuntimeNode;
             
             Debug.Assert(RuntimeData != null, nameof(RuntimeData) + " runtime data type was somehow null, something horrible has happened please report a bug.");
             RuntimeData.name = nodeTitle;
-            AssetDatabase.AddObjectToAsset(RuntimeData, editorGraphModel);
-            EditorUtility.SetDirty(editorGraphModel);
+            AssetDatabase.AddObjectToAsset(RuntimeData, graphModel);
+            EditorUtility.SetDirty(graphModel);
         }
         
-        public void CreateRuntimeDataClone(EditorGraphModel editorGraphModel, RuntimeNode toCopy)
+        public void CreateRuntimeDataClone(GraphModel graphModel, RuntimeNode toCopy)
         {
             RuntimeData = ScriptableObject.Instantiate(toCopy);
-            AssetDatabase.AddObjectToAsset(RuntimeData, editorGraphModel);
-            EditorUtility.SetDirty(editorGraphModel);
+            AssetDatabase.AddObjectToAsset(RuntimeData, graphModel);
+            EditorUtility.SetDirty(graphModel);
         }
         
         #region Ports

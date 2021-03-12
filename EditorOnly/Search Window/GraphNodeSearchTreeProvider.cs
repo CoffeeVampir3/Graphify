@@ -14,7 +14,12 @@ namespace GraphFramework.Editor
     /// </summary>
     public static class GraphNodeSearchTreeProvider
     {
-        private static IEnumerable<Type> GetNodesRegisteredToView(Type graphViewType)
+        //*Technically* the nodes register to a graph controller but this bridges between
+        //the two objects.
+        /// <summary>
+        /// Returns a list of all nodes registered to the provided graph view type.
+        /// </summary>
+        private static IReadOnlyCollection<Type> GetNodesRegisteredToView(Type graphViewType)
         {
             var nodeList = TypeCache.GetTypesWithAttribute<RegisterToGraph>();
             var controllerType = GraphRegistrationResolver.GetRegisteredGraphController(graphViewType);
@@ -38,17 +43,19 @@ namespace GraphFramework.Editor
 
         #region Node Search Tree Parser
 
-        private static Dictionary<(string, int), SearchTreeGroupEntry> dirToGroup;
-        private static Dictionary<SearchTreeGroupEntry, List<SearchTreeEntry>> groupToEntry;
+        private static readonly Dictionary<(string, int), SearchTreeGroupEntry> dirToGroup =
+            new Dictionary<(string, int), SearchTreeGroupEntry>();
+        private static readonly Dictionary<SearchTreeGroupEntry, List<SearchTreeEntry>> groupToEntry =
+            new Dictionary<SearchTreeGroupEntry, List<SearchTreeEntry>>();
 
         private static SearchTreeGroupEntry CreateDirectory(string directory, int depth)
         {
-            (string directory, int depth) dDir = (directory, depth);
-            if (dirToGroup.TryGetValue(dDir, out var searchGroup)) 
+            (string directory, int depth) directoryIndex = (directory, depth);
+            if (dirToGroup.TryGetValue(directoryIndex, out var searchGroup)) 
                 return searchGroup;
             
             searchGroup = new SearchTreeGroupEntry(new GUIContent(directory), depth);
-            dirToGroup.Add(dDir, searchGroup);
+            dirToGroup.Add(directoryIndex, searchGroup);
             return searchGroup;
         }
 
@@ -81,13 +88,13 @@ namespace GraphFramework.Editor
                 return tree;
             
             var nodeList = GetNodesRegisteredToView(graphViewType);
-            dirToGroup = new Dictionary<(string directory, int depth), SearchTreeGroupEntry>();
-            groupToEntry = new Dictionary<SearchTreeGroupEntry, List<SearchTreeEntry>>();
+            var allGroups = new List<SearchTreeGroupEntry>();
 
-            List<SearchTreeGroupEntry> allGroups = new List<SearchTreeGroupEntry>();
+            dirToGroup.Clear();
+            groupToEntry.Clear();
 
-            //Create our nice alignment icon, gosh it's so nice.
-            //...Why the fuck is this necessary @Unity?
+            //Create our nice alignment icon, gosh... it's so nice.
+            //We need this otherwise our search window has the wrong indentation.
             indentationIcon = new Texture2D(1, 1);
             indentationIcon.SetPixel(0, 0, new Color(0, 0, 0, 0));
             indentationIcon.Apply();
@@ -113,12 +120,14 @@ namespace GraphFramework.Editor
                     if (cur == "")
                         break;
 
+                    //Last entry case, this is our leaf.
                     if (i == split.Length - 1)
                     {
                         CreateEntry(item, lastGroup, cur, i+1);
                         break;
                     }
                     
+                    //Normal case, anything that isint the leaf is a new directory.
                     lastGroup = CreateDirectory(cur, i+1);
                     if (!allGroups.Contains(lastGroup))
                     {
@@ -131,7 +140,7 @@ namespace GraphFramework.Editor
             //Iterate through each group and create our final search tree.
             foreach (var group in allGroups)
             {
-                //Guards against top being added twice.
+                //Guards against top being added twice
                 if (!searchTree.Contains(group))
                 {
                     searchTree.Add(group);
