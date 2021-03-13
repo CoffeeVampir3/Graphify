@@ -110,14 +110,20 @@ namespace GraphFramework.Editor
             UnloadGraph();
             graphModel = modelToLoad;
 
+            if (this.Q<GridBackground>() == null)
+            {
+                var grid = new GridBackground();
+                Insert(0, grid);
+            }
             var oldSettings = settings;
             settings = GraphSettings.CreateOrGetSettings(graphModel);
-
             if (oldSettings != settings)
             {
-                styleSheets.Remove(settings.graphViewStyle);
+                if(oldSettings != null)
+                    styleSheets.Remove(oldSettings.graphViewStyle);
                 styleSheets.Add(settings.graphViewStyle);
             }
+
             Undo.ClearAll();
             BuildGraph();
         }
