@@ -16,8 +16,12 @@ namespace GraphFramework.Editor
 
         private static readonly Dictionary<(string, int), SearchTreeGroupEntry> dirToGroup =
             new Dictionary<(string, int), SearchTreeGroupEntry>();
+        
         private static readonly Dictionary<SearchTreeGroupEntry, List<SearchTreeEntry>> groupToEntry =
             new Dictionary<SearchTreeGroupEntry, List<SearchTreeEntry>>();
+        
+        private static readonly Dictionary<Type, List<SearchTreeEntry>> cachedSearchTrees =
+            new Dictionary<Type, List<SearchTreeEntry>>();
 
         private static SearchTreeGroupEntry CreateDirectory(string directory, int depth)
         {
@@ -30,8 +34,7 @@ namespace GraphFramework.Editor
             return searchGroup;
         }
 
-        private static void CreateEntry(GraphRegisterable registerable,
-            Type entryNodeType, SearchTreeGroupEntry parent, string entryName, int depth)
+        private static void CreateEntry(Type entryNodeType, SearchTreeGroupEntry parent, string entryName, int depth)
         {
             if (!groupToEntry.TryGetValue(parent, out var entryList))
             {
@@ -45,23 +48,21 @@ namespace GraphFramework.Editor
             };
             entryList.Add(entry);
         }
-
-        private static readonly Dictionary<Type, List<SearchTreeEntry>> cachedSearchTrees =
-            new Dictionary<Type, List<SearchTreeEntry>>();
+        
         private static Texture2D indentationIcon;
         /// <summary>
         /// Returns a search tree of our registered nodes for the given graph view type.
         /// This tree is cached by this function for performance.
         /// </summary>
-        public static List<SearchTreeEntry> CreateNodeSearchTreeFor(Type graphViewType)
+        public static List<SearchTreeEntry> CreateNodeSearchTreeFor(Type graphControllerType)
         {
-            if (cachedSearchTrees.TryGetValue(graphViewType, out var tree))
+            if (cachedSearchTrees.TryGetValue(graphControllerType, out var tree))
                 return tree;
             
             var nodeList = NodeRegistrationResolver.
-                GetItemsRegisteredToGraph<RegisterNode>(graphViewType);
+                GetItemsRegisteredToGraph<RegisterNode>(graphControllerType);
             var stackList = NodeRegistrationResolver.
-                GetItemsRegisteredToGraph<RegisterStack>(graphViewType);
+                GetItemsRegisteredToGraph<RegisterStack>(graphControllerType);
             
             nodeList.AddRange(stackList);
             
@@ -100,7 +101,7 @@ namespace GraphFramework.Editor
                     //Last entry case, this is our leaf.
                     if (i == split.Length - 1)
                     {
-                        CreateEntry(attr, item, lastGroup, cur, i+1);
+                        CreateEntry(item, lastGroup, cur, i+1);
                         break;
                     }
                     
@@ -129,7 +130,7 @@ namespace GraphFramework.Editor
                 }
             }
             
-            cachedSearchTrees.Add(graphViewType, searchTree);
+            cachedSearchTrees.Add(graphControllerType, searchTree);
             return searchTree;
         }
         

@@ -17,6 +17,7 @@ namespace GraphFramework.GraphExecutor
         //Allows you to look at specific graphs operating, rather than all of them at once.
         public bool shouldLinkEditor = false;
 
+        #if UNITY_EDITOR
         //Gateway into the editor-only code, this branch is compiled out at runtime.
         public void EvaluateEditor()
         {
@@ -27,6 +28,7 @@ namespace GraphFramework.GraphExecutor
             if(currentNode != null)
                 EditorLinkedRuntimeNodeVisited(currentNode);
         }
+        #endif
 
         /// <summary>
         /// Evaluates the current node and walks the graph to whatever node is returned by

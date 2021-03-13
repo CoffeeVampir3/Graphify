@@ -1,27 +1,22 @@
 ﻿using System;
-using GraphFramework.EditorOnly.Attributes;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEditor;
+using UnityEngine;
 
 namespace GraphFramework.Editor
 {
     public static class GraphRegistrationResolver
     {
-        public static Type GetRegisteredGraphController(this CoffeeGraphView graphView)
+        public static List<Type> GetAllGraphControllers()
         {
-            return GetRegisteredGraphController(graphView.GetType());
-        }
-        
-        public static Type GetRegisteredGraphController(Type graphViewType)
-        {
-            var attributes = graphViewType.GetCustomAttributes(false);
-
-            foreach (var attr in attributes)
+            var mew = TypeCache.GetTypesDerivedFrom<GraphController>();
+            foreach (var m in mew)
             {
-                if (attr is RegisterGraphController rGraphCont)
-                {
-                    return rGraphCont.registerGraphControllerType;
-                }
+                Debug.Log(m);
             }
-            return null;
+
+            return mew.ToList();
         }
     }
 }

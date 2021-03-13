@@ -20,7 +20,7 @@ namespace GraphFramework.Editor
         public List<SearchTreeEntry> CreateSearchTree(SearchWindowContext context)
         {
             var tree = GraphNodeSearchTreeProvider.
-                CreateNodeSearchTreeFor(graphView.GetType());
+                CreateNodeSearchTreeFor(graphView.graphModel.serializedGraphController.GetType());
 
             return tree;
         }

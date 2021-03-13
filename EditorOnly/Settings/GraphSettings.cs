@@ -6,15 +6,19 @@ using UnityEngine.UIElements;
 
 namespace GraphFramework.Editor
 {
+    /// <summary>
+    /// A class that allows us to save global settings for our graph controller (by type)
+    /// </summary>
+    [CreateAssetMenu]
     public class GraphSettings : ScriptableObject
     {
         [HideInInspector]
-        public SerializableType targetGraphViewType;
+        public SerializableType registeredToControllerType;
         [SerializeField, HideInInspector] 
         private bool isDefault = false;
         public StyleSheet graphViewStyle;
 
-        private static GraphSettings CreateGraphSettings(System.Type graphViewType, List<GraphSettings> allSettings)
+        private static GraphSettings CreateGraphSettings(System.Type controllerType, List<GraphSettings> allSettings)
         {
             var defaultSettings = allSettings.FirstOrDefault(
                 e => e.isDefault);
@@ -26,28 +30,29 @@ namespace GraphFramework.Editor
             }
 
             GraphSettings settings = Instantiate(defaultSettings);
-            settings.targetGraphViewType = new SerializableType(graphViewType);
+            settings.registeredToControllerType = new SerializableType(controllerType);
             AssetDatabase.AddObjectToAsset(settings, 
                 defaultSettings);
             AssetDatabase.SaveAssets();
             AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(settings));
-            settings.name = "Settings For: " + graphViewType.Name;
+            settings.name = "Settings For: " + controllerType.Name;
             settings.isDefault = false;
             
             return settings;
         }
         
-        public static GraphSettings CreateOrGetSettings(CoffeeGraphView graphView)
+        public static GraphSettings CreateOrGetSettings(GraphModel graphModel)
         {
             var allSettings = AssetHelper.FindAssetsOf<GraphSettings>();
 
-            System.Type graphViewType = graphView.GetType();
+            System.Type graphControllerType = graphModel.serializedGraphController.GetType();
+            
             var graphSettings = allSettings.FirstOrDefault(
-                e => e.targetGraphViewType.type == graphViewType);
+                e => e.registeredToControllerType.type == graphControllerType);
 
             if (graphSettings == null)
             {
-                graphSettings = CreateGraphSettings(graphViewType, allSettings);
+                graphSettings = CreateGraphSettings(graphControllerType, allSettings);
             }
             
             return graphSettings;

@@ -8,31 +8,30 @@ using UnityEngine.UIElements;
 
 namespace GraphFramework.Editor
 {
-    public abstract class CoffeeGraphView : GraphView
-    {
+    public class CoffeeGraphView : GraphView
+    { 
         protected internal CoffeeGraphWindow parentWindow;
-        protected readonly GraphSettings settings;
+        protected internal GraphModel graphModel;
         protected readonly GraphSearchWindow searchWindow;
-        protected GraphModel graphModel;
+        protected GraphSettings settings;
 
         //Keeps track of all NodeView's and their relation to their model.
-        //Shared internals with StackView which only reads the collection.
+        //Shared internals with StackView (readonly)
         protected internal readonly Dictionary<MovableView, MovableModel> viewToModel =
             new Dictionary<MovableView, MovableModel>();
         //Edge -> EdgeModel
         protected readonly Dictionary<Edge, EdgeModel> edgeToModel =
             new Dictionary<Edge, EdgeModel>();
         //Provides a fast lookup path for the editor<->graph linker (GraphExecutor class)
+        //Shared internals with GraphExecutor (readonly)
         protected internal readonly Dictionary<RuntimeNode, NodeView> runtimeNodeToView =
             new Dictionary<RuntimeNode, NodeView>();
         
         #region Initialization and Finalization
         
-        protected CoffeeGraphView()
+        protected internal CoffeeGraphView()
         {
-            settings = GraphSettings.CreateOrGetSettings(this);
-            styleSheets.Add(settings.graphViewStyle);
-
+            //Zoom, content click + drag, group select.
             SetupZoom(ContentZoomer.DefaultMinScale, ContentZoomer.DefaultMaxScale);
             this.AddManipulator(new ContentDragger());
             this.AddManipulator(new SelectionDragger());
@@ -64,13 +63,10 @@ namespace GraphFramework.Editor
         }
 
         /// <summary>
-        /// Callback when the graph GUI had been created.
+        /// Callback when the graph GUI had been created an
         /// </summary>
-        protected internal abstract void OnGUICreated();
-
-        internal void OnGraphLoaded()
+        protected internal virtual void OnGraphGUI()
         {
-            OnGUICreated();
         }
 
         /// <summary>
@@ -113,6 +109,15 @@ namespace GraphFramework.Editor
         {
             UnloadGraph();
             graphModel = modelToLoad;
+
+            var oldSettings = settings;
+            settings = GraphSettings.CreateOrGetSettings(graphModel);
+
+            if (oldSettings != settings)
+            {
+                styleSheets.Remove(settings.graphViewStyle);
+                styleSheets.Add(settings.graphViewStyle);
+            }
             Undo.ClearAll();
             BuildGraph();
         }

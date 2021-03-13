@@ -31,16 +31,13 @@ namespace GraphFramework.Editor
         protected internal NodeModel rootNodeModel;
 
         public static GraphModel CreateNew(string savePath, 
-            Type editorWindowType, CoffeeGraphView graphView)
+            Type editorWindowType, Type graphControllerType)
         {
             if (AssetDatabase.LoadAllAssetsAtPath(savePath).Length != 0)
             {
                 Debug.LogError("Asset already exists at path: " + savePath);
                 return null;
             }
-            
-            var graphControllerType = graphView.GetRegisteredGraphController();
-            var graphViewType = graphView.GetType();
 
             GraphModel graphModel = CreateInstance<GraphModel>();
             graphModel.AssetGuid = Guid.NewGuid().ToString();
@@ -54,10 +51,10 @@ namespace GraphFramework.Editor
                 return null;
             }
             
-            var rootType = NodeRegistrationResolver.GetRegisteredRootNodeType(graphViewType);
+            var rootType = NodeRegistrationResolver.GetRegisteredRootNodeType(graphControllerType);
             if (rootType == null)
             {
-                Debug.LogError("Attempted to create a root node but none were registered to graph: " + graphViewType.Name);
+                Debug.LogError("Attempted to create a root node but none were registered to graph: " + graphControllerType.Name);
                 return null;
             }
 

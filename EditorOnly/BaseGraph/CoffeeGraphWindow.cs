@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -7,12 +8,21 @@ using Object = UnityEngine.Object;
 
 namespace GraphFramework.Editor
 {
-    public abstract class CoffeeGraphWindow : EditorWindow
+    public class CoffeeGraphWindow : EditorWindow
     {
         [SerializeReference]
         protected CoffeeGraphView graphView;
         [SerializeReference]
         public string currentGraphGUID;
+        
+        [MenuItem("Graphs/Test Graph")]
+        public static void OpenGraph()
+        {
+            var window = GetWindow<CoffeeGraphWindow>();
+            window.titleContent = new GUIContent("C0ff33");
+            
+            window.Focus();
+        }
         
         protected void InitializeGraph()
         {
@@ -39,13 +49,38 @@ namespace GraphFramework.Editor
         private void OnGeometryChangedInitialization(GeometryChangedEvent e)
         {
             GenerateToolbar();
-            graphView.OnGraphLoaded();
+            graphView.OnGraphGUI();
             graphView.UnregisterCallback<GeometryChangedEvent>(OnGeometryChangedInitialization);
         }
 
         private void OnDisable()
         {
             rootVisualElement.Clear();
+        }
+
+        protected virtual void EnableGraphView()
+        {
+            graphView = new CoffeeGraphView
+            {
+                name = "Coffee Dialogue Graph"
+            };
+            InitializeGraph();
+        }
+
+        private void OnEnable()
+        {
+            if (graphView != null)
+            {
+                return;
+            }
+
+            EnableGraphView();
+            //Reloads the graph after the assembly reloads.
+            AssemblyReloadEvents.afterAssemblyReload += () =>
+            {
+                rootVisualElement.Clear();
+                EnableGraphView();
+            };
         }
 
         private void Debug__FoldoutAllItems()
@@ -84,8 +119,10 @@ namespace GraphFramework.Editor
         /// </summary>
         protected virtual void CreateNewGraph()
         {
+            var controllers = GraphRegistrationResolver.GetAllGraphControllers();
+            
             var model = GraphModel.CreateNew(debugSavePath, GetType(), 
-                graphView);
+                controllers.FirstOrDefault());
 
             if (model == null)
                 return;
