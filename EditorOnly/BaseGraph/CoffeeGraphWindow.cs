@@ -143,7 +143,7 @@ namespace GraphFramework.Editor
             //to load the graph, if the window isint loaded we use this delay call.
             OnWindowLayoutFinished = () =>
             {
-                serializedGraphSelector.SetValueWithoutNotify(model);
+                serializedGraphSelector.SetValueWithoutNotify(model.serializedGraphController);
                 graphView.LoadGraph(model);
             };
             
