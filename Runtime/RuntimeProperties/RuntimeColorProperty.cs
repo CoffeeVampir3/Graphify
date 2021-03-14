@@ -3,6 +3,6 @@ using UnityEngine;
 
 namespace GraphFramework
 {
-    [RegisterNode(typeof(GraphController), "Properties/Color")]
+    [RegisterTo(typeof(GraphController), "Properties/Color")]
     public class RuntimeColorProperty : RuntimeProperty<Color> { }
 }

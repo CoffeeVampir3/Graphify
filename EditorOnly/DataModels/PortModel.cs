@@ -10,31 +10,35 @@ namespace GraphFramework.Editor
     public class PortModel
     {
         [SerializeReference]
-        public Orientation orientation;
+        protected internal Orientation orientation;
         [SerializeReference]
-        public Direction direction;
+        protected internal Direction direction;
         [SerializeReference]
-        public Port.Capacity capacity;
+        protected internal Port.Capacity capacity;
         [SerializeReference] 
-        public SerializableType portValueType = null;
+        protected internal SerializableType portValueType = null;
         [SerializeReference] 
-        public string portName;
+        protected internal SerializableType portType = null;
         [SerializeReference] 
-        public SerializedFieldInfo serializedValueFieldInfo;
+        protected internal string portName;
+        [SerializeReference] 
+        protected internal SerializedFieldInfo serializedValueFieldInfo;
         //Lookup is done via GUID because undo/redo creates a different copy.
         [SerializeReference] 
-        public string portGUID;
+        protected internal string portGUID;
 
         public PortModel(Orientation orientation, 
             Direction direction, 
             Port.Capacity capacity, 
-            Type portType, 
+            Type portType,
+            Type portValueType, 
             FieldInfo fieldInfo)
         {
             this.orientation = orientation;
             this.direction = direction;
             this.capacity = capacity;
-            this.portValueType = new SerializableType(portType);
+            this.portType = new SerializableType(portType);
+            this.portValueType = new SerializableType(portValueType);
             this.serializedValueFieldInfo = new SerializedFieldInfo(fieldInfo);
             this.portName = ObjectNames.NicifyVariableName(fieldInfo.Name);
             this.portGUID = Guid.NewGuid().ToString();

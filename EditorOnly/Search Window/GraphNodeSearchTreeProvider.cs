@@ -60,12 +60,8 @@ namespace GraphFramework.Editor
                 return tree;
             
             var nodeList = NodeRegistrationResolver.
-                GetItemsRegisteredToGraph<RegisterNode>(graphControllerType);
-            var stackList = NodeRegistrationResolver.
-                GetItemsRegisteredToGraph<RegisterStack>(graphControllerType);
-            
-            nodeList.AddRange(stackList);
-            
+                GetItemsRegisteredToGraph(graphControllerType);
+
             var allGroups = new List<SearchTreeGroupEntry>();
 
             dirToGroup.Clear();
@@ -86,7 +82,7 @@ namespace GraphFramework.Editor
             foreach (var item in nodeList)
             {
                 var attr = item.
-                    GetCustomAttributes(typeof(GraphRegisterable), true)[0] as GraphRegisterable;
+                    GetCustomAttributes(typeof(RegisterTo), true)[0] as RegisterTo;
 
                 Debug.Assert(attr != null, nameof(attr) + " != null");
                 var split = attr.registeredPath.Split('/');

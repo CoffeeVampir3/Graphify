@@ -2,6 +2,7 @@
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
+using UnityEngine.UIElements;
 
 namespace GraphFramework.Editor
 {
@@ -15,6 +16,15 @@ namespace GraphFramework.Editor
         public NodeView(NodeModel model)
         {
             nodeModel = model;
+            
+            var collapseButton = this.Q("collapse-button");
+
+            //Keeps the model's expanded state in line with the view when a user changes
+            //the value, this disregards code changing the value and I kind of like that.
+            collapseButton.RegisterCallback<ClickEvent>(e =>
+            {
+                nodeModel.isExpanded = expanded;
+            });
         }
         
         #region Ports
@@ -112,7 +122,7 @@ namespace GraphFramework.Editor
         private void Clean()
         {
             title = nodeModel.NodeTitle;
-            expanded = nodeModel.IsExpanded;
+            expanded = nodeModel.isExpanded;
             
             //We don't want to change our position if the node is stacked.
             if(nodeModel.stackedOn == null)
@@ -135,6 +145,7 @@ namespace GraphFramework.Editor
                 RefreshPorts();
                 Clean();
                 firstClean = false;
+                return;
             }
             if (cleanImpending) return;
             cleanImpending = true;

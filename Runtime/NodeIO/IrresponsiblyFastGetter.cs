@@ -6,7 +6,7 @@ namespace GraphFramework
 {
     internal static class CreateFastGetter
     {
-        //An important note, this is not run every time we do a value lookup. This is run up to
+        //An important note, this is _NOT RUN_ every time we do a value lookup. This is run up to
         //once per port a single time per graph to retrieve the value key. Eventually this 
         //should converge to be only slightly worse than a dictionary lookup and function call.
         /// <summary>
@@ -36,9 +36,10 @@ namespace GraphFramework
              * [Instance of Field] : Ldfld -> Load instance of concrete field from object on stack.
              */
             
+            
             /*
             Full "c#"ish translation:
-            public OutFieldType GetValue(TargetType inst) {
+            public OutFieldType GetValuePortReference(TargetType inst) {
                 //Where OutFieldType is the target field as defined in the provided FieldInfo
                 return inst.[Instance of target field];
             }

@@ -7,17 +7,17 @@ namespace GraphFramework.Editor
     public class EdgeModel
     {
         [SerializeReference] 
-        public NodeModel inputModel;
+        protected internal NodeModel inputModel;
         [SerializeReference] 
-        public NodeModel outputModel;
+        protected internal NodeModel outputModel;
         [SerializeReference] 
-        public PortModel inputPortModel;
+        protected internal PortModel inputPortModel;
         [SerializeReference] 
-        public PortModel outputPortModel;
+        protected internal PortModel outputPortModel;
         [SerializeReference]
-        public string inputConnectionGuid;
+        protected internal string inputConnectionGuid;
         [SerializeReference]
-        public string outputConnectionGuid;
+        protected internal string outputConnectionGuid;
 
         public EdgeModel(NodeModel inputNode, PortModel inputPort, 
             NodeModel outputNode, PortModel outputPort,

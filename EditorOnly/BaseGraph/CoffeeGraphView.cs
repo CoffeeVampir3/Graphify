@@ -63,9 +63,9 @@ namespace GraphFramework.Editor
         }
 
         /// <summary>
-        /// Callback when the graph GUI had been created an
+        /// Callback when the graph GUI is initialized.
         /// </summary>
-        protected internal virtual void OnGraphGUI()
+        protected internal virtual void OnGraphGUIInitialized()
         {
         }
 
@@ -95,8 +95,11 @@ namespace GraphFramework.Editor
                     AssetDatabase.RemoveObjectFromAsset(modelRuntimeNode);
                 }
             }
-            if(graphModel != null) 
+            if(graphModel != null)
+            {
+                EditorUtility.SetDirty(graphModel);
                 CleanUndoRemnants();
+            }
             AssetDatabase.SaveAssets();
         }
 

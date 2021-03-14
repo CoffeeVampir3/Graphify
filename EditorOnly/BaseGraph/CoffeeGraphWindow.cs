@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -14,6 +13,8 @@ namespace GraphFramework.Editor
         protected CoffeeGraphView graphView;
         [SerializeReference]
         public string currentGraphGUID;
+        private bool isWindowLoaded = false;
+        private Action OnWindowLayoutFinished = null;
         
         [MenuItem("Graphs/Test Graph")]
         public static void OpenGraph()
@@ -24,7 +25,65 @@ namespace GraphFramework.Editor
             window.Focus();
         }
         
-        protected void InitializeGraph()
+        //TODO:: Debug features.
+        private void Debug__FoldoutAllItems()
+        {
+            foreach (var node in graphView.nodes.ToList())
+            {
+                node.expanded = false;
+                node.RefreshPorts();
+                node.RefreshExpandedState();
+            }
+        }
+
+        private void Debug__ExpandAllItems()
+        {
+            foreach (var node in graphView.nodes.ToList())
+            {
+                node.expanded = true;
+                node.RefreshPorts();
+                node.RefreshExpandedState();
+            }
+        }
+        
+        #region Public API
+        
+        public void VisitRuntimeNode(RuntimeNode node)
+        {
+            graphView?.RuntimeNodeVisited(node);
+        }
+        
+        public void ExitRuntimeNode(RuntimeNode node)
+        {
+            graphView?.RuntimeNodeExited(node);
+        }
+        
+        #endregion
+        
+        #region Initialization and Finalization
+
+        private void OnEnable()
+        {
+            if (graphView != null)
+            {
+                return;
+            }
+
+            EnableGraphView();
+            //Reloads the graph after the assembly reloads.
+            AssemblyReloadEvents.afterAssemblyReload += () =>
+            {
+                rootVisualElement.Clear();
+                EnableGraphView();
+            };
+        }
+        
+        private void OnDisable()
+        {
+            rootVisualElement.Clear();
+        }
+        
+        private void InitializeGraph()
         {
             if (string.IsNullOrWhiteSpace(currentGraphGUID))
             {
@@ -45,20 +104,8 @@ namespace GraphFramework.Editor
             graphView.RegisterCallback<GeometryChangedEvent>(OnGeometryChangedInitialization);
             graphView.RegisterCallback<DetachFromPanelEvent>(graphView.OnGraphClosed);
         }
-
-        private void OnGeometryChangedInitialization(GeometryChangedEvent e)
-        {
-            GenerateToolbar();
-            graphView.OnGraphGUI();
-            graphView.UnregisterCallback<GeometryChangedEvent>(OnGeometryChangedInitialization);
-        }
-
-        private void OnDisable()
-        {
-            rootVisualElement.Clear();
-        }
-
-        protected virtual void EnableGraphView()
+        
+        private void EnableGraphView()
         {
             graphView = new CoffeeGraphView
             {
@@ -67,69 +114,38 @@ namespace GraphFramework.Editor
             InitializeGraph();
         }
 
-        private void OnEnable()
+        private void OnGeometryChangedInitialization(GeometryChangedEvent e)
         {
-            if (graphView != null)
+            GenerateToolbar();
+            graphView.OnGraphGUIInitialized();
+            if (OnWindowLayoutFinished != null)
             {
-                return;
+                OnWindowLayoutFinished();
+                OnWindowLayoutFinished = null;
             }
-
-            EnableGraphView();
-            //Reloads the graph after the assembly reloads.
-            AssemblyReloadEvents.afterAssemblyReload += () =>
-            {
-                rootVisualElement.Clear();
-                EnableGraphView();
-            };
-        }
-
-        private void Debug__FoldoutAllItems()
-        {
-            foreach (var node in graphView.nodes.ToList())
-            {
-                node.expanded = false;
-                node.RefreshPorts();
-                node.RefreshExpandedState();
-            }
-        }
-
-        private void Debug__ExpandAllItems()
-        {
-            foreach (var node in graphView.nodes.ToList())
-            {
-                node.expanded = true;
-                node.RefreshPorts();
-                node.RefreshExpandedState();
-            }
-        }
-
-        public void VisitRuntimeNode(RuntimeNode node)
-        {
-            graphView?.RuntimeNodeVisited(node);
+            isWindowLoaded = true;
+            graphView.UnregisterCallback<GeometryChangedEvent>(OnGeometryChangedInitialization);
         }
         
-        public void ExitRuntimeNode(RuntimeNode node)
+        #endregion
+
+        protected internal virtual void LoadGraphExternal(GraphModel model)
         {
-            graphView?.RuntimeNodeExited(node);
+            //We have to wait until the window layout is created before we actually try
+            //to load the graph, if the window isint loaded we use this delay call.
+            OnWindowLayoutFinished = () =>
+            {
+                serializedGraphSelector.SetValueWithoutNotify(model);
+                graphView.LoadGraph(model);
+            };
+            
+            if (!isWindowLoaded) return;
+            //If it turns out the window is already loaded, just load the graph.
+            OnWindowLayoutFinished();
+            OnWindowLayoutFinished = null;
         }
 
-        private const string debugSavePath = "Assets/!TestTrashbin/wombograph.asset";
-        /// <summary>
-        /// Creates a new EditorGraphModel and Graph Controller.
-        /// </summary>
-        protected virtual void CreateNewGraph()
-        {
-            var controllers = GraphRegistrationResolver.GetAllGraphControllers();
-            
-            var model = GraphModel.CreateNew(debugSavePath, GetType(), 
-                controllers.FirstOrDefault());
-
-            if (model == null)
-                return;
-            
-            serializedGraphSelector.SetValueWithoutNotify(model);
-            graphView.LoadGraph(model);
-        }
+        #region Toolbar
 
         private void OnObjectSelectorValueChanged(ChangeEvent<Object> evt)
         {
@@ -145,8 +161,7 @@ namespace GraphFramework.Editor
             var editorGraph = AssetHelper.FindAssetWithGUID<GraphModel>(graphGuid);
             if (editorGraph == null)
             {
-                Debug.LogError("Was unable to find a matching editor graph for graph controller named: " + gc.name);
-                return;
+                editorGraph = GraphModel.BootstrapController(gc);
             }
             
             graphView.LoadGraph(editorGraph);
@@ -160,8 +175,6 @@ namespace GraphFramework.Editor
             serializedGraphSelector = new ObjectField {objectType = typeof(GraphController)};
             serializedGraphSelector.RegisterValueChangedCallback(OnObjectSelectorValueChanged);
             
-            toolbar.Add(new Button( CreateNewGraph ) 
-                {text = "Create New Graph"});
             toolbar.Add(new Button( Debug__FoldoutAllItems ) 
                 {text = "Foldout all Items"});
             toolbar.Add(new Button( Debug__ExpandAllItems ) 
@@ -170,6 +183,8 @@ namespace GraphFramework.Editor
             toolbar.Add(serializedGraphSelector);
             graphView.Add(toolbar);
         }
+        
+        #endregion
     }
     
 }

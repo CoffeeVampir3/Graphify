@@ -2,6 +2,6 @@
 
 namespace GraphFramework
 {
-    [RegisterNode(typeof(GraphController), "Properties/Integer")]
+    [RegisterTo(typeof(GraphController), "Properties/Integer")]
     public class RuntimeIntProperty : RuntimeProperty<int> { }
 }

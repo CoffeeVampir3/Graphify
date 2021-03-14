@@ -6,8 +6,8 @@ using UnityEngine;
 namespace GraphFramework.Editor
 {
     /// <summary>
-    /// Serializable model of our editor graph, has some extra data for debugging and
-    /// utilities.
+    /// Serializable model of our editor graph, holds all the persistent model data for a graph
+    /// has some extra data for debugging and utilities.
     /// </summary>
     [CreateAssetMenu]
     public class GraphModel : ScriptableObject, HasAssetGuid
@@ -30,49 +30,39 @@ namespace GraphFramework.Editor
         [SerializeReference] 
         protected internal NodeModel rootNodeModel;
 
-        public static GraphModel CreateNew(string savePath, 
-            Type editorWindowType, Type graphControllerType)
+        /// <summary>
+        /// Bootstraps an empty GraphController with everything the editor needs to use it.
+        /// </summary>
+        /// <param name="savePath">The path we're saving the model to.</param>
+        /// <param name="editorWindowType">The editor window type to use when this opens.</param>
+        /// <param name="graphControllerType">The graph controller this model is associated to.</param>
+        /// <returns>The new GraphModel</returns>
+        public static GraphModel BootstrapController(GraphController graphController)
         {
-            if (AssetDatabase.LoadAllAssetsAtPath(savePath).Length != 0)
-            {
-                Debug.LogError("Asset already exists at path: " + savePath);
-                return null;
-            }
-
             GraphModel graphModel = CreateInstance<GraphModel>();
             graphModel.AssetGuid = Guid.NewGuid().ToString();
             graphModel.name = "Editor Model";
+            graphModel.serializedGraphController = graphController;
 
-            graphModel.serializedGraphController = CreateInstance(graphControllerType) as GraphController;
-            if (graphModel.serializedGraphController == null)
-            {
-                Debug.LogError("Failed to create a new graph controller for editor window type " +
-                               editorWindowType?.Name + " named " + graphControllerType?.Name);
-                return null;
-            }
-            
-            var rootType = NodeRegistrationResolver.GetRegisteredRootNodeType(graphControllerType);
+            var rootType = NodeRegistrationResolver.GetRegisteredRootNodeType(graphController.GetType());
             if (rootType == null)
             {
-                Debug.LogError("Attempted to create a root node but none were registered to graph: " + graphControllerType.Name);
+                //Get registered root node type will generate an error, just return here.
                 return null;
             }
 
             //Important note these two graphs must share the same GUID as they're linked
             //to eachother using this GUID.
             graphModel.serializedGraphController.AssetGuid = graphModel.AssetGuid;
-            graphModel.graphWindowType = new SerializableType(editorWindowType);
+            //TODO:: Add support for custom window.
+            graphModel.graphWindowType = new SerializableType(typeof(CoffeeGraphWindow));
             
             EditorUtility.SetDirty(graphModel);
             EditorUtility.SetDirty(graphModel.serializedGraphController);
-
             try
             {
                 AssetDatabase.StartAssetEditing();
-                AssetDatabase.CreateAsset(graphModel.serializedGraphController, 
-                    savePath);
-                AssetDatabase.AddObjectToAsset(graphModel,
-                    savePath);
+                AssetDatabase.AddObjectToAsset(graphModel, graphController);
                 graphModel.rootNodeModel = NodeModel.InstantiateModel("Root Node", graphModel, rootType);
                 graphModel.serializedGraphController.rootNode = graphModel.rootNodeModel.RuntimeData;
                 EditorUtility.SetDirty(graphModel.rootNodeModel.RuntimeData);

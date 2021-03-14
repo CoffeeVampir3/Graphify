@@ -3,6 +3,6 @@ using UnityEngine;
 
 namespace GraphFramework
 {
-    [RegisterNode(typeof(GraphController), "Properties/Render Texture")]
+    [RegisterTo(typeof(GraphController), "Properties/Render Texture")]
     public class RuntimeRenderTextureProperty : RuntimeProperty<RenderTexture> { }
 }

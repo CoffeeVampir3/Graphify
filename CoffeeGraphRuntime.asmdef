@@ -1,7 +1,9 @@
 {
     "name": "GraphRuntime",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "GUID:7104629240eb8a645904aa070efcaeb8"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": true,

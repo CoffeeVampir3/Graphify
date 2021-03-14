@@ -13,20 +13,25 @@ namespace GraphFramework.Editor
     public class NodeModel : MovableModel
     {
         [SerializeReference]
-        public RuntimeNode RuntimeData;
+        protected internal RuntimeNode RuntimeData;
         [SerializeReference]
-        public List<PortModel> inputPorts = new List<PortModel>();
+        protected internal List<PortModel> inputPorts = new List<PortModel>();
         [SerializeReference]
-        public List<PortModel> outputPorts = new List<PortModel>();
+        protected internal List<PortModel> outputPorts = new List<PortModel>();
+        //TODO:: Finish dyn ports.
+        [SerializeReference]
+        protected internal List<PortModel> dynamicInputPorts = new List<PortModel>();
+        [SerializeReference]
+        protected internal List<PortModel> dynamicOutputPorts = new List<PortModel>();
         [SerializeReference] 
-        public StackModel stackedOn = null;
+        protected internal StackModel stackedOn = null;
+        [SerializeReference] 
+        protected internal bool isExpanded = true;
         [SerializeField] 
         private string nodeTitle = "Untitled.";
         [SerializeField] 
         private Rect position = Rect.zero;
-        [SerializeField] 
-        private bool isExpanded = true;
-        
+
         [NonSerialized] 
         private NodeView view;
 
@@ -73,16 +78,49 @@ namespace GraphFramework.Editor
             AssetDatabase.AddObjectToAsset(RuntimeData, graphModel);
             EditorUtility.SetDirty(graphModel);
         }
+
+        #endregion
         
         #region Ports
 
-        protected internal PortModel CreatePortModel(FieldInfo field, Direction dir)
+        protected internal void CreatePortModel(FieldInfo field, Direction dir)
         {
+            Action<PortModel> portCreationAction = null;
+            Action<PortModel> dynamicPortCreationAction = null;
+            switch (dir)
+            {
+                case Direction.Input:
+                    portCreationAction = inputPorts.Add;
+                    dynamicPortCreationAction = dynamicInputPorts.Add;
+                    break;
+                case Direction.Output:
+                    portCreationAction = outputPorts.Add;
+                    dynamicPortCreationAction = dynamicOutputPorts.Add;
+                    break;
+            }
+            
             //This extracts the <T> type from the given ValuePort<T>.
-            var portValueType = field.FieldType.
-                GetGenericClassConstructorArguments(typeof(ValuePort<>));
-            return new PortModel(Orientation.Horizontal, dir, 
-                Port.Capacity.Multi, portValueType.FirstOrDefault(), field);
+            if (typeof(ValuePort).IsAssignableFrom(field.FieldType))
+            {
+                var portValueType = field.FieldType.
+                    GetGenericClassConstructorArguments(typeof(ValuePort<>));
+                var pm = new PortModel(Orientation.Horizontal, dir, 
+                    Port.Capacity.Multi, field.FieldType, 
+                    portValueType.FirstOrDefault(), field);
+                portCreationAction?.Invoke(pm);
+                return;
+            }
+
+            //This extracts the <T> type from the given DynamicValuePort<T>.
+            if (typeof(DynamicValuePort).IsAssignableFrom(field.FieldType))
+            {
+                var portValueType = field.FieldType.
+                    GetGenericClassConstructorArguments(typeof(DynamicValuePort<>));
+                var pm = new PortModel(Orientation.Horizontal, dir, 
+                    Port.Capacity.Multi, field.FieldType, 
+                    portValueType.FirstOrDefault(), field);
+                dynamicPortCreationAction?.Invoke(pm);
+            }
         }
 
         //(typeof(RuntimeData), typeof(DirectionAttribute))
@@ -93,16 +131,16 @@ namespace GraphFramework.Editor
         /// <summary>
         /// Cached wrapper around GetLocalFieldWithAttribute
         /// </summary>
-        private List<FieldInfo> GetFieldInfoFor<attr>(Type runtimeDataType)
-            where attr : Attribute
+        private List<FieldInfo> GetFieldInfoFor<Attr>(Type runtimeDataType)
+            where Attr : Attribute
         {
-            var index = (runtimeDataType, typeof(attr));
+            var index = (runtimeDataType, typeof(Attr));
             if (dataTypeToInfoFields.TryGetValue(index, out var fields))
             {
                 return fields;
             }
 
-            fields = runtimeDataType.GetLocalFieldsWithAttribute<attr>();
+            fields = runtimeDataType.GetLocalFieldsWithAttribute<Attr>();
             dataTypeToInfoFields.Add(index, fields);
             return fields;
         }
@@ -118,8 +156,7 @@ namespace GraphFramework.Editor
 
             foreach (var field in iFields)
             {
-                PortModel p = CreatePortModel(field, Direction.Input);
-                inputPorts.Add(p);
+                CreatePortModel(field, Direction.Input);
                 if (!clearCopy) continue;
                 if (field.GetValue(RuntimeData) is ValuePort vp)
                 {
@@ -128,8 +165,7 @@ namespace GraphFramework.Editor
             }
             foreach (var field in oFields)
             {
-                PortModel p = CreatePortModel(field, Direction.Output);
-                outputPorts.Add(p);
+                CreatePortModel(field, Direction.Output);
                 if (!clearCopy) continue;
                 if (field.GetValue(RuntimeData) is ValuePort vp)
                 {
@@ -137,8 +173,6 @@ namespace GraphFramework.Editor
                 }
             }
         }
-        
-        #endregion
         
         #endregion
         
@@ -180,25 +214,15 @@ namespace GraphFramework.Editor
             }
         }
 
-        public bool IsExpanded
-        {
-            get => isExpanded;
-            set
-            {
-                isExpanded = value;
-                view?.OnDirty();
-            }
-        }
-        
         #endregion
         
         #region Connections
 
         [NonSerialized]
-        private Dictionary<PortModel, ValuePort> cachedValuePorts = 
-            new Dictionary<PortModel, ValuePort>();
+        private Dictionary<PortModel, RuntimePort> cachedValuePorts = 
+            new Dictionary<PortModel, RuntimePort>();
         private bool TryResolveValuePortFromModels(PortModel portModel,
-            out ValuePort valuePort)
+            out RuntimePort valuePort)
         {
             if (cachedValuePorts.TryGetValue(portModel, out valuePort))
             {
@@ -232,15 +256,22 @@ namespace GraphFramework.Editor
         /// </summary>
         public void DeletePortLinkByGuid(PortModel inPort, string guid)
         {
-            if (!TryResolveValuePortFromModels(inPort, out var valuePort))
+            if (!TryResolveValuePortFromModels(inPort, out var runtimePort))
                 return;
-            //Delete value port connection
-            for (int i = valuePort.links.Count - 1; i >= 0; i--)
+
+            switch (runtimePort)
             {
-                Link currentLink = valuePort.links[i];
-                if (currentLink.GUID != guid) continue;
-                valuePort.links.Remove(currentLink);
-                return;
+                case ValuePort valuePort:
+                    for (int i = valuePort.links.Count - 1; i >= 0; i--)
+                    {
+                        Link currentLink = valuePort.links[i];
+                        if (currentLink.GUID != guid) continue;
+                        valuePort.links.Remove(currentLink);
+                        return;
+                    }
+                    break;
+                case DynamicValuePort dynamicVp:
+                    throw new System.NotImplementedException();
             }
         }
 
@@ -255,8 +286,18 @@ namespace GraphFramework.Editor
                 outputModel.RuntimeData, outputPort.serializedValueFieldInfo);
 
             //Guaranteed to be cached if CanPortConnectTo returned true.
-            var inputValuePort = cachedValuePorts[myInputPort];
-            inputValuePort.links.Add(localConnection);
+            var inputRuntimePort = cachedValuePorts[myInputPort];
+            switch (inputRuntimePort)
+            {
+                case ValuePort inputValuePort:
+                    for (int i = inputValuePort.links.Count - 1; i >= 0; i--)
+                    {
+                        inputValuePort.links.Add(localConnection);
+                    }
+                    break;
+                case DynamicValuePort dynamicVp:
+                    throw new System.NotImplementedException();
+            }
             return localConnection;
         }
         

@@ -2,6 +2,6 @@
 
 namespace GraphFramework
 {
-    [RegisterNode(typeof(GraphController), "Properties/String")]
+    [RegisterTo(typeof(GraphController), "Properties/String")]
     public class RuntimeStringProperty : RuntimeProperty<string> { }
 }

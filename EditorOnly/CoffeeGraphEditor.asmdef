@@ -2,7 +2,8 @@
     "name": "GraphEditor",
     "rootNamespace": "",
     "references": [
-        "GUID:650f5d7751bbedc4597324ed0871ceac"
+        "GUID:650f5d7751bbedc4597324ed0871ceac",
+        "GUID:7104629240eb8a645904aa070efcaeb8"
     ],
     "includePlatforms": [
         "Editor"
