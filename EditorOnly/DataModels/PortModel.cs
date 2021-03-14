@@ -18,8 +18,6 @@ namespace GraphFramework.Editor
         [SerializeReference] 
         protected internal SerializableType portValueType = null;
         [SerializeReference] 
-        protected internal SerializableType portType = null;
-        [SerializeReference] 
         protected internal string portName;
         [SerializeReference] 
         protected internal SerializedFieldInfo serializedValueFieldInfo;
@@ -29,15 +27,13 @@ namespace GraphFramework.Editor
 
         public PortModel(Orientation orientation, 
             Direction direction, 
-            Port.Capacity capacity, 
-            Type portType,
+            Port.Capacity capacity,
             Type portValueType, 
             FieldInfo fieldInfo)
         {
             this.orientation = orientation;
             this.direction = direction;
             this.capacity = capacity;
-            this.portType = new SerializableType(portType);
             this.portValueType = new SerializableType(portValueType);
             this.serializedValueFieldInfo = new SerializedFieldInfo(fieldInfo);
             this.portName = ObjectNames.NicifyVariableName(fieldInfo.Name);

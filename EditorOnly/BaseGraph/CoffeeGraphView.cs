@@ -580,7 +580,7 @@ namespace GraphFramework.Editor
             }
             var localConnection = inModel.LinkPortTo(inputPort, outModel, outputPort);
             var remoteConnection = outModel.LinkPortTo(outputPort, inModel, inputPort);
-
+            
             var modelEdge = new EdgeModel(inModel, inputPort,
                 outModel, outputPort,
                 localConnection.GUID,

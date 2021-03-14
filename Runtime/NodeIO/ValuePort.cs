@@ -15,10 +15,10 @@ namespace GraphFramework
     /// so retrieving a value is always one single dictionary lookup with no other overhead.
     /// </summary>
     [Serializable]
-    public abstract class ValuePort : RuntimePort
+    public abstract class ValuePort
     {
         //Internals shared with graph editor.
-        [SerializeReference, HideInInspector]
+        [SerializeReference]
         protected internal List<Link> links = new List<Link>();
 
         /// <summary>

@@ -18,11 +18,6 @@ namespace GraphFramework.Editor
         protected internal List<PortModel> inputPorts = new List<PortModel>();
         [SerializeReference]
         protected internal List<PortModel> outputPorts = new List<PortModel>();
-        //TODO:: Finish dyn ports.
-        [SerializeReference]
-        protected internal List<PortModel> dynamicInputPorts = new List<PortModel>();
-        [SerializeReference]
-        protected internal List<PortModel> dynamicOutputPorts = new List<PortModel>();
         [SerializeReference] 
         protected internal StackModel stackedOn = null;
         [SerializeReference] 
@@ -85,42 +80,24 @@ namespace GraphFramework.Editor
 
         protected internal void CreatePortModel(FieldInfo field, Direction dir)
         {
-            Action<PortModel> portCreationAction = null;
-            Action<PortModel> dynamicPortCreationAction = null;
+            Action<PortModel> portCreationAction;
             switch (dir)
             {
                 case Direction.Input:
                     portCreationAction = inputPorts.Add;
-                    dynamicPortCreationAction = dynamicInputPorts.Add;
                     break;
                 case Direction.Output:
                     portCreationAction = outputPorts.Add;
-                    dynamicPortCreationAction = dynamicOutputPorts.Add;
                     break;
+                default:
+                    return;
             }
             
-            //This extracts the <T> type from the given ValuePort<T>.
-            if (typeof(ValuePort).IsAssignableFrom(field.FieldType))
-            {
-                var portValueType = field.FieldType.
-                    GetGenericClassConstructorArguments(typeof(ValuePort<>));
-                var pm = new PortModel(Orientation.Horizontal, dir, 
-                    Port.Capacity.Multi, field.FieldType, 
-                    portValueType.FirstOrDefault(), field);
-                portCreationAction?.Invoke(pm);
-                return;
-            }
-
-            //This extracts the <T> type from the given DynamicValuePort<T>.
-            if (typeof(DynamicValuePort).IsAssignableFrom(field.FieldType))
-            {
-                var portValueType = field.FieldType.
-                    GetGenericClassConstructorArguments(typeof(DynamicValuePort<>));
-                var pm = new PortModel(Orientation.Horizontal, dir, 
-                    Port.Capacity.Multi, field.FieldType, 
-                    portValueType.FirstOrDefault(), field);
-                dynamicPortCreationAction?.Invoke(pm);
-            }
+            var portValueType = field.FieldType.
+                GetGenericClassConstructorArguments(typeof(ValuePort<>));
+            var pm = new PortModel(Orientation.Horizontal, dir, 
+                Port.Capacity.Multi, portValueType.FirstOrDefault(), field);
+            portCreationAction.Invoke(pm);
         }
 
         //(typeof(RuntimeData), typeof(DirectionAttribute))
@@ -219,10 +196,10 @@ namespace GraphFramework.Editor
         #region Connections
 
         [NonSerialized]
-        private Dictionary<PortModel, RuntimePort> cachedValuePorts = 
-            new Dictionary<PortModel, RuntimePort>();
+        private Dictionary<PortModel, ValuePort> cachedValuePorts = 
+            new Dictionary<PortModel, ValuePort>();
         private bool TryResolveValuePortFromModels(PortModel portModel,
-            out RuntimePort valuePort)
+            out ValuePort valuePort)
         {
             if (cachedValuePorts.TryGetValue(portModel, out valuePort))
             {
@@ -256,22 +233,15 @@ namespace GraphFramework.Editor
         /// </summary>
         public void DeletePortLinkByGuid(PortModel inPort, string guid)
         {
-            if (!TryResolveValuePortFromModels(inPort, out var runtimePort))
+            if (!TryResolveValuePortFromModels(inPort, out var valuePort))
                 return;
 
-            switch (runtimePort)
+            for (int i = valuePort.links.Count - 1; i >= 0; i--)
             {
-                case ValuePort valuePort:
-                    for (int i = valuePort.links.Count - 1; i >= 0; i--)
-                    {
-                        Link currentLink = valuePort.links[i];
-                        if (currentLink.GUID != guid) continue;
-                        valuePort.links.Remove(currentLink);
-                        return;
-                    }
-                    break;
-                case DynamicValuePort dynamicVp:
-                    throw new System.NotImplementedException();
+                Link currentLink = valuePort.links[i];
+                if (currentLink.GUID != guid) continue;
+                valuePort.links.Remove(currentLink);
+                return;
             }
         }
 
@@ -284,20 +254,17 @@ namespace GraphFramework.Editor
         {
             var localConnection = new Link(RuntimeData, myInputPort.serializedValueFieldInfo,
                 outputModel.RuntimeData, outputPort.serializedValueFieldInfo);
-
+            
             //Guaranteed to be cached if CanPortConnectTo returned true.
-            var inputRuntimePort = cachedValuePorts[myInputPort];
-            switch (inputRuntimePort)
+            var inputValuePort = cachedValuePorts[myInputPort];
+            inputValuePort.links.Add(localConnection);
+            /*
+            for (int i = inputValuePort.links.Count - 1; i >= 0; i--)
             {
-                case ValuePort inputValuePort:
-                    for (int i = inputValuePort.links.Count - 1; i >= 0; i--)
-                    {
-                        inputValuePort.links.Add(localConnection);
-                    }
-                    break;
-                case DynamicValuePort dynamicVp:
-                    throw new System.NotImplementedException();
+                Debug.Log("Added.");
+                inputValuePort.links.Add(localConnection);
             }
+            */
             return localConnection;
         }
         
