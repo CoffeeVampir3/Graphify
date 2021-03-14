@@ -1,6 +1,5 @@
 ﻿using UnityEditor;
 using UnityEditor.Callbacks;
-using UnityEngine;
 
 namespace GraphFramework.Editor
 {
@@ -12,7 +11,7 @@ namespace GraphFramework.Editor
             if (!IsOpenedAssetTargetType(instanceID, out var controller))
                 return false;
             
-            var model = AssetHelper.FindAssetWithGUID<GraphModel>(controller.AssetGuid);
+            var model = AssetHelper.FindNestedAssetOfType<GraphModel>(controller);
             if (model == null)
             {
                 model = GraphModel.BootstrapController(controller);

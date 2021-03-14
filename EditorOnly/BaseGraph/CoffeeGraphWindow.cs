@@ -15,7 +15,8 @@ namespace GraphFramework.Editor
         public string currentGraphGUID;
         private bool isWindowLoaded = false;
         private Action OnWindowLayoutFinished = null;
-        
+        private string domainSafeWorkingAssetPath;
+
         [MenuItem("Graphs/Test Graph")]
         public static void OpenGraph()
         {
@@ -75,6 +76,12 @@ namespace GraphFramework.Editor
             {
                 rootVisualElement.Clear();
                 EnableGraphView();
+
+                //Check if we were working on something before the domain reloaded.
+                if (string.IsNullOrEmpty(domainSafeWorkingAssetPath))
+                    return;
+                
+                LoadGraphControllerInternal(domainSafeWorkingAssetPath);
             };
         }
         
@@ -95,6 +102,7 @@ namespace GraphFramework.Editor
             //graph view no longer existing but still being referenced.
             AssemblyReloadEvents.beforeAssemblyReload += () =>
             {
+                isWindowLoaded = false;
                 graphView = null;
             };
             
@@ -144,6 +152,31 @@ namespace GraphFramework.Editor
             OnWindowLayoutFinished();
             OnWindowLayoutFinished = null;
         }
+        
+        protected internal virtual void LoadGraphControllerInternal(string gcPath)
+        {
+            OnWindowLayoutFinished = () =>
+            {
+                var gc = AssetDatabase.LoadAssetAtPath<GraphController>(gcPath);
+
+                if (gc == null)
+                    return;
+                
+                var editorGraph = AssetHelper.FindNestedAssetOfType<GraphModel>(gc);
+                if (editorGraph == null)
+                {
+                    editorGraph = GraphModel.BootstrapController(gc);
+                }
+
+                serializedGraphSelector.SetValueWithoutNotify(gc);
+                graphView.LoadGraph(editorGraph);
+            };
+            
+            if (!isWindowLoaded) return;
+            //If it turns out the window is already loaded, just load the graph.
+            OnWindowLayoutFinished();
+            OnWindowLayoutFinished = null;
+        }
 
         #region Toolbar
 
@@ -151,20 +184,16 @@ namespace GraphFramework.Editor
         {
             if (evt.newValue == null)
             {
+                domainSafeWorkingAssetPath = null;
                 graphView.UnloadGraph();
                 return;
             }
             
-            if (!(evt.newValue is GraphController gc)) return;
-            
-            var graphGuid = gc.AssetGuid;
-            var editorGraph = AssetHelper.FindAssetWithGUID<GraphModel>(graphGuid);
-            if (editorGraph == null)
-            {
-                editorGraph = GraphModel.BootstrapController(gc);
-            }
-            
-            graphView.LoadGraph(editorGraph);
+            var gc = serializedGraphSelector.value as GraphController;
+            var path = AssetDatabase.GetAssetPath(gc);
+            domainSafeWorkingAssetPath = string.IsNullOrEmpty(path) ? null : path;
+
+            LoadGraphControllerInternal(path);
         }
         
         private ObjectField serializedGraphSelector = null;

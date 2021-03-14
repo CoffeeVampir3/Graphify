@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -10,13 +9,11 @@ namespace GraphFramework.Editor
     /// has some extra data for debugging and utilities.
     /// </summary>
     [CreateAssetMenu]
-    public class GraphModel : ScriptableObject, HasAssetGuid
+    public class GraphModel : ScriptableObject
     {
         [SerializeField] 
         public SerializableType graphWindowType;
-        [field: SerializeField]
-        public string AssetGuid { set; get; }
-        
+
         [SerializeReference] 
         protected internal List<NodeModel> nodeModels = new List<NodeModel>();
         [SerializeReference]
@@ -40,7 +37,6 @@ namespace GraphFramework.Editor
         public static GraphModel BootstrapController(GraphController graphController)
         {
             GraphModel graphModel = CreateInstance<GraphModel>();
-            graphModel.AssetGuid = Guid.NewGuid().ToString();
             graphModel.name = "Editor Model";
             graphModel.serializedGraphController = graphController;
 
@@ -50,10 +46,7 @@ namespace GraphFramework.Editor
                 //Get registered root node type will generate an error, just return here.
                 return null;
             }
-
-            //Important note these two graphs must share the same GUID as they're linked
-            //to eachother using this GUID.
-            graphModel.serializedGraphController.AssetGuid = graphModel.AssetGuid;
+            
             //TODO:: Add support for custom window.
             graphModel.graphWindowType = new SerializableType(typeof(CoffeeGraphWindow));
             
@@ -71,6 +64,7 @@ namespace GraphFramework.Editor
             {
                 AssetDatabase.StopAssetEditing();
             }
+
             AssetDatabase.SaveAssets();
             return graphModel;
         }

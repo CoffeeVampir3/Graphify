@@ -3,7 +3,7 @@
 namespace GraphFramework.Editor
 {
     internal abstract class AssetClickedHandler<Item>
-        where Item : ScriptableObject, HasAssetGuid
+        where Item : ScriptableObject
     {
         /// <summary>
         /// Helper function to check if a clicked asset is one of the type we care about, if

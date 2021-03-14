@@ -28,28 +28,20 @@ namespace GraphFramework.Editor
 
             return items;
         }
-        
-        /// <summary>
-        /// Searches for an asset with the provided asset GUID
-        /// This search accounts for sub-nested assets.
-        /// </summary>
-        public static T FindAssetWithGUID<T>(string coffeeGUID) where T : Object, HasAssetGuid
-        {
-            var searchStr = "t:" + typeof(T).Name;
-            var charGuids = AssetDatabase.FindAssets(searchStr);
-            foreach (var chGuid in charGuids)
-            {
-                var path = AssetDatabase.GUIDToAssetPath(chGuid);
 
-                var assetsAtPath = AssetDatabase.LoadAllAssetsAtPath(path);
-                foreach (var asset in assetsAtPath)
-                {
-                    if (!(asset is T item))
-                        continue;
-                    if (item.AssetGuid == coffeeGUID) return item;
-                }
+        public static T FindNestedAssetOfType<T>(Object mainAsset)
+        {
+            var path = AssetDatabase.GetAssetPath(mainAsset);
+
+            var objs = AssetDatabase.LoadAllAssetRepresentationsAtPath(path);
+
+            foreach (var obj in objs)
+            {
+                if (obj is T item)
+                    return item;
             }
-            return null;
+
+            return default;
         }
     }
 }

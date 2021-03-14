@@ -1,13 +1,10 @@
-﻿using GraphFramework.Editor;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace GraphFramework
 {
-    public abstract class GraphController : ScriptableObject, HasAssetGuid
+    public abstract class GraphController : ScriptableObject
     {
         [SerializeField]
         public RuntimeNode rootNode;
-        [field: SerializeField]
-        public string AssetGuid { get; set; }
     }
 }
