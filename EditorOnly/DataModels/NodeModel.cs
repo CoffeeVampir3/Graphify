@@ -258,13 +258,6 @@ namespace GraphFramework.Editor
             //Guaranteed to be cached if CanPortConnectTo returned true.
             var inputValuePort = cachedValuePorts[myInputPort];
             inputValuePort.links.Add(localConnection);
-            /*
-            for (int i = inputValuePort.links.Count - 1; i >= 0; i--)
-            {
-                Debug.Log("Added.");
-                inputValuePort.links.Add(localConnection);
-            }
-            */
             return localConnection;
         }
         

@@ -11,7 +11,7 @@ namespace GraphFramework.Editor
         private readonly NodeModel nodeModel;
         private readonly Dictionary<Port, PortModel> portToModel = new Dictionary<Port, PortModel>();
         //Lookup via string because undo/redo creates a different copy.
-        private readonly Dictionary<string, Port> modelToPort = new Dictionary<string, Port>();
+        private readonly Dictionary<string, Port> modelGuidToPort = new Dictionary<string, Port>();
 
         public NodeView(NodeModel model)
         {
@@ -26,7 +26,7 @@ namespace GraphFramework.Editor
                 nodeModel.isExpanded = expanded;
             });
         }
-        
+
         #region Ports
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace GraphFramework.Editor
         /// </summary>
         public bool TryGetModelToPort(string modelGUID, out Port p)
         {
-            return modelToPort.TryGetValue(modelGUID, out p);
+            return modelGuidToPort.TryGetValue(modelGUID, out p);
         }
         
         private void CreatePortsFromModel()
@@ -55,7 +55,7 @@ namespace GraphFramework.Editor
                 p.portName = portModel.portName;
 
                 portToModel.Add(p, portModel);
-                modelToPort.Add(portModel.portGUID, p);
+                modelGuidToPort.Add(portModel.portGUID, p);
             }
             foreach (var portModel in nodeModel.outputPorts)
             {
@@ -64,7 +64,7 @@ namespace GraphFramework.Editor
                 p.portName = portModel.portName;
                 
                 portToModel.Add(p, portModel);
-                modelToPort.Add(portModel.portGUID, p);
+                modelGuidToPort.Add(portModel.portGUID, p);
             }
         }
 
