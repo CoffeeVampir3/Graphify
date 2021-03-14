@@ -18,7 +18,7 @@ namespace GraphFramework
     public abstract class ValuePort
     {
         //Internals shared with graph editor.
-        [SerializeReference]
+        [SerializeReference, HideInInspector]
         protected internal List<Link> links = new List<Link>();
 
         /// <summary>

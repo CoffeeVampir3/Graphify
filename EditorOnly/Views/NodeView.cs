@@ -12,7 +12,7 @@ namespace GraphFramework.Editor
         private readonly Dictionary<Port, PortModel> portToModel = new Dictionary<Port, PortModel>();
         //Lookup via string because undo/redo creates a different copy.
         private readonly Dictionary<string, Port> modelGuidToPort = new Dictionary<string, Port>();
-
+        
         public NodeView(NodeModel model)
         {
             nodeModel = model;
@@ -45,10 +45,10 @@ namespace GraphFramework.Editor
         {
             return modelGuidToPort.TryGetValue(modelGUID, out p);
         }
-        
-        private void CreatePortsFromModel()
+
+        private void CreatePortsFromModelList(List<PortModel> ports)
         {
-            foreach (var portModel in nodeModel.inputPorts)
+            foreach (var portModel in ports)
             {
                 Port p = AddPort(portModel.orientation, portModel.direction, 
                     portModel.capacity, portModel.portValueType.type);
@@ -57,15 +57,12 @@ namespace GraphFramework.Editor
                 portToModel.Add(p, portModel);
                 modelGuidToPort.Add(portModel.portGUID, p);
             }
-            foreach (var portModel in nodeModel.outputPorts)
-            {
-                Port p = AddPort(portModel.orientation, portModel.direction, 
-                    portModel.capacity, portModel.portValueType.type);
-                p.portName = portModel.portName;
-                
-                portToModel.Add(p, portModel);
-                modelGuidToPort.Add(portModel.portGUID, p);
-            }
+        }
+        
+        private void CreatePortsFromModel()
+        {
+            CreatePortsFromModelList(nodeModel.inputPorts);
+            CreatePortsFromModelList(nodeModel.outputPorts);
         }
 
         private Port AddPort(Orientation orientation,
