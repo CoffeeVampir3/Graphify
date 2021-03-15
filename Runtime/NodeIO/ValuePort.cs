@@ -26,6 +26,8 @@ namespace GraphFramework
         /// </summary>
         public IEnumerable<Link> Links => links;
 
+        public abstract void Reset();
+
         /// <summary>
         /// Returns true if this port has any links.
         /// </summary>
@@ -49,16 +51,22 @@ namespace GraphFramework
     [Serializable]
     public class ValuePort<T> : ValuePort
     {
-        //The is the backing value of the port, connections reference this value.
+        //Backing value of the port.
         [SerializeField]
-        protected internal T portValue = default;
+        private T portValue = default;
+        //Ports use a soft mutable value when the port value is set in code, the only
+        //way the actual port value can mutate is the user changing its value via graph UI.
+        [NonSerialized]
+        protected internal T mutablePortValue = default;
+
+        public override void Reset() => mutablePortValue = portValue;
 
         /// <summary>
         /// Used to set the value of this port.
         /// </summary>
         public T PortValue
         {
-            set => portValue = value;
+            set => mutablePortValue = value;
         }
 
         /// <summary>

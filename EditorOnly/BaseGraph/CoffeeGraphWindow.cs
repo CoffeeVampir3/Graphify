@@ -48,6 +48,11 @@ namespace GraphFramework.Editor
         }
         
         #region Public API
+
+        public void ResetGraph()
+        {
+            graphView?.ResetGraph();
+        }
         
         public void VisitRuntimeNode(RuntimeNode node)
         {
@@ -208,6 +213,8 @@ namespace GraphFramework.Editor
                 {text = "Foldout all Items"});
             toolbar.Add(new Button( Debug__ExpandAllItems ) 
                 {text = "Expand all Items"});
+            toolbar.Add(new Button( ResetGraph ) 
+                {text = "Reset Graph"});
 
             toolbar.Add(serializedGraphSelector);
             graphView.Add(toolbar);

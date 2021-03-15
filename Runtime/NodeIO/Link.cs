@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
@@ -53,6 +54,7 @@ namespace GraphFramework
                 fastGetters.Add((node.GetType(), portField.FieldName), fastGetter);
             }
             ValuePort port = fastGetter(node);
+            port.Reset();
             #endif
             
             return port;
@@ -97,6 +99,17 @@ namespace GraphFramework
         {
             distantEndValueKey = remoteLinkBinder.Bind();
         }
+
+        public void Reset()
+        {
+            if (!valueBound)
+            {
+                BindRemote();
+                valueBound = true;
+            }
+            
+            distantEndValueKey.Reset();
+        }
         
         //Not cached because caching is not safe here. This ideally is not useful at runtime.
         /// <summary>
@@ -116,15 +129,19 @@ namespace GraphFramework
             //Lazy binding, this is the most optimal strategy as we will not attempt to create
             //tons of binding data all at once, and the binding we do create gets cached incrementally
             //as a result.
-            if(!valueBound)
+            if (!valueBound)
+            {
                 BindRemote();
+                valueBound = true;
+            }
+
             if (!(distantEndValueKey is ValuePort<T> valuePort))
             {
                 //No error because this was a try get.
                 value = default;
                 return false;
             }
-            value = valuePort.portValue;
+            value = valuePort.mutablePortValue;
             return true;
         }
         
@@ -137,11 +154,15 @@ namespace GraphFramework
             //Lazy binding, this is the most optimal strategy as we will not attempt to create
             //tons of binding data all at once, and the binding we do create gets cached incrementally
             //as a result.
-            if(!valueBound)
+            if (!valueBound)
+            {
                 BindRemote();
+                valueBound = true;
+            }
+
             if (distantEndValueKey is ValuePort<T> valuePort)
             {
-                return valuePort.portValue;
+                return valuePort.mutablePortValue;
             }
 
             //This should be an error, as GetValueAs should not be trying to get an illegal type.

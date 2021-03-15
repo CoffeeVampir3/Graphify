@@ -163,6 +163,14 @@ namespace GraphFramework.Editor
         }
 
         #region Public API
+
+        public void ResetGraph()
+        {
+            foreach (var link in graphModel.links)
+            {
+                link.Reset();
+            }
+        }
         
         /// <summary>
         /// Creates a new node on the graph.
