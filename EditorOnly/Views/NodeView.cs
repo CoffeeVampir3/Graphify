@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace GraphFramework.Editor
@@ -89,6 +91,16 @@ namespace GraphFramework.Editor
         private void CreateEditorFromNodeData()
         {
             var serializedNode = new SerializedObject(nodeModel.RuntimeData);
+            
+            if(ViewRegistrationResolver.TryGetCustom(nodeModel.RuntimeData.GetType(),
+                   out var customEditorType) && 
+               Activator.CreateInstance(customEditorType) is CustomNodeView editor) 
+            {
+                editor.CreateView(serializedNode);
+                extensionContainer.Add(editor);
+                return;
+            }
+            
             var it = serializedNode.GetIterator();
             if (!it.NextVisible(true))
                 return;

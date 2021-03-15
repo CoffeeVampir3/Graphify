@@ -8,7 +8,6 @@ namespace GraphFramework.Editor
     /// Serializable model of our editor graph, holds all the persistent model data for a graph
     /// has some extra data for debugging and utilities.
     /// </summary>
-    [CreateAssetMenu]
     public class GraphModel : ScriptableObject
     {
         [SerializeField] 
