@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
-using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace GraphFramework.Editor
@@ -101,31 +100,7 @@ namespace GraphFramework.Editor
                 return;
             }
             
-            var it = serializedNode.GetIterator();
-            if (!it.NextVisible(true))
-                return;
-            
-            //Descends through serialized property children & allows us to edit them.
-            do
-            {
-                var propertyField = new PropertyField(it.Copy()) 
-                    { name = it.propertyPath };
-
-                //Bind the property so we can edit the values.
-                propertyField.Bind(serializedNode);
-
-                //This ignores the label name field, it's ugly.
-                if (it.propertyPath == "m_Script" && 
-                    serializedNode.targetObject != null) 
-                {
-                    propertyField.SetEnabled(false);
-                    propertyField.visible = false;
-                    continue;
-                }
-
-                extensionContainer.Add(propertyField);
-            }
-            while (it.NextVisible(false));
+            AutoView.Generate(serializedNode, extensionContainer);
         }
 
         private void Clean()

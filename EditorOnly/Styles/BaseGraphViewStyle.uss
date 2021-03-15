@@ -56,22 +56,38 @@ GridBackground {
     margin: 0;
 }
 
-.unity-base-field .unity-base-field__input {
+.unity-property-field__input.unity-base-field__input,
+.unity-base-field__input.unity-text-field__input,
+.unity-base-field__input.unity-float-field__input {
     border-radius: 5px;
-    border-width: 2px;
+    border-width: 1px;
     border-top-width: 1px;
-    min-width: 70px;
+    background-color: rgba(0, 0, 0, .2);
 }
 
-.unity-base-field__input.unity-property-field__input {
+.unity-base-field > .unity-text-element.unity-label {
+    min-width: initial;
+    padding-right: 14px;
+}
+
+.unity-base-field.unity-color-field {
+    max-width: 180px;
+}
+
+.unity-base-field__input {
     padding-left: 4px;
-    background-color: rgba(22, 22, 22, .4);
 }
 
-.unity-base-field__input.unity-property-field__input.unity-base-text-field__input {
+.unity-base-field__input.unity-property-field__input.unity-base-text-field__input.unity-base-text-field__input--single-line {
     white-space: normal;
     -unity-overflow-clip-box: content-box;
-    max-width: 140px;
+}
+
+.textInputBox {
+    min-width: 250px;
+    max-width: 250px;
+    white-space: normal;
+    -unity-overflow-clip-box: content-box;
 }
 
 .unity-base-field__input,
