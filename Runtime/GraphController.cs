@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using GraphFramework.Runtime;
+using UnityEngine;
 
 namespace GraphFramework
 {
@@ -6,5 +7,7 @@ namespace GraphFramework
     {
         [SerializeField]
         public RuntimeNode rootNode;
+        [SerializeReference]
+        public GravestoneList<RuntimeNode> runtimeNodes = new GravestoneList<RuntimeNode>();
     }
 }

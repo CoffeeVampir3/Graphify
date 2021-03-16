@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
@@ -17,6 +16,10 @@ namespace GraphFramework
         internal RuntimeNode node;
         [SerializeReference]
         internal SerializedFieldInfo portField;
+        [SerializeField] 
+        private int remoteNodeId = -1;
+        [SerializeReference] 
+        internal GraphController parentGraphController;
 
         internal LinkBinder(RuntimeNode remote,
             SerializedFieldInfo field)
