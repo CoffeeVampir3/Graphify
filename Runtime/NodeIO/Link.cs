@@ -55,7 +55,7 @@ namespace GraphFramework
         //a few bytes per link.
         [SerializeReference]
         private LinkBinder localLinkBinder;
-        [SerializeReference] 
+        [SerializeReference]
         public string GUID;
         //This is the field we bind at runtime, which acts as a pointer to our data values.
         [NonSerialized]
@@ -75,6 +75,7 @@ namespace GraphFramework
         /// <summary>
         /// Creates the value key binding from serialization.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void BindRemote()
         {
             if (valueBound) return;
@@ -86,6 +87,7 @@ namespace GraphFramework
         /// Initializes the link (if necessary) and sets the mutable port values to the initialization value
         /// of the node
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void CreateVirtualizedLinks(int graphId)
         {
             BindRemote();
@@ -95,6 +97,7 @@ namespace GraphFramework
         /// <summary>
         /// Resets the value of this link for the given graph Id to their initial value.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Reset(int graphId)
         {
             #if UNITY_EDITOR
@@ -117,6 +120,7 @@ namespace GraphFramework
         /// Attempts to resolve the value of the connection if the distant end type might not be
         /// what you expect. If there's only one possible type the connection could be, use GetValue.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TryGetValue<T>(out T value)
         {
             //Lazy binding for the editor, this is an edge case safeguard where a new element was added
@@ -150,6 +154,7 @@ namespace GraphFramework
         /// Attempts to resolve the connection value. If the type *might* not be what you expect,
         /// use TryGetValue.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T GetValueAs<T>()
         {
             //Lazy binding for the editor, this is an edgecase safeguard where a new element was added
@@ -186,6 +191,7 @@ namespace GraphFramework
         /// <summary>
         /// Returns the node this link is connected to.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public RuntimeNode GetNode()
         {
             return linkedTo;

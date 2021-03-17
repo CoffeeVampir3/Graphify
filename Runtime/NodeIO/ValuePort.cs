@@ -27,11 +27,15 @@ namespace GraphFramework
         /// </summary>
         public IEnumerable<Link> Links => links;
 
+        /// <summary>
+        /// Resets the value of a virtual port back to it's original value.
+        /// </summary>
         public abstract void Reset(int graphId);
 
         /// <summary>
         /// Returns true if this port has any links.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsLinked()
         {
             return links.Count > 0;
@@ -40,6 +44,7 @@ namespace GraphFramework
         /// <summary>
         /// Returns true if this port has more than one link.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool HasMultipleLinks()
         {
             return links.Count > 1;
@@ -59,6 +64,9 @@ namespace GraphFramework
         [NonSerialized] 
         public readonly Dictionary<int, T> virtualizedMutablePortValues = new Dictionary<int, T>();
 
+        /// <summary>
+        /// Resets the value of the virtual port for this graph id to the original port value.
+        /// </summary>
         public override void Reset(int graphId) => virtualizedMutablePortValues[graphId] = portValue;
 
         /// <summary>
@@ -72,6 +80,7 @@ namespace GraphFramework
         /// <summary>
         /// Returns the value of the first link or default.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T FirstValue()
         {
             return links.Count > 0 ? links[0].GetValueAs<T>() : default;
@@ -80,6 +89,7 @@ namespace GraphFramework
         /// <summary>
         /// Returns the node for the first link or null.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public RuntimeNode FirstNode()
         {
             return links.Count > 0 ? links[0].GetNode() : null;
@@ -88,6 +98,7 @@ namespace GraphFramework
         /// <summary>
         /// Returns the first link or null.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Link FirstLink()
         {
             return links.Count > 0 ? links[0] : null;
@@ -96,6 +107,7 @@ namespace GraphFramework
         /// <summary>
         /// Returns the value of the link at the given index or default.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T ValueOf(int index)
         {
             return links.Count > index ? links[index].GetValueAs<T>() : default;
@@ -104,6 +116,7 @@ namespace GraphFramework
         /// <summary>
         /// Returns the linked node at the given index or null.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public RuntimeNode NodeOf(int index)
         {
             return links.Count > index ? links[index].GetNode() : null;

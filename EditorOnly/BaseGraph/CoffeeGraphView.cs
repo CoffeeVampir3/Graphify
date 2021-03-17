@@ -91,7 +91,7 @@ namespace GraphFramework.Editor
                     if (runtimeNodes.Contains(modelRuntimeNode)) continue;
                     //The root node is not in graphModel.nodeModels so we need to account
                     //for it.
-                    if (modelRuntimeNode is RootNode) continue;
+                    if (modelRuntimeNode == graphModel.rootNodeModel.RuntimeData) continue;
                     AssetDatabase.RemoveObjectFromAsset(modelRuntimeNode);
                 }
             }

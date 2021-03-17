@@ -3,11 +3,12 @@
     public class VirtualGraph
     {
         private GraphController parentGraphController;
-        public int virtualId = -1;
+        public readonly int virtualId;
 
-        public VirtualGraph(GraphController parent)
+        public VirtualGraph(GraphController parent, int id)
         {
             parentGraphController = parent;
+            virtualId = id;
         }
     }
 }

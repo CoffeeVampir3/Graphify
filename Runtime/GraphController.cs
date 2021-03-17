@@ -7,23 +7,20 @@ namespace GraphFramework
 {
     public abstract class GraphController : ScriptableObject
     {
-        [SerializeField]
+        [SerializeField, HideInInspector]
         public RuntimeNode rootNode;
-        [SerializeReference] 
+        [SerializeReference, HideInInspector] 
         protected internal List<Link> links = new List<Link>();
         [NonSerialized] 
-        private readonly GravestoneList<VirtualGraph> virtualizedGraphs = new GravestoneList<VirtualGraph>();
-
+        private int currentVirtualGraphIndex = int.MinValue;
+        
         public VirtualGraph CreateVirtualGraph()
         {
-            VirtualGraph vg = new VirtualGraph(this);
-            vg.virtualId = virtualizedGraphs.Add(vg);
+            VirtualGraph vg = new VirtualGraph(this, currentVirtualGraphIndex++);
             foreach (var link in links)
             {
                 link.CreateVirtualizedLinks(vg.virtualId);
             }
-            Debug.Log(vg.virtualId);
-
             return vg;
         }
     }
