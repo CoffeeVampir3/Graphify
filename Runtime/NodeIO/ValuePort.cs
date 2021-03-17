@@ -29,10 +29,6 @@ namespace GraphFramework
 
         public abstract void Reset(int graphId);
 
-        internal abstract void CreateVirtualPorts(int graphId);
-
-        internal abstract void DiscardVirtualPortsFor(int graphId);
-
         /// <summary>
         /// Returns true if this port has any links.
         /// </summary>
@@ -56,23 +52,12 @@ namespace GraphFramework
     [Serializable]
     public class ValuePort<T> : ValuePort
     {
-        //Backing value of the port.
+        //Backing value of the port, the is used as the initialization value for the port.
         [SerializeField]
         private T portValue = default;
-        //Ports use a soft mutable value when the port value is set in code, the only
-        //way the actual port value can mutate is the user changing its value via graph UI.
+        //Indexed by graph ID, this gives us a virtualized lookup of GraphId->CurrentPortValue
         [NonSerialized] 
         public readonly Dictionary<int, T> virtualizedMutablePortValues = new Dictionary<int, T>();
-
-        internal override void CreateVirtualPorts(int graphId)
-        {
-            virtualizedMutablePortValues[graphId] = default;
-        }
-
-        internal override void DiscardVirtualPortsFor(int graphId)
-        {
-            virtualizedMutablePortValues.Remove(graphId);
-        }
 
         public override void Reset(int graphId) => virtualizedMutablePortValues[graphId] = portValue;
 

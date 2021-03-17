@@ -2,7 +2,7 @@
 {
     public class VirtualGraph
     {
-        public GraphController parentGraphController;
+        private GraphController parentGraphController;
         public int virtualId = -1;
 
         public VirtualGraph(GraphController parent)

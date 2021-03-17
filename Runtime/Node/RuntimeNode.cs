@@ -13,8 +13,8 @@ namespace GraphFramework
             ValuePort.CurrentGraphIndex = graphIndex;
             return OnEvaluate();
         }
-        
-        public virtual RuntimeNode OnEvaluate()
+
+        protected virtual RuntimeNode OnEvaluate()
         {
             return null;
         }

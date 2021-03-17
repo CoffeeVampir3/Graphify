@@ -164,13 +164,19 @@ namespace GraphFramework.Editor
 
         #region Public API
 
-        public void ResetGraph()
+        public void ResetVirtualGraph(int graphId)
         {
+            foreach (var elem in graphElements)
+            {
+                if (elem is NodeView nv)
+                {
+                    nv.RemoveFromClassList("CurrentNode");
+                }
+            }
+            graphModel.rootNodeModel?.View?.AddToClassList("CurrentNode");
             foreach (var link in graphModel.serializedGraphController.links)
             {
-                //TODO::
-                Debug.LogError("Not implemented yet.");
-                link.Reset(0);
+                link.Reset(graphId);
             }
         }
         

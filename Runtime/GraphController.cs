@@ -13,7 +13,7 @@ namespace GraphFramework
         protected internal List<Link> links = new List<Link>();
         [NonSerialized] 
         private readonly GravestoneList<VirtualGraph> virtualizedGraphs = new GravestoneList<VirtualGraph>();
-        
+
         public VirtualGraph CreateVirtualGraph()
         {
             VirtualGraph vg = new VirtualGraph(this);
@@ -21,7 +21,6 @@ namespace GraphFramework
             foreach (var link in links)
             {
                 link.CreateVirtualizedLinks(vg.virtualId);
-                link.Reset(vg.virtualId);
             }
             Debug.Log(vg.virtualId);
 

@@ -82,16 +82,23 @@ namespace GraphFramework
             valueBound = true;
         }
 
+        /// <summary>
+        /// Initializes the link (if necessary) and sets the mutable port values to the initialization value
+        /// of the node
+        /// </summary>
         public void CreateVirtualizedLinks(int graphId)
         {
             BindRemote();
-            distantEndValueKey.CreateVirtualPorts(graphId);
+            Reset(graphId);
         }
 
+        /// <summary>
+        /// Resets the value of this link for the given graph Id to their initial value.
+        /// </summary>
         public void Reset(int graphId)
         {
             #if UNITY_EDITOR
-            //Safeguard for editor mutations
+            //Safeguard for editor mutations, protects against added element edge case.
             BindRemote();
             #endif
             distantEndValueKey.Reset(graphId);
@@ -112,7 +119,7 @@ namespace GraphFramework
         /// </summary>
         public bool TryGetValue<T>(out T value)
         {
-            //Lazy binding for the editor, this is an edgecase safeguard where a new element was added
+            //Lazy binding for the editor, this is an edge case safeguard where a new element was added
             //to the graph but was not bound by the VG initialization.
             #if UNITY_EDITOR
             BindRemote();

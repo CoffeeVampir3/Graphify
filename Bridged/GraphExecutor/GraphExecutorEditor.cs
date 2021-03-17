@@ -74,6 +74,12 @@ namespace GraphFramework.GraphExecutor
             
             return graphModelData != null && linkedEditorWindow != null;
         }
+
+       public void EditorLinkedResetGraph(int graphId)
+       {
+           if (!(linkedEditorWindow is CoffeeGraphWindow cg)) return;
+           cg.ResetGraph(graphId);
+       }
         
         public void EditorLinkedRuntimeNodeVisited(RuntimeNode node)
         {

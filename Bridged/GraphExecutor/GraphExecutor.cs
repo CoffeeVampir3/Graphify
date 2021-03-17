@@ -1,4 +1,5 @@
 ﻿using System;
+using GraphFramework.Runtime;
 using Sirenix.OdinInspector;
 
 namespace GraphFramework.GraphExecutor
@@ -29,14 +30,30 @@ namespace GraphFramework.GraphExecutor
             if(currentNode != null)
                 EditorLinkedRuntimeNodeVisited(currentNode);
         }
-        #endif
-
+        
         [Button]
-        public void Reset(int graphId)
+        public void Reset()
         {
             currentNode = graphController.rootNode;
             nextNode = null;
             previousNode = null;
+            EditorLinkedResetGraph(currentVirtualGraph.virtualId);
+        }
+        #endif
+        
+        [Button]
+        public void Do()
+        {
+            WalkNode(currentVirtualGraph.virtualId);
+        }
+
+        private VirtualGraph currentVirtualGraph = null;
+        [Button]
+        public void CreateVirtualGraph()
+        {
+            if(currentVirtualGraph != null)
+                Reset();
+            currentVirtualGraph = graphController.CreateVirtualGraph();
         }
 
         /// <summary>

@@ -57,6 +57,11 @@ namespace GraphFramework.Runtime
             if (actualCount != 0) return;
             //In the case we've removed all of our items we can completely free all the data we've been 
             //hoarding like some sort of data dragon.
+            Clear();
+        }
+
+        public void Clear()
+        {
             itemList.Clear();
             hangingIndices.Clear();
         }
