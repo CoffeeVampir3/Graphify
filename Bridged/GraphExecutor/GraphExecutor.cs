@@ -1,4 +1,5 @@
 ﻿using System;
+using Sirenix.OdinInspector;
 
 namespace GraphFramework.GraphExecutor
 {
@@ -30,16 +31,24 @@ namespace GraphFramework.GraphExecutor
         }
         #endif
 
+        [Button]
+        public void Reset(int graphId)
+        {
+            currentNode = graphController.rootNode;
+            nextNode = null;
+            previousNode = null;
+        }
+
         /// <summary>
         /// Evaluates the current node and walks the graph to whatever node is returned by
         /// the evaluated node.
         /// </summary>
-        public void WalkNode()
+        public void WalkNode(int graphId)
         {
             if (nextNode != null)
                 currentNode = nextNode;
             RuntimeNode tempPrev = currentNode;
-            nextNode = currentNode.OnEvaluate();
+            nextNode = currentNode.Evaluate(graphId);
             
             //This is our gateway into editor code, using this method we can get 100% of the
             //editor linker branch to compile out.

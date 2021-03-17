@@ -19,8 +19,6 @@ namespace GraphFramework.Editor
         protected internal List<StackModel> stackModels = new List<StackModel>();
         [SerializeReference] 
         protected internal List<EdgeModel> edgeModels = new List<EdgeModel>();
-        [SerializeReference] 
-        protected internal List<Link> links = new List<Link>();
         [SerializeReference]
         protected internal GraphController serializedGraphController;
         [SerializeReference] 

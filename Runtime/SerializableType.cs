@@ -8,7 +8,7 @@ namespace GraphFramework
     {
         [SerializeField, HideInInspector]
         private string serializedTypeName = "";
-        [HideInInspector]
+        [NonSerialized]
         public Type type = null;
 
         public SerializableType()

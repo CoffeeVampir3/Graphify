@@ -20,13 +20,18 @@ namespace GraphFramework
         //Internals shared with graph editor.
         [SerializeReference, HideInInspector]
         protected internal List<Link> links = new List<Link>();
+        public static int CurrentGraphIndex { get; set; }
 
         /// <summary>
         /// The list of links this port has.
         /// </summary>
         public IEnumerable<Link> Links => links;
 
-        public abstract void Reset();
+        public abstract void Reset(int graphId);
+
+        internal abstract void CreateVirtualPorts(int graphId);
+
+        internal abstract void DiscardVirtualPortsFor(int graphId);
 
         /// <summary>
         /// Returns true if this port has any links.
@@ -56,17 +61,27 @@ namespace GraphFramework
         private T portValue = default;
         //Ports use a soft mutable value when the port value is set in code, the only
         //way the actual port value can mutate is the user changing its value via graph UI.
-        [NonSerialized]
-        protected internal T mutablePortValue = default;
+        [NonSerialized] 
+        public readonly Dictionary<int, T> virtualizedMutablePortValues = new Dictionary<int, T>();
 
-        public override void Reset() => mutablePortValue = portValue;
+        internal override void CreateVirtualPorts(int graphId)
+        {
+            virtualizedMutablePortValues[graphId] = default;
+        }
+
+        internal override void DiscardVirtualPortsFor(int graphId)
+        {
+            virtualizedMutablePortValues.Remove(graphId);
+        }
+
+        public override void Reset(int graphId) => virtualizedMutablePortValues[graphId] = portValue;
 
         /// <summary>
         /// Used to set the value of this port.
         /// </summary>
         public T PortValue
         {
-            set => mutablePortValue = value;
+            set => virtualizedMutablePortValues[CurrentGraphIndex] = value;
         }
 
         /// <summary>

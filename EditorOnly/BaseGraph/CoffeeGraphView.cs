@@ -166,9 +166,11 @@ namespace GraphFramework.Editor
 
         public void ResetGraph()
         {
-            foreach (var link in graphModel.links)
+            foreach (var link in graphModel.serializedGraphController.links)
             {
-                link.Reset();
+                //TODO::
+                Debug.LogError("Not implemented yet.");
+                link.Reset(0);
             }
         }
         
@@ -460,13 +462,13 @@ namespace GraphFramework.Editor
             //Map guid->connection since we're going to be doing lots of lookups and
             //this is a more efficient data format.
             var graphKnownGuidToLink = new Dictionary<string, Link>();
-            var untraversedLinks = new List<Link>(graphModel.links);
-            var traversedLinks = new List<Link>(graphModel.links.Count);
+            var untraversedLinks = new List<Link>(graphModel.serializedGraphController.links);
+            var traversedLinks = new List<Link>(graphModel.serializedGraphController.links);
             bool anyLinksRemoved = false;
             
-            for (var i = 0; i < graphModel.links.Count; i++)
+            for (var i = 0; i < graphModel.serializedGraphController.links.Count; i++)
             {
-                var link = graphModel.links[i];
+                var link = graphModel.serializedGraphController.links[i];
                 graphKnownGuidToLink.Add(link.GUID, link);
             }
 
@@ -549,11 +551,11 @@ namespace GraphFramework.Editor
 
         private void DeleteConnectionByGuid(string guid)
         {
-            for (int j = graphModel.links.Count - 1; j >= 0; j--)
+            for (int j = graphModel.serializedGraphController.links.Count - 1; j >= 0; j--)
             {
-                Link currentLink = graphModel.links[j];
+                Link currentLink = graphModel.serializedGraphController.links[j];
                 if (currentLink.GUID != guid) continue;
-                graphModel.links.Remove(currentLink);
+                graphModel.serializedGraphController.links.Remove(currentLink);
                 return;
             }
         }
@@ -596,8 +598,8 @@ namespace GraphFramework.Editor
 
             edgeToModel.Add(edge, modelEdge);
             graphModel.edgeModels.Add(modelEdge);
-            graphModel.links.Add(localConnection);
-            graphModel.links.Add(remoteConnection);
+            graphModel.serializedGraphController.links.Add(localConnection);
+            graphModel.serializedGraphController.links.Add(remoteConnection);
             return true;
         }
 
