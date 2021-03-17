@@ -48,7 +48,7 @@ namespace GraphFramework
     public class Link
     {
         [SerializeReference]
-        public RuntimeNode linkedTo;
+        private RuntimeNode linkedTo;
         [SerializeReference] 
         private LinkBinder remoteLinkBinder;
         //This is only used by the editor, but is quite difficult to factor out and only saves
@@ -88,7 +88,7 @@ namespace GraphFramework
         /// of the node
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void CreateVirtualizedLinks(int graphId)
+        internal void CreateVirtualizedLinks(int graphId)
         {
             BindRemote();
             Reset(graphId);
@@ -189,12 +189,8 @@ namespace GraphFramework
         }
 
         /// <summary>
-        /// Returns the node this link is connected to.
+        /// The node this link is connected to.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public RuntimeNode GetNode()
-        {
-            return linkedTo;
-        }
+        public RuntimeNode Node => linkedTo;
     }
 }

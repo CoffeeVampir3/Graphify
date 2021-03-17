@@ -25,7 +25,7 @@ namespace GraphFramework
         /// <summary>
         /// The list of links this port has.
         /// </summary>
-        public IEnumerable<Link> Links => links;
+        public List<Link> Links => links;
 
         /// <summary>
         /// Resets the value of a virtual port back to it's original value.
@@ -92,7 +92,7 @@ namespace GraphFramework
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public RuntimeNode FirstNode()
         {
-            return links.Count > 0 ? links[0].GetNode() : null;
+            return links.Count > 0 ? links[0].Node : null;
         }
         
         /// <summary>
@@ -102,24 +102,6 @@ namespace GraphFramework
         public Link FirstLink()
         {
             return links.Count > 0 ? links[0] : null;
-        }
-
-        /// <summary>
-        /// Returns the value of the link at the given index or default.
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public T ValueOf(int index)
-        {
-            return links.Count > index ? links[index].GetValueAs<T>() : default;
-        }
-        
-        /// <summary>
-        /// Returns the linked node at the given index or null.
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public RuntimeNode NodeOf(int index)
-        {
-            return links.Count > index ? links[index].GetNode() : null;
         }
     }
 }

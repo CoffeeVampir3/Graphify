@@ -1,4 +1,5 @@
-﻿using UnityEngine.Scripting;
+﻿using UnityEditor.Experimental.GraphView;
+using UnityEngine.Scripting;
 
 namespace GraphFramework.Attributes
 {
@@ -8,5 +9,10 @@ namespace GraphFramework.Attributes
     /// </summary>
     public class In : PreserveAttribute
     {
+        public readonly Port.Capacity capacity;
+        public In(Port.Capacity portCapacity = Port.Capacity.Single)
+        {
+            capacity = portCapacity;
+        }
     }
 }

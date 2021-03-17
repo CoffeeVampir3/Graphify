@@ -6,13 +6,14 @@ namespace GraphFramework.Editor
 {
     public static class ReflectionExtensions
     {
-        public static List<FieldInfo> GetLocalFieldsWithAttribute<TargetAttr>(this Type t)
+        public static List<FieldInfo> GetLocalFieldsWithAttribute<TargetAttr>(this Type t, out List<Attribute> fieldAttribs)
             where TargetAttr : Attribute
         {
             var allFields = t.GetFields(BindingFlags.Public |
                         BindingFlags.Instance | BindingFlags.NonPublic);
 
             var fieldList = new List<FieldInfo>();
+            fieldAttribs = new List<Attribute>();
             foreach (var f in allFields)
             {
                 var attribs = f.GetCustomAttributes();
@@ -22,6 +23,7 @@ namespace GraphFramework.Editor
                     if (attr.GetType() != typeof(TargetAttr)) 
                         continue;
                     fieldList.Add(f);
+                    fieldAttribs.Add(attr);
                     break;
                 }
             }

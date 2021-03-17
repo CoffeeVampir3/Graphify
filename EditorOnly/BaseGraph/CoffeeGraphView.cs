@@ -97,7 +97,10 @@ namespace GraphFramework.Editor
             }
             if(graphModel != null)
             {
+                graphModel.viewPosition = viewTransform.position;
+                graphModel.viewZoom = viewTransform.scale;
                 EditorUtility.SetDirty(graphModel);
+                EditorUtility.SetDirty(graphModel.serializedGraphController);
                 CleanUndoRemnants();
             }
             AssetDatabase.SaveAssets();
@@ -105,6 +108,8 @@ namespace GraphFramework.Editor
 
         #endregion
 
+        #region Internal API
+        
         /// <summary>
         /// Loads the provided GraphModel.
         /// </summary>
@@ -128,6 +133,8 @@ namespace GraphFramework.Editor
             }
 
             Undo.ClearAll();
+            viewTransform.position = graphModel.viewPosition;
+            viewTransform.scale = graphModel.viewZoom;
             BuildGraph();
         }
 
@@ -161,6 +168,8 @@ namespace GraphFramework.Editor
             
             view.RemoveFromClassList("CurrentNode");
         }
+        
+        #endregion
 
         #region Public API
 
@@ -594,8 +603,17 @@ namespace GraphFramework.Editor
             {
                 return false;
             }
+
             var localConnection = inModel.LinkPortTo(inputPort, outModel, outputPort);
             var remoteConnection = outModel.LinkPortTo(outputPort, inModel, inputPort);
+            
+            //If we're trying to reconnect a port that was already connected, discard the old connection first.
+            if (edgeToModel.TryGetValue(edge, out var oldEdgeModel))
+            {
+                edgeToModel.Remove(edge);
+                if (graphModel.edgeModels.Contains(oldEdgeModel))
+                    DeleteEdge(edge, oldEdgeModel);
+            }
             
             var modelEdge = new EdgeModel(inModel, inputPort,
                 outModel, outputPort,
@@ -690,6 +708,7 @@ namespace GraphFramework.Editor
                 }
                 else
                 {
+                    Undo.IncrementCurrentGroup();
                     AddEdgeClasses(edge);
                 }
             }

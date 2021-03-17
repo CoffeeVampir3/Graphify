@@ -12,7 +12,10 @@ namespace GraphFramework.Editor
     {
         [SerializeField] 
         public SerializableType graphWindowType;
-
+        [SerializeField]
+        public Vector3 viewPosition = Vector3.zero;
+        [SerializeField] 
+        public Vector3 viewZoom = Vector3.one;
         [SerializeReference] 
         protected internal List<NodeModel> nodeModels = new List<NodeModel>();
         [SerializeReference]
@@ -21,7 +24,7 @@ namespace GraphFramework.Editor
         protected internal List<EdgeModel> edgeModels = new List<EdgeModel>();
         [SerializeReference]
         protected internal GraphController serializedGraphController;
-        [SerializeReference] 
+        [SerializeReference]
         protected internal NodeModel rootNodeModel;
 
         /// <summary>

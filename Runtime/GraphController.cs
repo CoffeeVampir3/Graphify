@@ -13,7 +13,7 @@ namespace GraphFramework
         protected internal List<Link> links = new List<Link>();
         [NonSerialized] 
         private int currentVirtualGraphIndex = int.MinValue;
-        
+
         public VirtualGraph CreateVirtualGraph()
         {
             VirtualGraph vg = new VirtualGraph(this, currentVirtualGraphIndex++);

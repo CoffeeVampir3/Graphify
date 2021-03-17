@@ -37,7 +37,8 @@ namespace GraphFramework.GraphExecutor
             currentNode = graphController.rootNode;
             nextNode = null;
             previousNode = null;
-            EditorLinkedResetGraph(currentVirtualGraph.virtualId);
+            if(currentVirtualGraph != null)
+                EditorLinkedResetGraph(currentVirtualGraph.virtualId);
         }
         #endif
         

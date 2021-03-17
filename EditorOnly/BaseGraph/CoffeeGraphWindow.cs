@@ -11,8 +11,6 @@ namespace GraphFramework.Editor
     {
         [SerializeReference]
         protected CoffeeGraphView graphView;
-        [SerializeReference]
-        public string currentGraphGUID;
         private bool isWindowLoaded = false;
         private Action OnWindowLayoutFinished = null;
         private string domainSafeWorkingAssetPath;
@@ -47,7 +45,7 @@ namespace GraphFramework.Editor
             }
         }
         
-        #region Public API
+        #region Linking API
 
         public void ResetGraph(int graphId)
         {
@@ -89,19 +87,9 @@ namespace GraphFramework.Editor
                 LoadGraphControllerInternal(domainSafeWorkingAssetPath);
             };
         }
-        
-        private void OnDisable()
-        {
-            rootVisualElement.Clear();
-        }
-        
+
         private void InitializeGraph()
         {
-            if (string.IsNullOrWhiteSpace(currentGraphGUID))
-            {
-                currentGraphGUID = Guid.NewGuid().ToString();
-            }
-
             //Unloads the graph before the assembly reloads.
             //This is important, otherwise unity editor will soft-lock, presumably due to
             //graph view no longer existing but still being referenced.
