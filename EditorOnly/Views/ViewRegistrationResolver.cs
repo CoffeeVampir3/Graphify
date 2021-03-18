@@ -15,9 +15,8 @@ namespace GraphFramework.Editor
             foreach (var viewType in viewTypeList)
             {
                 var attribs = viewType.GetCustomAttributes();
-                var rvForAttrib = attribs.FirstOrDefault(
-                    (e) => e is RegisterViewFor) as RegisterViewFor;
-                if (rvForAttrib == null)
+                if (!(attribs.FirstOrDefault(
+                        e => e is RegisterViewFor) is RegisterViewFor rvForAttrib))
                     return false;
                 
                 if (forType.IsAssignableFrom(rvForAttrib.runtimeNodeType))

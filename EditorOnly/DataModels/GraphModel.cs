@@ -47,7 +47,6 @@ namespace GraphFramework.Editor
                 return null;
             }
             
-            //TODO:: Add support for custom window.
             graphModel.graphWindowType = new SerializableType(typeof(CoffeeGraphWindow));
             
             EditorUtility.SetDirty(graphModel);

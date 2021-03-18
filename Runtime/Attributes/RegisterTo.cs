@@ -13,20 +13,12 @@ namespace GraphFramework.Attributes
         
         /// <summary>
         /// Registers to the provided controller with the given unique searchable path.
+        /// (Use no path for registering root nodes if they shouldn't be creatable.)
         /// </summary>
-        public RegisterTo(Type registerTo, string nodePath)
+        public RegisterTo(Type registerTo, string nodePath = "")
         {
             registeredGraphType = registerTo;
             registeredPath = nodePath;
-        }
-
-        /// <summary>
-        /// Registers to the provided controller no searchable path, used primarily for RootNode.
-        /// </summary>
-        public RegisterTo(Type registerTo)
-        {
-            registeredGraphType = registerTo;
-            registeredPath = "";
         }
     }
 }

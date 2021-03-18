@@ -6,7 +6,7 @@ using Debug = UnityEngine.Debug;
 namespace GraphFramework
 {
     /// <summary>
-    /// Reflection that allows us to save the relationship between actual value field and value port.
+    /// A one-time binding per graph controller (not virtual graph) per port.
     /// </summary>
     [System.Serializable]
     internal sealed class LinkBinder
@@ -78,6 +78,7 @@ namespace GraphFramework
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void BindRemote()
         {
+            //Binding multiple times would not create errors, it's just an avoidable cost.
             if (valueBound) return;
             distantEndValueKey = remoteLinkBinder.Bind();
             valueBound = true;

@@ -81,8 +81,7 @@ namespace GraphFramework.Editor
                     generateTo.Add(drawer);
                     continue;
                 }
-
-                copiedProp = null;
+                
                 copiedProp = it.Copy();
                 
                 //Otherwise lay out like normal.

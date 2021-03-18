@@ -26,11 +26,8 @@ namespace GraphFramework.Editor
         private string nodeTitle = "Untitled.";
         [SerializeField] 
         private Rect position = Rect.zero;
-
-        [NonSerialized] 
-        private NodeView view;
-
-        public NodeView View => view;
+        [field: NonSerialized]
+        public NodeView View { get; private set; }
 
         #region Creation & Cloning
         
@@ -43,6 +40,9 @@ namespace GraphFramework.Editor
             return model;
         }
 
+        /// <summary>
+        /// Creates a deep-copy of this node model with it's own unique references.
+        /// </summary>
         public NodeModel Clone(GraphModel graphModel)
         {
             NodeModel model = new NodeModel
@@ -67,6 +67,9 @@ namespace GraphFramework.Editor
             EditorUtility.SetDirty(graphModel);
         }
         
+        /// <summary>
+        /// Deep copies another nodes runtime data onto this node.
+        /// </summary>
         public void CreateRuntimeDataClone(GraphModel graphModel, RuntimeNode toCopy)
         {
             RuntimeData = ScriptableObject.Instantiate(toCopy);
@@ -143,9 +146,9 @@ namespace GraphFramework.Editor
                 }
             }
             
-            PortInfoAndMetadata iacp = new PortInfoAndMetadata(fields, caps);
-            dataTypeToInfoFields.Add(index, iacp);
-            return iacp;
+            PortInfoAndMetadata pInfo = new PortInfoAndMetadata(fields, caps);
+            dataTypeToInfoFields.Add(index, pInfo);
+            return pInfo;
         }
 
         /// <summary>
@@ -191,14 +194,14 @@ namespace GraphFramework.Editor
         /// </summary>
         public NodeView CreateView()
         {
-            view = new NodeView(this);
-            view.Display();
-            return view;
+            View = new NodeView(this);
+            View.Display();
+            return View;
         }
 
         public void UpdatePosition()
         {
-            position = view.GetPosition();
+            position = View.GetPosition();
         }
         
         public string NodeTitle
@@ -208,7 +211,7 @@ namespace GraphFramework.Editor
             set
             {
                 nodeTitle = value;
-                view?.OnDirty();
+                View?.OnDirty();
             }
         }
 
@@ -218,7 +221,7 @@ namespace GraphFramework.Editor
             set
             {
                 position = value;
-                view?.OnDirty();
+                View?.OnDirty();
             }
         }
 
@@ -245,6 +248,7 @@ namespace GraphFramework.Editor
             }
             catch
             {
+                Debug.LogError("Attempted to resolve a node's value port relation for " + this.nodeTitle + " but the field " + portModel.serializedValueFieldInfo.FieldName + " was not found!");
                 return false;
             }
         }

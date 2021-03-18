@@ -10,9 +10,7 @@ using UnityEngine;
 namespace GraphFramework
 {
     /// <summary>
-    /// An I/O port for the coffee graph. Internally this works as a simple dictionary.
-    /// Connections with other nodes use a simple "pointer" key exchange,
-    /// so retrieving a value is always one single dictionary lookup with no other overhead.
+    /// An I/O port for the graph. This holds the semantic links as well as the set of virtualized values.
     /// </summary>
     [Serializable]
     public abstract class ValuePort
@@ -62,7 +60,7 @@ namespace GraphFramework
         private T portValue = default;
         //Indexed by graph ID, this gives us a virtualized lookup of GraphId->CurrentPortValue
         [NonSerialized] 
-        public readonly Dictionary<int, T> virtualizedMutablePortValues = new Dictionary<int, T>();
+        internal readonly Dictionary<int, T> virtualizedMutablePortValues = new Dictionary<int, T>();
 
         /// <summary>
         /// Resets the value of the virtual port for this graph id to the original port value.
@@ -70,9 +68,9 @@ namespace GraphFramework
         public override void Reset(int graphId) => virtualizedMutablePortValues[graphId] = portValue;
 
         /// <summary>
-        /// Used to set the value of this port.
+        /// Sets the local value of this port.
         /// </summary>
-        public T PortValue
+        public T LocalValue
         {
             set => virtualizedMutablePortValues[CurrentGraphIndex] = value;
         }

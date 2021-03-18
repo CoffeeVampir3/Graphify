@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
-using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 
 namespace GraphFramework.Editor
@@ -103,6 +102,9 @@ namespace GraphFramework.Editor
             AutoView.Generate(serializedNode, extensionContainer);
         }
 
+        /// <summary>
+        /// Updates this view to be consistent with the data model.
+        /// </summary>
         private void Clean()
         {
             title = nodeModel.NodeTitle;
@@ -136,6 +138,9 @@ namespace GraphFramework.Editor
             schedule.Execute(Clean).StartingIn(250);
         }
 
+        /// <summary>
+        /// Sets this view to be updated to match it's data model.
+        /// </summary>
         public void OnDirty()
         {
             RequestClean();

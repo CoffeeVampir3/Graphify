@@ -3,6 +3,9 @@ using UnityEditor.Callbacks;
 
 namespace GraphFramework.Editor
 {
+    /// <summary>
+    /// Handles the case when any graph controller asset is double-clicked.
+    /// </summary>
     internal class GraphClickedHandler : AssetClickedHandler<GraphController>
     {
         [OnOpenAsset(1)]

@@ -11,11 +11,6 @@ namespace GraphFramework
         [NonSerialized]
         public Type type = null;
 
-        public SerializableType()
-        {
-            //Empty
-        }
-        
         public SerializableType(System.Type t)
         {
             type = t;

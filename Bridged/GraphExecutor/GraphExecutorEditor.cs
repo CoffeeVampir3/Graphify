@@ -6,7 +6,7 @@ using GraphFramework.Editor;
 using UnityEditor;
 using UnityEngine;
 
-namespace GraphFramework.GraphExecutor
+namespace GraphFramework
 {
     public partial class GraphExecutor
     {

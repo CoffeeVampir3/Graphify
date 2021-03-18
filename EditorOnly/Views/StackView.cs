@@ -100,6 +100,9 @@ namespace GraphFramework.Editor
             RegisterCallback<GeometryChangedEvent>(OnStackOrderChanged);
         }
 
+        /// <summary>
+        /// Updates this view to be consistent with it's data model.
+        /// </summary>
         public void OnDirty()
         {
             var label = this.Q<Label>();

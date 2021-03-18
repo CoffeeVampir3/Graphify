@@ -24,8 +24,26 @@ namespace GraphFramework.Editor
             window.Focus();
         }
         
-        //TODO:: Debug features.
-        private void Debug__FoldoutAllItems()
+        /// <summary>
+        /// Loads the provided graph model to this window.
+        /// </summary>
+        protected internal virtual void LoadGraphExternal(GraphModel model)
+        {
+            //We have to wait until the window layout is created before we actually try
+            //to load the graph, if the window isint loaded we use this delay call.
+            OnWindowLayoutFinished = () =>
+            {
+                serializedGraphSelector.SetValueWithoutNotify(model.serializedGraphController);
+                graphView.LoadGraph(model);
+            };
+            
+            if (!isWindowLoaded) return;
+            //If it turns out the window is already loaded, just load the graph.
+            OnWindowLayoutFinished();
+            OnWindowLayoutFinished = null;
+        }
+        
+        private void FoldoutAllItems()
         {
             foreach (var node in graphView.nodes.ToList())
             {
@@ -35,7 +53,7 @@ namespace GraphFramework.Editor
             }
         }
 
-        private void Debug__ExpandAllItems()
+        private void ExpandAllItems()
         {
             foreach (var node in graphView.nodes.ToList())
             {
@@ -88,7 +106,7 @@ namespace GraphFramework.Editor
             };
         }
 
-        private void InitializeGraph()
+        private void InitializeView()
         {
             //Unloads the graph before the assembly reloads.
             //This is important, otherwise unity editor will soft-lock, presumably due to
@@ -112,7 +130,7 @@ namespace GraphFramework.Editor
             {
                 name = "Coffee Dialogue Graph"
             };
-            InitializeGraph();
+            InitializeView();
         }
 
         private void OnGeometryChangedInitialization(GeometryChangedEvent e)
@@ -130,22 +148,10 @@ namespace GraphFramework.Editor
         
         #endregion
 
-        protected internal virtual void LoadGraphExternal(GraphModel model)
-        {
-            //We have to wait until the window layout is created before we actually try
-            //to load the graph, if the window isint loaded we use this delay call.
-            OnWindowLayoutFinished = () =>
-            {
-                serializedGraphSelector.SetValueWithoutNotify(model.serializedGraphController);
-                graphView.LoadGraph(model);
-            };
-            
-            if (!isWindowLoaded) return;
-            //If it turns out the window is already loaded, just load the graph.
-            OnWindowLayoutFinished();
-            OnWindowLayoutFinished = null;
-        }
-        
+        /// <summary>
+        /// Loads a graph controller via it's asset path, this gives us a persistent way to access
+        /// it after a domain reload.
+        /// </summary>
         protected internal virtual void LoadGraphControllerInternal(string gcPath)
         {
             OnWindowLayoutFinished = () =>
@@ -197,9 +203,9 @@ namespace GraphFramework.Editor
             serializedGraphSelector = new ObjectField {objectType = typeof(GraphController)};
             serializedGraphSelector.RegisterValueChangedCallback(OnObjectSelectorValueChanged);
             
-            toolbar.Add(new Button( Debug__FoldoutAllItems ) 
+            toolbar.Add(new Button( FoldoutAllItems ) 
                 {text = "Foldout all Items"});
-            toolbar.Add(new Button( Debug__ExpandAllItems ) 
+            toolbar.Add(new Button( ExpandAllItems ) 
                 {text = "Expand all Items"});
 
             toolbar.Add(serializedGraphSelector);

@@ -1,8 +1,7 @@
 ﻿using System;
 using GraphFramework.Runtime;
-using Sirenix.OdinInspector;
 
-namespace GraphFramework.GraphExecutor
+namespace GraphFramework
 {
     /// <summary>
     /// This class is responsible for executing the graph at runtime, during edit/play
@@ -12,13 +11,22 @@ namespace GraphFramework.GraphExecutor
     public partial class GraphExecutor
     {
         public GraphController graphController;
-        
         public RuntimeNode currentNode = null;
         public RuntimeNode nextNode = null;
         public RuntimeNode previousNode = null;
         //Allows you to look at specific graphs operating, rather than all of them at once.
         public bool shouldLinkEditor = false;
+        [NonSerialized]
+        private VirtualGraph virtualizedGraph;
+        
+        public void Initialize()
+        {
+            virtualizedGraph = graphController.CreateVirtualGraph();
+            Reset();
+        }
 
+        #region Editor Link
+        
         #if UNITY_EDITOR
         //Gateway into the editor-only code, this branch is compiled out at runtime.
         public void EvaluateEditor()
@@ -31,42 +39,28 @@ namespace GraphFramework.GraphExecutor
                 EditorLinkedRuntimeNodeVisited(currentNode);
         }
         
-        [Button]
         public void Reset()
         {
             currentNode = graphController.rootNode;
             nextNode = null;
             previousNode = null;
-            if(currentVirtualGraph != null)
-                EditorLinkedResetGraph(currentVirtualGraph.virtualId);
+            if(virtualizedGraph != null)
+                EditorLinkedResetGraph(virtualizedGraph.virtualId);
         }
         #endif
         
-        [Button]
-        public void Do()
-        {
-            WalkNode(currentVirtualGraph.virtualId);
-        }
-
-        private VirtualGraph currentVirtualGraph = null;
-        [Button]
-        public void CreateVirtualGraph()
-        {
-            if(currentVirtualGraph != null)
-                Reset();
-            currentVirtualGraph = graphController.CreateVirtualGraph();
-        }
+        #endregion
 
         /// <summary>
         /// Evaluates the current node and walks the graph to whatever node is returned by
         /// the evaluated node.
         /// </summary>
-        public void WalkNode(int graphId)
+        public void Step()
         {
             if (nextNode != null)
                 currentNode = nextNode;
             RuntimeNode tempPrev = currentNode;
-            nextNode = currentNode.Evaluate(graphId);
+            nextNode = currentNode.Evaluate(virtualizedGraph.virtualId);
             
             //This is our gateway into editor code, using this method we can get 100% of the
             //editor linker branch to compile out.

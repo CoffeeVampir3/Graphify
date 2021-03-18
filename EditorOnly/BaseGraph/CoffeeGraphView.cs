@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using GraphFramework.Runtime;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -208,10 +209,10 @@ namespace GraphFramework.Editor
             CreateNewNode(model);
         }
         
+        //TODO::
         /// <summary>
-        /// Creates a new node on the graph.
+        /// Creates a new stack node on the graph.
         /// </summary>
-        /// <param name="runtimeDataType">The runtime data type.</param>
         /// <param name="atPosition">Editor screen space(?) position.</param>
         public void CreateNewStack(string nodeName, Type[] allowedTypes, Vector2 atPosition)
         {
@@ -272,11 +273,10 @@ namespace GraphFramework.Editor
             foreach (var viewGuid in box.viewGuids)
             {
                 if (!(GetElementByGuid(viewGuid) is NodeView nv)) continue;
-                var model = viewToModel[nv] as NodeModel;
-                //It is not possible this is null as we looked up using a node view and therefore the result
-                //is guaranteed to be a node model.
-                //ReSharper disable once PossibleNullReferenceException
-                //Creates a copy of the model and adds it to the graph, simple.
+                if (!viewToModel.TryGetValue(nv, out var mModel))
+                    return;
+                if (!(mModel is NodeModel model))
+                    return;
                 var clone = model.Clone(graphModel);
                 oldModelToCopiedModel.Add(model, clone);
                 CreateNewNode(clone);
@@ -304,7 +304,6 @@ namespace GraphFramework.Editor
                 }
                 else
                 {
-                    //TODO:: This may not be a viable solution once dynamic ports are added.
                     var pIndex = inModel.inputPorts.IndexOf(inPort);
                     if (targetInModel.inputPorts.Count <= pIndex)
                         continue;
@@ -318,7 +317,6 @@ namespace GraphFramework.Editor
                 }
                 else
                 {
-                    //TODO:: This may not be a viable solution once dynamic ports are added.
                     var pIndex = outModel.outputPorts.IndexOf(outPort);
                     if (targetOutModel.outputPorts.Count <= pIndex)
                         continue;
@@ -350,9 +348,9 @@ namespace GraphFramework.Editor
 
         /// <summary>
         /// Creates a node from the given model, but does not add it to the undo record or
-        /// editor graph. This is intended for use only via BuildGraph()
+        /// editor graph model. This is intended for use only via BuildGraph()
         /// </summary>
-        private void CreateNodeFromModel(NodeModel model)
+        private void CreateNodeFromModelInternal(NodeModel model)
         {
             NodeView nv = model.CreateView();
             AddElement(nv);
@@ -363,14 +361,17 @@ namespace GraphFramework.Editor
             model.stackedOn?.View?.StackOn(model, nv);
         }
 
+        /// <summary>
+        /// Creates a node that can't be copied or deleted.
+        /// </summary>
         private void CreateNodeFromModelAsRoot(NodeModel model)
         {
-            CreateNodeFromModel(model);
+            CreateNodeFromModelInternal(model);
             //Removes the capability of our root node to be deleted or copied.
             model.View.capabilities &= ~(Capabilities.Deletable | Capabilities.Copiable);
         }
 
-        private void CreateStackFromModel(StackModel model)
+        private void CreateStackFromModelInternal(StackModel model)
         {
             StackView sv = model.CreateView(this);
             AddElement(sv);
@@ -379,14 +380,14 @@ namespace GraphFramework.Editor
 
         private void CreateNewStack(StackModel model)
         {
-            CreateStackFromModel(model);
+            CreateStackFromModelInternal(model);
             Undo.RecordObject(graphModel, "graphChanges");
             graphModel.stackModels.Add(model);
         }
 
         private void CreateNewNode(NodeModel model)
         {
-            CreateNodeFromModel(model);
+            CreateNodeFromModelInternal(model);
             Undo.RegisterCreatedObjectUndo(model.RuntimeData, "graphChanges");
             Undo.RecordObject(graphModel, "graphChanges");
             graphModel.nodeModels.Add(model);
@@ -413,7 +414,7 @@ namespace GraphFramework.Editor
             edgeToModel.Add(edge, model);
         }
 
-        private void CreateEdgeFromModel(EdgeModel model)
+        private void CreateEdgeFromModelInternal(EdgeModel model)
         {
             if (model.inputModel?.View == null || model.outputModel?.View == null ||
                 !model.inputModel.View.TryGetModelToPort(model.inputPortModel.portGUID, out var inputPort) ||
@@ -442,22 +443,22 @@ namespace GraphFramework.Editor
         {
             if (graphModel.nodeModels == null)
                 return;
-
+            
             foreach (var model in graphModel.stackModels.ToArray())
             {
-                CreateStackFromModel(model);
+                CreateStackFromModelInternal(model);
             }
             
             CreateNodeFromModelAsRoot(graphModel.rootNodeModel);
 
             foreach (var model in graphModel.nodeModels.ToArray())
             {
-                CreateNodeFromModel(model);
+                CreateNodeFromModelInternal(model);
             }
 
             foreach (var model in graphModel.edgeModels.ToArray())
             {
-                CreateEdgeFromModel(model);
+                CreateEdgeFromModelInternal(model);
             }
         }
 
@@ -469,8 +470,9 @@ namespace GraphFramework.Editor
         /// This is a hack to restore the state of ValuePort connections after an undo,
         /// long story short the undo system does not preserve their state, so we need
         /// to essentially rebuild them to match the current graph state which was undone.
-        /// This operation is quite expensive, but this ensures their can be no synchronization
-        /// loss between the graph and the ValuePorts.
+        /// We do not know whether the undo created or removed items, so we have to account for
+        /// both possibilities deductively, first we assume this was a delete operation. If
+        /// nothing was deleted, we then check if any items were restored.
         /// </summary>
         private void PostUndoSyncNodePortConnections()
         {
@@ -546,7 +548,8 @@ namespace GraphFramework.Editor
             ClearGraph();
 
             //There's some issue with the undo stack rewinding the object state and somehow
-            //the editor graph can be null for a moment here. It do be like it is sometimes.
+            //the editor graph can be null for a moment here. (It can get called more than once
+            //for a single undo operation.) It do be like it is sometimes.
             if (graphModel == null) return;
             PostUndoSyncNodePortConnections();
             BuildGraph();
@@ -564,6 +567,10 @@ namespace GraphFramework.Editor
             //Base graph view handles removal of the visual element itself.
         }
 
+        /// <summary>
+        /// Deletes a connection by GUID, used because the undo system can spawn a different
+        /// reference object so it's not safe to compare by-object.
+        /// </summary>
         private void DeleteConnectionByGuid(string guid)
         {
             for (int j = graphModel.serializedGraphController.links.Count - 1; j >= 0; j--)
@@ -698,18 +705,18 @@ namespace GraphFramework.Editor
 
                 //(NodeView) Input Node -> (NodeModel) In Model -> (PortModel) Input Port
                 //(NodeView) Output Node -> (NodeModel) Out Model -> (PortModel) Output Port
-                if (!ResolveEdge(edge, out var inModel, out var outModel,
-                        out var inputPort, out var outputPort) ||
-                    !TryCreateConnection(edge, inModel, outModel, inputPort, outputPort))
+                if (ResolveEdge(edge, out var inModel, out var outModel,
+                        out var inputPort, out var outputPort) &&
+                    TryCreateConnection(edge, inModel, outModel, inputPort, outputPort))
+                {
+                    Undo.IncrementCurrentGroup();
+                    AddEdgeClasses(edge);
+                }
+                else
                 {
                     //We failed to create a connection so discard this edge, otherwise it's confusing
                     //to the user if an edge is created when a connection isint.
                     addedEdges.Remove(edge);
-                }
-                else
-                {
-                    Undo.IncrementCurrentGroup();
-                    AddEdgeClasses(edge);
                 }
             }
         }
@@ -742,6 +749,7 @@ namespace GraphFramework.Editor
 
         #region Default Connection Edge Rules
 
+        private static readonly Type anyType = typeof(Any);
         /// <summary>
         /// These default rules allow only exact types to connect to eachother.
         /// </summary>
@@ -752,7 +760,7 @@ namespace GraphFramework.Editor
             foreach (var port in ports)
             {
                 if (startPort == port || startPort.node == port.node) continue;
-                if (startPort.portType != port.portType) continue;
+                if (startPort.portType != port.portType && startPort.portType != anyType) continue;
                 compPorts.Add(port);
             }
 
