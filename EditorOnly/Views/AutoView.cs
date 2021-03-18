@@ -1,4 +1,8 @@
-﻿using UnityEditor;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
+using GraphFramework.Attributes;
+using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 
@@ -64,21 +68,57 @@ namespace GraphFramework.Editor
             return false;
         }
         
-        public static void Generate(SerializedObject so, VisualElement generateTo)
+        #region Directional Attribute Handler
+        
+        private static readonly Dictionary<string, DirectionalAttribute> nameToDirAttrib
+            = new Dictionary<string,DirectionalAttribute>();
+        
+        private static bool ShouldDrawBackingField(SerializedProperty it)
+        {
+            return nameToDirAttrib.TryGetValue(it.propertyPath, out var attrib) && 
+                   attrib.showBackingValue;
+        }
+
+        private static void ReadDirectionalAttribs(Type nodeType)
+        {
+            nameToDirAttrib.Clear();
+            var fields = nodeType.GetFields(BindingFlags.Instance | BindingFlags.Public
+                                                                  | BindingFlags.NonPublic);
+            
+            foreach (var field in fields)
+            {
+                var attribs = field.GetCustomAttributes();
+                foreach (var attrib in attribs)
+                {
+                    if (!(attrib is DirectionalAttribute attr)) continue;
+                    nameToDirAttrib.Add(field.Name, attr);
+                }
+            }
+        }
+        
+        #endregion
+        
+        public static void Generate(SerializedObject so, RuntimeNode node ,VisualElement generateTo)
         {
             var it = so.GetIterator();
             if (!it.NextVisible(true))
                 return;
             
+            nameToDirAttrib.Clear();
+            ReadDirectionalAttribs(node.GetType());
             //Descends through serialized property children & allows us to edit them.
             do
             {
                 var copiedProp = it.Copy();
+
                 //Some of unity's property drawers are broken, they will create visual
                 //artifacts and possibly crash unity. So we fix those.
                 if (FixBrokenPropertyDrawers(copiedProp, out var drawer))
                 {
-                    generateTo.Add(drawer);
+                    //Check the actual iterator as the copied prop is subnested and we're only
+                    //checking prototype information which is the same per type.
+                    if(ShouldDrawBackingField(it))
+                        generateTo.Add(drawer);
                     continue;
                 }
                 
@@ -100,7 +140,8 @@ namespace GraphFramework.Editor
                     continue;
                 }
 
-                generateTo.Add(propertyField);
+                if(ShouldDrawBackingField(it))
+                    generateTo.Add(propertyField);
             }
             while (it.NextVisible(false));
         }

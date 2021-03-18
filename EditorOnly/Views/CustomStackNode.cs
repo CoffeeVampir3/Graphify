@@ -5,9 +5,11 @@ namespace GraphFramework.Editor
 {
     public abstract class CustomStackNode
     {
-        internal List<Type> registeredTypes = new List<Type>();
+        internal readonly List<Type> registeredTypes = new List<Type>();
         protected CustomStackNode()
         {
+            //This is a virtual call in the constructor, but the order of operations isint an issue
+            //for this case.
             Registration();
         }
 

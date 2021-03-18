@@ -99,7 +99,7 @@ namespace GraphFramework.Editor
                 return;
             }
             
-            AutoView.Generate(serializedNode, extensionContainer);
+            AutoView.Generate(serializedNode, nodeModel.RuntimeData, extensionContainer);
         }
 
         /// <summary>

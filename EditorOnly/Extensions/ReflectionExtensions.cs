@@ -13,6 +13,7 @@ namespace GraphFramework.Editor
                         BindingFlags.Instance | BindingFlags.NonPublic);
 
             var fieldList = new List<FieldInfo>();
+            
             fieldAttribs = new List<Attribute>();
             foreach (var f in allFields)
             {
@@ -20,7 +21,7 @@ namespace GraphFramework.Editor
 
                 foreach (var attr in attribs)
                 {
-                    if (attr.GetType() != typeof(TargetAttr)) 
+                    if (!(attr is TargetAttr))
                         continue;
                     fieldList.Add(f);
                     fieldAttribs.Add(attr);

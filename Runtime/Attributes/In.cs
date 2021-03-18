@@ -1,5 +1,4 @@
 ﻿using UnityEditor.Experimental.GraphView;
-using UnityEngine.Scripting;
 
 namespace GraphFramework.Attributes
 {
@@ -7,12 +6,13 @@ namespace GraphFramework.Attributes
     /// <summary>
     /// Defines a ValuePort as an input with the given capacity.
     /// </summary>
-    public class In : PreserveAttribute
+    public class In : DirectionalAttribute
     {
-        public readonly Port.Capacity capacity;
-        public In(Port.Capacity portCapacity = Port.Capacity.Single)
+        public In(bool showBackingValue = false, Port.Capacity portCapacity = Port.Capacity.Single)
         {
             capacity = portCapacity;
+            direction = Direction.Input;
+            this.showBackingValue = showBackingValue;
         }
     }
 }

@@ -103,51 +103,45 @@ namespace GraphFramework.Editor
             portCreationAction.Invoke(pm);
         }
 
-        //(typeof(RuntimeData), typeof(DirectionAttribute))
-        //Reflection data cache for (node, dir), List of PortInfo and list of "PortMetadata"
-        private static readonly Dictionary<(Type, Type), PortInfoAndMetadata> dataTypeToInfoFields
-            = new Dictionary<(Type, Type), PortInfoAndMetadata>();
-        
         private readonly struct PortInfoAndMetadata
         {
             public readonly List<FieldInfo> fieldInfo;
             public readonly List<Port.Capacity> caps;
+            public readonly List<Direction> directions;
 
-            public PortInfoAndMetadata(List<FieldInfo> fieldInfo, List<Port.Capacity> caps)
+            public PortInfoAndMetadata(List<FieldInfo> fieldInfo, List<Port.Capacity> caps, 
+                List<Direction> dirs)
             {
                 this.fieldInfo = fieldInfo;
+                this.directions = dirs; 
                 this.caps = caps;
             }
         }
 
+        private static Dictionary<Type, PortInfoAndMetadata> cachedFieldInfo =
+            new Dictionary<Type, PortInfoAndMetadata>();
+
         /// <summary>
         /// Scans the attribute for our ports and returns the field and metadata.
         /// </summary>
-        private PortInfoAndMetadata GetFieldInfoFor<Attr>(Type runtimeDataType)
-            where Attr : Attribute
+        private PortInfoAndMetadata GetFieldInfoFor(Type runtimeDataType)
         {
-            var index = (runtimeDataType, typeof(Attr));
-            if (dataTypeToInfoFields.TryGetValue(index, out var info))
-            {
+            if (cachedFieldInfo.TryGetValue(runtimeDataType, out var info))
                 return info;
-            }
-
-            var fields = runtimeDataType.GetLocalFieldsWithAttribute<Attr>(out var attribs);
+            
+            var fields = runtimeDataType.GetLocalFieldsWithAttribute<DirectionalAttribute>(out var attribs);
+            
             List<Port.Capacity> caps = new List<Port.Capacity>();
+            List<Direction> directions = new List<Direction>();
             foreach (var attr in attribs)
             {
-                if (attr is In inAttr)
-                {
-                    caps.Add(inAttr.capacity);
-                } 
-                if (attr is Out outAttr)
-                {
-                    caps.Add(outAttr.capacity);
-                }
+                if (!(attr is DirectionalAttribute dAttr)) continue;
+                caps.Add(dAttr.capacity);
+                directions.Add(dAttr.direction);
             }
             
-            PortInfoAndMetadata pInfo = new PortInfoAndMetadata(fields, caps);
-            dataTypeToInfoFields.Add(index, pInfo);
+            PortInfoAndMetadata pInfo = new PortInfoAndMetadata(fields, caps, directions);
+            cachedFieldInfo.Add(runtimeDataType, pInfo);
             return pInfo;
         }
 
@@ -157,26 +151,14 @@ namespace GraphFramework.Editor
         /// <param name="clearCopy">Copied models should use true, clears all port links if true.</param>
         protected internal void CreatePortModelsFromReflection(bool clearCopy = false)
         {
-            var oFieldAndCaps = GetFieldInfoFor<Out>(RuntimeData.GetType());
-            var iFieldAndCaps = GetFieldInfoFor<In>(RuntimeData.GetType());
-
-            for (int i = 0; i < iFieldAndCaps.fieldInfo.Count; i++)
-            {
-                var field = iFieldAndCaps.fieldInfo[i];
-                var cap = iFieldAndCaps.caps[i];
-                CreatePortModel(field, Direction.Input, cap);
-                if (!clearCopy) continue;
-                if (field.GetValue(RuntimeData) is ValuePort vp)
-                {
-                    vp.links.Clear();
-                }
-            }
+            var fieldsAndData = GetFieldInfoFor(RuntimeData.GetType());
             
-            for (int i = 0; i < oFieldAndCaps.fieldInfo.Count; i++)
+            for (int i = 0; i < fieldsAndData.fieldInfo.Count; i++)
             {
-                var field = oFieldAndCaps.fieldInfo[i];
-                var cap = oFieldAndCaps.caps[i];
-                CreatePortModel(field, Direction.Output, cap);
+                var field = fieldsAndData.fieldInfo[i];
+                var cap = fieldsAndData.caps[i];
+                var dir = fieldsAndData.directions[i];
+                CreatePortModel(field, dir, cap);
                 if (!clearCopy) continue;
                 if (field.GetValue(RuntimeData) is ValuePort vp)
                 {

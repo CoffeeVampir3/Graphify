@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GraphFramework.Runtime;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -563,7 +562,14 @@ namespace GraphFramework.Editor
             Undo.DestroyObjectImmediate(model.RuntimeData);
             runtimeNodeToView.Remove(model.RuntimeData);
             graphModel.nodeModels.Remove(model);
+            viewToModel.Remove(model.View);
             //Base graph view handles removal of the visual element itself.
+        }
+
+        private void DeleteStack(StackModel stack)
+        {
+            viewToModel.Remove(stack.View);
+            graphModel.stackModels.Remove(stack);
         }
 
         /// <summary>
@@ -688,6 +694,10 @@ namespace GraphFramework.Editor
                     case Edge edge:
                         if (edgeToModel.TryGetValue(edge, out var edgeModel))
                             DeleteEdge(edge, edgeModel);
+                        continue;
+                    case StackView sView:
+                        if (viewToModel.TryGetValue(sView, out var stackModel))
+                            DeleteStack(stackModel as StackModel);
                         continue;
                 }
             }
