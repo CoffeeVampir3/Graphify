@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
@@ -39,13 +40,14 @@ namespace GraphFramework.Editor
                 return true;
             }
             
-            //TODO:: This is a pretty shit implementation RN
             //Register Stack registers to a GraphController.
-            if (!typeof(GraphController).IsAssignableFrom(nodeType)) return false;
+            if (!typeof(CustomStackNode).IsAssignableFrom(nodeType)) return false;
             
-            graphView.CreateNewStack(searchTreeEntry.name, null, context.screenMousePosition);
-            return true; 
-
+            //Create a custom stack instance which runs the registration code... Yeah it's a bit weird but w/e
+            if (!(Activator.CreateInstance(nodeType) is CustomStackNode act)) return false;
+            graphView.CreateNewStack(searchTreeEntry.name, act.registeredTypes.ToArray(), 
+                context.screenMousePosition);
+            return true;
         }
     }
 }

@@ -5,7 +5,7 @@
     /// </summary>
     public class VirtualGraph
     {
-        private GraphController parentGraphController;
+        private readonly GraphController parentGraphController;
         public readonly int virtualId;
         
         // Do not attempt to construct virtual graphs outside of the graph controller,

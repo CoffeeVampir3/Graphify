@@ -3,6 +3,6 @@ using UnityEngine;
 
 namespace GraphFramework
 {
-    [RegisterTo(typeof(GraphController), "Properties/Bounds")]
+    [RegisterTo(typeof(GraphControllerWithProperties), "Properties/Bounds")]
     public class RuntimeBoundsProperty : RuntimeProperty<Bounds> { }
 }

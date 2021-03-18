@@ -209,7 +209,6 @@ namespace GraphFramework.Editor
             CreateNewNode(model);
         }
         
-        //TODO::
         /// <summary>
         /// Creates a new stack node on the graph.
         /// </summary>

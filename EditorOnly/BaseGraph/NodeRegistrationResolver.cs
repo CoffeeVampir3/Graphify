@@ -9,22 +9,22 @@ namespace GraphFramework.Editor
 {
     internal static class NodeRegistrationResolver
     {
-        private static readonly Type registerAttrType = typeof(RegisterTo);
         private static readonly Type rootNodeType = typeof(RootNode);
 
         /// <summary>
         /// Returns a list of all nodes registered to the provided graph controller type.
         /// </summary>
-        public static List<Type> GetItemsRegisteredToGraph(Type graphControllerType)
+        public static List<Type> GetItemsRegisteredToGraph<Attr>(Type graphControllerType)
+        where Attr : RegistrationAttribute
         {
-            var nodeList = TypeCache.GetTypesWithAttribute<RegisterTo>();
+            var nodeList = TypeCache.GetTypesWithAttribute<Attr>();
             
             //Simple, iterates through every registered node and, if they're registered to
             //our graph, or a type our graph derives from, add it to the list of registered
             //nodes and return that list.
             return (from node 
                 in nodeList
-                let attr = node.GetCustomAttributes(registerAttrType, false)[0] as RegisterTo
+                let attr = node.GetCustomAttributes(typeof(Attr), false)[0] as Attr
                 where attr.registeredGraphType.IsAssignableFrom(graphControllerType)
                 select node)
                 .ToList();
@@ -35,7 +35,7 @@ namespace GraphFramework.Editor
         /// </summary>
         public static Type GetRegisteredRootNodeType(Type graphControllerType)
         {
-            var registeredNodes = GetItemsRegisteredToGraph(graphControllerType);
+            var registeredNodes = GetItemsRegisteredToGraph<RegisterTo>(graphControllerType);
 
             var roots = registeredNodes.Where(e => rootNodeType.IsAssignableFrom(e));
             var enumerable = roots.ToList();

@@ -24,7 +24,7 @@ namespace GraphFramework.Editor
             var model = new StackModel {nodeTitle = nodeName};
             if (allowedTypes != null && allowedTypes.Length > 0)
             {
-                Debug.Log("Has Types.");
+                model.allowedTypes = new List<SerializableType>(allowedTypes.Length);
                 foreach (var type in allowedTypes)
                 {
                     model.allowedTypes.Add(new SerializableType(type));
@@ -50,13 +50,7 @@ namespace GraphFramework.Editor
         {
             if (allowedTypes == null || allowedTypes.Count == 0)
                 return true;
-            foreach (var sType in allowedTypes.Where(sType => t == sType.type))
-            {
-                Debug.Log("Type: " + sType.type);
-                return true;
-            }
-
-            return false;
+            return allowedTypes.Any(sType => t == sType.type);
         }
         
         public string NodeTitle

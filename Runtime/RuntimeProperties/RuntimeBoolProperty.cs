@@ -2,6 +2,6 @@
 
 namespace GraphFramework
 {
-    [RegisterTo(typeof(GraphController), "Properties/Bool")]
+    [RegisterTo(typeof(GraphControllerWithProperties), "Properties/Bool")]
     public class RuntimeBoolProperty : RuntimeProperty<bool> { }
 }

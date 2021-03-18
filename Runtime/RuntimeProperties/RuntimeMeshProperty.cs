@@ -3,6 +3,6 @@ using UnityEngine;
 
 namespace GraphFramework
 {
-    [RegisterTo(typeof(GraphController), "Properties/Mesh")]
+    [RegisterTo(typeof(GraphControllerWithProperties), "Properties/Mesh")]
     public class RuntimeMeshProperty : RuntimeProperty<Mesh> { }
 }

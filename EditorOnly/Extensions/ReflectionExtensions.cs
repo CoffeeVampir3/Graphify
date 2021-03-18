@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace GraphFramework.Editor
 {
-    public static class ReflectionExtensions
+    internal static class ReflectionExtensions
     {
         public static List<FieldInfo> GetLocalFieldsWithAttribute<TargetAttr>(this Type t, out List<Attribute> fieldAttribs)
             where TargetAttr : Attribute
