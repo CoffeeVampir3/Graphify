@@ -2,8 +2,7 @@
 
 # Quickstart Guide:
 
-Note: This is temporary documentation until the wiki gets set up.
-This API is in an alpha stage so it is subject to change where applicable.
+Note: This is temporary documentation until the wiki gets set up. This API is in its alpha stage and has not been finalized, things might change!
 
 Create a class that derives from GraphController:
 ```cs
