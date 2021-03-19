@@ -2,4 +2,13 @@
 
 # Quickstart Guide:
 
-  ###### Creating your first graph:
+Note: This is temporary documentation until the wiki gets set up.
+
+Create a class that derives from GraphController:
+```cs
+    [CreateAssetMenu]
+    public class TestGraphController : GraphController
+    {
+    }
+```
+
