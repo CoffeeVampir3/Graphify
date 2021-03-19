@@ -10,7 +10,11 @@ Note: This is temporary documentation until the wiki gets set up. This API is in
 
 ### Installing:
 
-Download and unzip in any unity directory. Package versions coming soon.
+Download and unzip in any unity directory. Package versions coming soo
+
+###
+
+See the wiki for complete documentation on how to use the graph.
 
 ### Graph Controllers
 
