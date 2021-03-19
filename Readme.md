@@ -12,6 +12,7 @@ Create a class that derives from GraphController:
     }
 ```
 
+### Root Nodes
 
 Every graph needs a root node, to give our graph controller a root we must create and register our new root node:
 ```cs
@@ -37,6 +38,8 @@ All ports are defined as a ValuePort<T>, in our case this is an Any which means 
 
 Now you can hop in and check out your first graph, simply create an instance of GraphController by taking advantage of the Create Asset Menu attribute you gave it. Then, double click on the graph controller and your graph will open with it's root node.. It's that simple to get an editable graph, but you probably want more than a root node and no content.
 
+### More About Nodes
+
 Now to add something we can connect to, we'll make another node, this time one we can create in the graph:
 ```cs
     [RegisterTo(typeof(TestGraphController), "My Second Node")]
@@ -58,9 +61,7 @@ Viola! Now you can head into your graph and right-click anywhere in the world, y
 
 Will create a new category called "Dialogue Nodes" which your "My Second Node" will now belong to.
 
-Now you know how to make nodes and ports! Next, how do you make the graph do something?
-
-Extend your root node by overriding it's OnEvaluate function:
+Now you know how to make nodes and ports! Next, how do you make the graph do something? Lets extend your root node by overriding it's OnEvaluate function:
 ```cs
     [RegisterTo(typeof(TestGraphController))]
     public class RootTester : RuntimeNode, RootNode
@@ -76,9 +77,7 @@ Extend your root node by overriding it's OnEvaluate function:
     }
 ```
 
-Now when your root node gets evaluated, if it's linked to anything, it'll return the first node it's linked to.
-
-Similarly, we can extend our "My Second Node" with some functionality as well:
+Now when your root node gets evaluated, if it's linked to anything, it'll return the first node it's linked to. Similarly, we can extend our "My Second Node" with some functionality as well:
 ```cs
     [RegisterTo(typeof(TestGraphController), "Wow/Node")]
     public class MySecondNode : RuntimeNode
@@ -107,8 +106,9 @@ Similarly, we can extend our "My Second Node" with some functionality as well:
 
 This will output the value of everything connected to the stringInput ports as long as it's a string. It will also randomly pick any connected port to traverse to next if there's any connections.
 
-To execute a graph, you use the GraphExecutor class:
+### Running a Graph:
 
+To execute a graph, you use the GraphExecutor class:
 ```cs
     public class GraphTester : MonoBehaviour
     {
