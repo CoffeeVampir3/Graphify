@@ -1,6 +1,4 @@
-﻿using UnityEditor.Experimental.GraphView;
-
-namespace GraphFramework.Attributes
+﻿namespace GraphFramework.Attributes
 {
     //Using preserve attribute so we don't get this stripped out in IL2CPP compilations
     /// <summary>
@@ -11,19 +9,19 @@ namespace GraphFramework.Attributes
         //Explicit constructors so they show up in autocomplete.
         public In()
         {
-            capacity = Port.Capacity.Single;
+            capacity = Capacity.Single;
             direction = Direction.Input;
             this.showBackingValue = false;
         }
         
-        public In(Port.Capacity portCapacity)
+        public In(Capacity portCapacity)
         {
             capacity = portCapacity;
             direction = Direction.Input;
             this.showBackingValue = false;
         }
         
-        public In(bool showBackingValue = false, Port.Capacity portCapacity = Port.Capacity.Single)
+        public In(bool showBackingValue = false, Capacity portCapacity = Capacity.Single)
         {
             capacity = portCapacity;
             direction = Direction.Input;

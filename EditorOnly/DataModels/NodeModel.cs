@@ -6,6 +6,7 @@ using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using GraphFramework.Attributes;
+using Direction = GraphFramework.Attributes.Direction;
 
 namespace GraphFramework.Editor
 {
@@ -129,35 +130,48 @@ namespace GraphFramework.Editor
             }
         }
 
-        protected internal void CreatePortModel(FieldInfo field, Direction dir, Port.Capacity cap)
+        protected internal UnityEditor.Experimental.GraphView.Port.Capacity CapacityToUnity(Capacity cap)
+        {
+            if (cap == Capacity.Single)
+            {
+                return Port.Capacity.Single;
+            }
+
+            return Port.Capacity.Multi;
+        }
+
+        protected internal void CreatePortModel(FieldInfo field, Direction dir, Capacity cap)
         {
             Action<PortModel> portCreationAction;
+            UnityEditor.Experimental.GraphView.Direction unityDirection;
             switch (dir)
             {
                 case Direction.Input:
                     portCreationAction = inputPorts.Add;
+                    unityDirection = UnityEditor.Experimental.GraphView.Direction.Input;
                     break;
                 case Direction.Output:
                     portCreationAction = outputPorts.Add;
+                    unityDirection = UnityEditor.Experimental.GraphView.Direction.Output;
                     break;
                 default:
                     return;
             }
-            
+
             var portValueType = field.FieldType.
                 GetGenericClassConstructorArguments(typeof(ValuePort<>));
-            var pm = new PortModel(Orientation.Horizontal, dir, 
-                cap, portValueType.FirstOrDefault(), field);
+            var pm = new PortModel(Orientation.Horizontal, unityDirection, 
+                CapacityToUnity(cap), portValueType.FirstOrDefault(), field);
             portCreationAction.Invoke(pm);
         }
 
         private readonly struct PortInfoAndMetadata
         {
             public readonly List<FieldInfo> fieldInfo;
-            public readonly List<Port.Capacity> caps;
+            public readonly List<Capacity> caps;
             public readonly List<Direction> directions;
 
-            public PortInfoAndMetadata(List<FieldInfo> fieldInfo, List<Port.Capacity> caps, 
+            public PortInfoAndMetadata(List<FieldInfo> fieldInfo, List<Capacity> caps, 
                 List<Direction> dirs)
             {
                 this.fieldInfo = fieldInfo;
@@ -179,7 +193,7 @@ namespace GraphFramework.Editor
             
             var fields = runtimeDataType.GetLocalFieldsWithAttribute<DirectionalAttribute>(out var attribs);
             
-            List<Port.Capacity> caps = new List<Port.Capacity>();
+            List<Capacity> caps = new List<Capacity>();
             List<Direction> directions = new List<Direction>();
             foreach (var attr in attribs)
             {

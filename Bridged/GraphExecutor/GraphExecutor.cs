@@ -24,6 +24,17 @@ namespace GraphFramework
             virtualizedGraph = graphController.CreateVirtualGraph();
             Reset();
         }
+        
+        public void Reset()
+        {
+            currentNode = graphController.rootNode;
+            nextNode = null;
+            previousNode = null;
+            #if UNITY_EDITOR
+            if(virtualizedGraph != null)
+                EditorLinkedResetGraph(virtualizedGraph.virtualId);
+            #endif
+        }
 
         #region Editor Link
         
@@ -37,15 +48,6 @@ namespace GraphFramework
                 EditorLinkedRuntimeNodeExited(previousNode);
             if(currentNode != null)
                 EditorLinkedRuntimeNodeVisited(currentNode);
-        }
-        
-        public void Reset()
-        {
-            currentNode = graphController.rootNode;
-            nextNode = null;
-            previousNode = null;
-            if(virtualizedGraph != null)
-                EditorLinkedResetGraph(virtualizedGraph.virtualId);
         }
         #endif
         
