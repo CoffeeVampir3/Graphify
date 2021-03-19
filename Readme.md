@@ -127,3 +127,5 @@ To execute a graph, you use the GraphExecutor class:
 ```
 
 Make sure to drag your GraphController into the executor, this will make the executor try to execute your graph up to four steps.
+
+Wiki *coming soon* (TM)
