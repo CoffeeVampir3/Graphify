@@ -2,3 +2,4 @@
 
 # Quickstart Guide:
 
+###### Creating your first graph:
