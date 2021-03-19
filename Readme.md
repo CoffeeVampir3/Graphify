@@ -10,4 +10,4 @@ Download and unzip in any unity directory. Package versions coming soo
 
 ### Where Are The Docs?!
 
-See the https://github.com/CoffeeVampir3/Graphify/wiki/Quickstart-Guide for complete documentation on how to use the graph.
+See the [Wiki](https://github.com/CoffeeVampir3/Graphify/wiki/Quickstart-Guide) for complete documentation on how to use the graph.
