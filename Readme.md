@@ -2,7 +2,7 @@
 
 # Turn Anything Into a Graph!
 
-Graphify is a Unity Api for quickly and easily making anything into a graph!
+Graphify is an ultra-lightweight Unity Api for quickly and easily making anything into a graph! It's 100% built using Unity's new UI Toolkit, and allows users to easily extend the graph using their own UI Toolkit code. Games can be very computationally expensive, so the graph has completely seperated the runtime and the editor components, meaning there's absolutely nothing that will slow down your games runtime! With an easy to use API based on Siccity's xNode API there's nothing that can hold you back from graphifying your game.
 
 ### Installing:
 
