@@ -132,20 +132,26 @@ namespace GraphFramework
             
             if (distantEndValueKey is ValuePort<T> valuePort)
             {
+                Debug.Log("Is Value Port.");
                 //If we're in the unity editor, we have to account for the fact that the graph can be altered,
                 //this weird looking thing checks to see if we failed to find a value, if we failed to find
                 //the assumption is that this is a new element added to the graph, so we reset it and try again.
                 #if UNITY_EDITOR
                 if (!valuePort.virtualizedMutablePortValues.TryGetValue(ValuePort.CurrentGraphIndex, out value))
                 {
+                    Debug.Log("?");
                     valuePort.Reset(ValuePort.CurrentGraphIndex);
+                    Debug.Log(valuePort.virtualizedMutablePortValues[ValuePort.CurrentGraphIndex]);
                     return valuePort.virtualizedMutablePortValues.TryGetValue(ValuePort.CurrentGraphIndex, out value);
                 }
+                return true;
                 #else
                 return valuePort.virtualizedMutablePortValues.TryGetValue(ValuePort.CurrentGraphIndex, out value);
                 #endif
+                
             }
             
+            Debug.Log("Default.");
             //No error because this was a try get.
             value = default;
             return false;
