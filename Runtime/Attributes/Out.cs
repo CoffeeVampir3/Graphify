@@ -8,6 +8,21 @@ namespace GraphFramework.Attributes
     /// </summary>
     public class Out : DirectionalAttribute
     {
+        //Explicit constructors so they show up in autocomplete.
+        public Out()
+        {
+            capacity = Port.Capacity.Single;
+            direction = Direction.Output;
+            this.showBackingValue = false;
+        }
+        
+        public Out(Port.Capacity portCapacity)
+        {
+            capacity = portCapacity;
+            direction = Direction.Output;
+            this.showBackingValue = false;
+        }
+        
         public Out(bool showBackingValue = false, Port.Capacity portCapacity = Port.Capacity.Single)
         {
             capacity = portCapacity;

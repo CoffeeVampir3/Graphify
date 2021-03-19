@@ -8,7 +8,22 @@ namespace GraphFramework.Attributes
     /// </summary>
     public class In : DirectionalAttribute
     {
-        public In(bool showBackingValue = false, Port.Capacity portCapacity = Port.Capacity.Single)
+        //Explicit constructors so they show up in autocomplete.
+        public In()
+        {
+            capacity = Port.Capacity.Single;
+            direction = Direction.Input;
+            this.showBackingValue = false;
+        }
+        
+        public In(Port.Capacity portCapacity)
+        {
+            capacity = portCapacity;
+            direction = Direction.Input;
+            this.showBackingValue = false;
+        }
+        
+        public In(bool showBackingValue, Port.Capacity portCapacity = Port.Capacity.Single)
         {
             capacity = portCapacity;
             direction = Direction.Input;

@@ -107,7 +107,7 @@ namespace GraphFramework
             #endif
             distantEndValueKey.Reset(graphId);
         }
-        
+
         //Not cached because caching is not safe here. This ideally is not useful at runtime.
         /// <summary>
         /// Gets the local side of this connection, ideally don't call this ever you shouldn't have to.
@@ -144,6 +144,7 @@ namespace GraphFramework
                     Debug.Log(valuePort.virtualizedMutablePortValues[ValuePort.CurrentGraphIndex]);
                     return valuePort.virtualizedMutablePortValues.TryGetValue(ValuePort.CurrentGraphIndex, out value);
                 }
+                
                 return true;
                 #else
                 return valuePort.virtualizedMutablePortValues.TryGetValue(ValuePort.CurrentGraphIndex, out value);
