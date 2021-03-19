@@ -81,13 +81,13 @@ Now you know how to make nodes and ports! Next, how do you make the graph do som
 
         protected override RuntimeNode OnEvaluate()
         {
-            if (!rootPort.IsLinked()) return this;
+            if (!rootPort.IsLinked()) return null;
             return rootPort.FirstNode();
         }
     }
 ```
 
-Now when your root node gets evaluated, if it's linked to anything, it'll return the first node it's linked to. Similarly, we can extend our "My Second Node" with some functionality as well:
+Now when your root node gets evaluated, if it's linked to anything, it'll return the first node it's linked to. Returning null will tell the executor to stop running. Similarly, we can extend our "My Second Node" with some functionality as well:
 ```cs
     [RegisterTo(typeof(TestGraphController), "Wow/Node")]
     public class MySecondNode : RuntimeNode
@@ -107,7 +107,7 @@ Now when your root node gets evaluated, if it's linked to anything, it'll return
                 }
             }
 
-            if (!stringOutput.IsLinked()) return this;
+            if (!stringOutput.IsLinked()) return null;
             var index = (Random.Range(0, stringOutput.Links.Count));
             return stringOutput.Links[index].Node;
         }
