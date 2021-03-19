@@ -18,6 +18,7 @@ namespace GraphFramework.Editor
             nodeModel = model;
             
             var collapseButton = this.Q("collapse-button");
+            var titleElement = this.Q<Label>();
 
             //Keeps the model's expanded state in line with the view when a user changes
             //the value, this disregards code changing the value and I kind of like that.
@@ -25,6 +26,21 @@ namespace GraphFramework.Editor
             {
                 nodeModel.isExpanded = expanded;
             });
+
+            titleElement.pickingMode = PickingMode.Position;
+            titleElement.RegisterCallback<PointerDownEvent>(e =>
+            {
+                if (e.clickCount != 2)
+                    return;
+                Renamer renamer = new Renamer(OnRenamed);
+                renamer.Popup();
+            });
+        }
+
+        public void OnRenamed(string newName)
+        {
+            this.nodeModel.NodeTitle = newName;
+            OnDirty();
         }
 
         #region Ports
@@ -109,6 +125,7 @@ namespace GraphFramework.Editor
         {
             title = nodeModel.NodeTitle;
             expanded = nodeModel.isExpanded;
+            name = nodeModel.NodeTitle;
             
             //We don't want to change our position if the node is stacked.
             if(nodeModel.stackedOn == null)

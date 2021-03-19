@@ -13,6 +13,7 @@ namespace GraphFramework.Editor
         protected internal CoffeeGraphWindow parentWindow;
         protected internal GraphModel graphModel;
         protected readonly GraphSearchWindow searchWindow;
+        protected readonly NavigationBlackboard navigationBlackboard;
         protected GraphSettings settings;
 
         //Keeps track of all NodeView's and their relation to their model.
@@ -52,6 +53,9 @@ namespace GraphFramework.Editor
 
             searchWindow = ScriptableObject.CreateInstance<GraphSearchWindow>();
             InitializeSearchWindow();
+
+            navigationBlackboard = new NavigationBlackboard(this);
+            Add(navigationBlackboard);
         }
         
         //Thanks @Mert Kirimgeri for his lovely youtube series on GraphView API.
@@ -168,7 +172,7 @@ namespace GraphFramework.Editor
             
             view.RemoveFromClassList("CurrentNode");
         }
-        
+
         #endregion
 
         #region Public API
@@ -744,7 +748,7 @@ namespace GraphFramework.Editor
             {
                 ProcessElementRemovals(ref changes.elementsToRemove);
             }
-
+            
             if (changes.edgesToCreate == null)
                 return changes;
 

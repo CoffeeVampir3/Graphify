@@ -107,18 +107,33 @@ GridBackground {
     --port-color: rgba(29, 174, 95, .8);
 }
 
-.stack-child-element #input {
+.stack-child-element.collapsed #input  {
     display: none;
 }
 
-.firstInStack #input {
-    display: flex;
-}
-
-.stack-child-element #output {
+.firstInStack.collapsed #input {
     display: none;
 }
 
-.lastInStack #output {
+.stack-child-element.collapsed #output {
+    display: none;
+}
+
+.lastInStack.collapsed #output {
     display: flex;
+}
+
+.stacked {
+    padding-left: 20px;
+}
+
+.blackboard.customBB {
+    background-color: rgba(23, 23, 23, .85);
+}
+
+.unity-list-view__item:hover {
+    background-color: rgba(20, 50, 20, .4);
+}
+.unity-list-view__item--selected:checked {
+    background-color: rgba(20, 50, 20, .6);
 }

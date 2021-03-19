@@ -5,15 +5,13 @@ namespace GraphFramework.Editor
 {
     public class NavBlackboardNodeItem : VisualElement
     {
-        public readonly Foldout foldout;
+        public readonly Label label;
         public Node targetNode;
         
         public NavBlackboardNodeItem()
         {
-            foldout = new Foldout();
-            foldout.SetValueWithoutNotify(false);
-
-            Add(foldout);
+            label = new Label {pickingMode = PickingMode.Ignore};
+            Add(label);
         }
     }
 }
