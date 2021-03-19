@@ -47,7 +47,7 @@ namespace GraphFramework.Editor
                 return null;
             }
             
-            graphModel.graphWindowType = new SerializableType(typeof(CoffeeGraphWindow));
+            graphModel.graphWindowType = new SerializableType(typeof(GraphfyWindow));
             
             EditorUtility.SetDirty(graphModel);
             EditorUtility.SetDirty(graphModel.serializedGraphController);

@@ -5,7 +5,7 @@ using UnityEngine.UIElements;
 
 namespace GraphFramework.Editor
 {
-    public class Renamer : VisualElement
+    internal class Renamer : VisualElement
     {
         private readonly Action<string> namedCallback = null;
         private TextField nameField = null;

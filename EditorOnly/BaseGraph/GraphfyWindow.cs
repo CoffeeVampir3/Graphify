@@ -7,10 +7,10 @@ using Object = UnityEngine.Object;
 
 namespace GraphFramework.Editor
 {
-    public class CoffeeGraphWindow : EditorWindow
+    public class GraphfyWindow : EditorWindow
     {
         [SerializeReference]
-        protected CoffeeGraphView graphView;
+        protected GraphifyView graphView;
         private bool isWindowLoaded = false;
         private Action OnWindowLayoutFinished = null;
         private string domainSafeWorkingAssetPath;
@@ -18,7 +18,7 @@ namespace GraphFramework.Editor
         [MenuItem("Graphs/Test Graph")]
         public static void OpenGraph()
         {
-            var window = GetWindow<CoffeeGraphWindow>();
+            var window = GetWindow<GraphfyWindow>();
             window.titleContent = new GUIContent("C0ff33");
             
             window.Focus();
@@ -126,7 +126,7 @@ namespace GraphFramework.Editor
         
         private void EnableGraphView()
         {
-            graphView = new CoffeeGraphView
+            graphView = new GraphifyView
             {
                 name = "Coffee Dialogue Graph"
             };

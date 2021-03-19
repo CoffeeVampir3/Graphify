@@ -6,7 +6,7 @@ using UnityEngine;
 //This is so we can make sure nobody does dumb modifications to links by accident.
 //We share the internals instead of facades because it makes more sense to give the graph
 //full control over this class.
-[assembly: InternalsVisibleTo("GraphEditor")]
+[assembly: InternalsVisibleTo("GraphifyEditor")]
 namespace GraphFramework
 {
     /// <summary>

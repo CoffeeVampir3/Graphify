@@ -21,7 +21,7 @@ namespace GraphFramework.Editor
             }
 
             EditorWindow window = EditorWindow.GetWindow(model.graphWindowType.type);
-            if (window == null || !(window is CoffeeGraphWindow graphWindow)) return false;
+            if (window == null || !(window is GraphfyWindow graphWindow)) return false;
             
             graphWindow.LoadGraphExternal(model);
             return true;

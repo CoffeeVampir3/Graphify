@@ -77,19 +77,19 @@ namespace GraphFramework
 
        public void EditorLinkedResetGraph(int graphId)
        {
-           if (!(linkedEditorWindow is CoffeeGraphWindow cg)) return;
+           if (!(linkedEditorWindow is GraphfyWindow cg)) return;
            cg.ResetGraph(graphId);
        }
         
         public void EditorLinkedRuntimeNodeVisited(RuntimeNode node)
         {
-            if (!(linkedEditorWindow is CoffeeGraphWindow cg)) return;
+            if (!(linkedEditorWindow is GraphfyWindow cg)) return;
             cg.VisitRuntimeNode(node);
         }
 
         public void EditorLinkedRuntimeNodeExited(RuntimeNode node)
         {
-            if (!(linkedEditorWindow is CoffeeGraphWindow cg)) return;
+            if (!(linkedEditorWindow is GraphfyWindow cg)) return;
             cg.ExitRuntimeNode(node);
         }
     }

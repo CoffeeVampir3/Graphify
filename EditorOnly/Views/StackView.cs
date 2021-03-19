@@ -8,8 +8,8 @@ namespace GraphFramework.Editor
     public class StackView : StackNode, MovableView
     {
         private readonly StackModel stackModel;
-        private readonly CoffeeGraphView parentGraphView;
-        public StackView(StackModel model, CoffeeGraphView graphView)
+        private readonly GraphifyView parentGraphView;
+        public StackView(StackModel model, GraphifyView graphView)
         {
             stackModel = model;
             parentGraphView = graphView;

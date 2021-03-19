@@ -8,9 +8,9 @@ using UnityEngine.UIElements;
 
 namespace GraphFramework.Editor
 {
-    public class CoffeeGraphView : GraphView
+    public class GraphifyView : GraphView
     { 
-        protected internal CoffeeGraphWindow parentWindow;
+        protected internal GraphfyWindow parentWindow;
         protected internal GraphModel graphModel;
         protected readonly GraphSearchWindow searchWindow;
         protected readonly NavigationBlackboard navigationBlackboard;
@@ -30,7 +30,7 @@ namespace GraphFramework.Editor
         
         #region Initialization and Finalization
         
-        protected internal CoffeeGraphView()
+        protected internal GraphifyView()
         {
             //Zoom, content click + drag, group select.
             SetupZoom(ContentZoomer.DefaultMinScale, ContentZoomer.DefaultMaxScale);

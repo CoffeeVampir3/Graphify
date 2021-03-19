@@ -7,9 +7,9 @@ namespace GraphFramework.Editor
 {
     public class GraphSearchWindow : ScriptableObject, ISearchWindowProvider
     {
-        private CoffeeGraphView graphView;
+        private GraphifyView graphView;
 
-        public void Init(CoffeeGraphView parentGraphView)
+        public void Init(GraphifyView parentGraphView)
         {
             graphView = parentGraphView;
         }

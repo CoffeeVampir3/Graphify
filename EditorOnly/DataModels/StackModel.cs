@@ -34,7 +34,7 @@ namespace GraphFramework.Editor
             return model;
         }
         
-        public StackView CreateView(CoffeeGraphView graphView)
+        public StackView CreateView(GraphifyView graphView)
         {
             view = new StackView(this, graphView);
             view.Display();

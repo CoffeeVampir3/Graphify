@@ -1,11 +1,13 @@
 {
-    "name": "GraphFrameworkBridge",
+    "name": "GraphifyEditor",
     "rootNamespace": "",
     "references": [
         "GUID:650f5d7751bbedc4597324ed0871ceac",
-        "GUID:b21648eec87e1be4580b847a2999e252"
+        "GUID:7104629240eb8a645904aa070efcaeb8"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

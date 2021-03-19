@@ -8,10 +8,10 @@ namespace GraphFramework.Editor
     public class NavigationBlackboard : UnityEditor.Experimental.GraphView.Blackboard
     {
         private readonly ListView listBase = new ListView();
-        private readonly CoffeeGraphView coffeeGraph;
-        public NavigationBlackboard(CoffeeGraphView gv) : base(gv)
+        private readonly GraphifyView graphify;
+        public NavigationBlackboard(GraphifyView gv) : base(gv)
         {
-            coffeeGraph = gv;
+            graphify = gv;
             graphView = gv;
             
             this.AddToClassList("customBB");
@@ -61,7 +61,7 @@ namespace GraphFramework.Editor
             bc.label.text = node.name;
             bc.targetNode = node;
 
-            if (node is NodeView nv && coffeeGraph.viewToModel.TryGetValue(nv, out var model) 
+            if (node is NodeView nv && graphify.viewToModel.TryGetValue(nv, out var model) 
                                     && model is NodeModel nm && nm.stackedOn != null)
             {
                 ele.AddToClassList("stacked");
@@ -82,7 +82,7 @@ namespace GraphFramework.Editor
             if (listBase.itemsSource == null)
                 return;
 
-            if (coffeeGraph.selection.Count == 0)
+            if (graphify.selection.Count == 0)
             {
                 listBase.ClearSelection();
                 return;
@@ -96,7 +96,7 @@ namespace GraphFramework.Editor
                 {
                     return;
                 }
-                if (coffeeGraph.selection.Contains(node))
+                if (graphify.selection.Contains(node))
                 {
                     newSelection.Add(index);
                 }
@@ -115,14 +115,14 @@ namespace GraphFramework.Editor
             
             listBase.SetSelection(listBase.itemsSource.IndexOf(targetNode));
             
-            coffeeGraph.ClearSelection();
+            graphify.ClearSelection();
             newSelectded = targetNode;
-            coffeeGraph.AddToSelection(targetNode);
+            graphify.AddToSelection(targetNode);
             //UI elements boys and girls.
             schedule.Execute(() =>
             {
-                coffeeGraph.AddToSelection(newSelectded);
-                coffeeGraph.FrameSelection();
+                graphify.AddToSelection(newSelectded);
+                graphify.FrameSelection();
             }).StartingIn(1);
 
             evt.StopImmediatePropagation();
@@ -131,12 +131,12 @@ namespace GraphFramework.Editor
         private List<Node> listItemNodes = new List<Node>();
         private void DelayedRefresh()
         {
-            listBase.itemsSource ??= coffeeGraph.nodes.ToList();
-            if (listBase.itemsSource.Count != coffeeGraph.nodes.Count() || currentStackCount != previosuStackCount)
+            listBase.itemsSource ??= graphify.nodes.ToList();
+            if (listBase.itemsSource.Count != graphify.nodes.Count() || currentStackCount != previosuStackCount)
             {
                 previosuStackCount = currentStackCount;
                 listBase.Clear();
-                listItemNodes = coffeeGraph.nodes.ToList();
+                listItemNodes = graphify.nodes.ToList();
                 listBase.itemsSource = listItemNodes;
             }
             currentStackCount = 0;
