@@ -3,6 +3,7 @@
 # Quickstart Guide:
 
 Note: This is temporary documentation until the wiki gets set up.
+This API is in an alpha stage so it is subject to change where applicable.
 
 Create a class that derives from GraphController:
 ```cs
