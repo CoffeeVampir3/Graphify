@@ -1,5 +1,5 @@
 {
-    "name": "GraphifyEditor",
+    "name": "GraphFramework.GraphifyEditor",
     "rootNamespace": "",
     "references": [
         "GUID:650f5d7751bbedc4597324ed0871ceac",

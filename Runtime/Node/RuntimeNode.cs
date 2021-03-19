@@ -2,7 +2,7 @@
 using UnityEngine;
 
 //Internals visible to graphify bridge so we can hide away potentially dangerous evaluate call.
-[assembly: InternalsVisibleTo("GraphifyBridge")]
+[assembly: InternalsVisibleTo("GraphFramework.GraphifyBridge")]
 namespace GraphFramework
 {
     public abstract class RuntimeNode : ScriptableObject
