@@ -23,7 +23,7 @@ namespace GraphFramework.Attributes
             this.showBackingValue = false;
         }
         
-        public In(bool showBackingValue, Port.Capacity portCapacity = Port.Capacity.Single)
+        public In(bool showBackingValue = false, Port.Capacity portCapacity = Port.Capacity.Single)
         {
             capacity = portCapacity;
             direction = Direction.Input;

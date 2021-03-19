@@ -1,5 +1,22 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-4808540674059986631
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 328f34f4bdcf4f7a9af04a84fa020cd6, type: 3}
+  m_Name: 'Settings For: DialogueGraphController'
+  m_EditorClassIdentifier: 
+  registeredToControllerType:
+    serializedTypeName: DialogueGraph.DialogueGraphController, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  isDefault: 0
+  graphViewStyle: {fileID: 7433441132597879392, guid: efbcd2a4693b951488698a8a412eab88, type: 3}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
