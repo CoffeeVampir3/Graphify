@@ -12,3 +12,13 @@ Create a class that derives from GraphController:
     }
 ```
 
+
+Every graph needs a root node, to give our graph controller a root we must create and register our new root node:
+```cs
+    [RegisterTo(typeof(TestGraphController))]
+    public class RootTester : RuntimeNode, RootNode
+    {
+    }
+```
+
+Now you can hop in and check out your first graph, simply create an instance of GraphController by taking advantage of the Create Asset Menu attribute you gave it. Then, double click on the graph controller and your graph will open. It's that simple to get an editable graph, but you probably want more than a root node and no content.
