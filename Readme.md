@@ -2,4 +2,4 @@
 
 # Quickstart Guide:
 
-###### Creating your first graph:
+  ###### Creating your first graph:
