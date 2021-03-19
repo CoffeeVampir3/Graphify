@@ -8,6 +8,12 @@ Graphify is a Unity Api for quickly and easily making anything into a graph!
 
 Note: This is temporary documentation until the wiki gets set up. This API is in its alpha stage and has not been finalized, things might change!
 
+### Installing:
+
+Download and unzip in any unity directory. Package versions coming soon.
+
+### Graph Controllers
+
 Create a class that derives from GraphController:
 ```cs
     [CreateAssetMenu]
