@@ -4,10 +4,6 @@
 
 Graphify is a Unity Api for quickly and easily making anything into a graph!
 
-# Quickstart Guide:
-
-Note: This is temporary documentation until the wiki gets set up. This API is in its alpha stage and has not been finalized, things might change!
-
 ### Installing:
 
 Download and unzip in any unity directory. Package versions coming soo
@@ -15,6 +11,8 @@ Download and unzip in any unity directory. Package versions coming soo
 ### Where Are The Docs?!
 
 See the wiki for complete documentation on how to use the graph.
+
+# Quickstart Guide:
 
 ### Graph Controllers
 
@@ -140,6 +138,4 @@ To execute a graph, you use the GraphExecutor class:
     }
 ```
 
-Make sure to drag your GraphController into the executor, this will make the executor try to execute your graph up to four steps.
-
-Wiki *coming soon* (TM)
+Make sure to drag your GraphController into the executor, this will make the executor try to execute your graph up to four steps. See the wiki for complete documentation.
