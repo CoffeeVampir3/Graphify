@@ -106,3 +106,24 @@ Similarly, we can extend our "My Second Node" with some functionality as well:
 ```
 
 This will output the value of everything connected to the stringInput ports as long as it's a string. It will also randomly pick any connected port to traverse to next if there's any connections.
+
+To execute a graph, you use the GraphExecutor class:
+
+```cs
+    public class GraphTester : MonoBehaviour
+    {
+        public GraphExecutor executor;
+
+        private void Start()
+        {
+            executor.Initialize();
+
+            for (int i = 0; i < 4; i++)
+            {
+                executor.Step();
+            }
+        }
+    }
+```
+
+Make sure to drag your GraphController into the executor, this will make the executor try to execute your graph up to four steps.
