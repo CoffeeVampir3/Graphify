@@ -55,7 +55,7 @@ namespace GraphFramework
         /// Evaluates the current node and walks the graph to whatever node is returned by
         /// the evaluated node.
         /// </summary>
-        public void Step()
+        public virtual void Step()
         {
             if (nextNode != null)
                 currentNode = nextNode;

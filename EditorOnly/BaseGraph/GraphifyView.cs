@@ -455,6 +455,7 @@ namespace GraphFramework.Editor
 
             foreach (var model in graphModel.nodeModels.ToArray())
             {
+                model.UpdatePorts();
                 CreateNodeFromModelInternal(model);
             }
 

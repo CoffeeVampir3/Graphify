@@ -81,6 +81,34 @@ namespace GraphFramework.Editor
         
         #region Ports
 
+        protected internal void UpdatePorts()
+        {
+            var fieldsAndData = GetFieldInfoFor(RuntimeData.GetType());
+            
+            for (int i = 0; i < fieldsAndData.fieldInfo.Count; i++)
+            {
+                var field = fieldsAndData.fieldInfo[i];
+                var cap = fieldsAndData.caps[i];
+                var dir = fieldsAndData.directions[i];
+
+                bool shouldCreateNewPortModel = inputPorts.All(
+                    pm => pm.serializedValueFieldInfo.FieldName != field.Name);
+
+                if (shouldCreateNewPortModel)
+                {
+                    if (outputPorts.Any(pm => pm.serializedValueFieldInfo.FieldName == field.Name))
+                    {
+                        shouldCreateNewPortModel = false;
+                    }
+                }
+                if (shouldCreateNewPortModel)
+                {
+                    Debug.Log("Yes.");
+                    CreatePortModel(field, dir, cap);
+                }
+            }
+        }
+
         protected internal void CreatePortModel(FieldInfo field, Direction dir, Port.Capacity cap)
         {
             Action<PortModel> portCreationAction;
@@ -100,6 +128,8 @@ namespace GraphFramework.Editor
                 GetGenericClassConstructorArguments(typeof(ValuePort<>));
             var pm = new PortModel(Orientation.Horizontal, dir, 
                 cap, portValueType.FirstOrDefault(), field);
+            
+            Debug.Log("Added.");
             portCreationAction.Invoke(pm);
         }
 
