@@ -10,4 +10,4 @@ Download and unzip in any unity directory. Package versions coming soo
 
 ### Where Are The Docs?!
 
-See the [Quickstart Guide](https://github.com/CoffeeVampir3/Graphify/wiki/Quickstart-Guide) for a fast start or the [Wiki](https://github.com/CoffeeVampir3/Graphify/wiki/Home)
+See the [Quickstart Guide](https://github.com/CoffeeVampir3/Graphify/wiki/Quickstart-Guide) for a fast start or see the comprehensive [Wiki](https://github.com/CoffeeVampir3/Graphify/wiki/Home)
