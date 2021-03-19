@@ -53,12 +53,19 @@ namespace GraphFramework
 
         /// <summary>
         /// Evaluates the current node and walks the graph to whatever node is returned by
-        /// the evaluated node.
+        /// the evaluated node. Returns true if it can keep walking or false if there's no more nodes.
         /// </summary>
-        public virtual void Step()
+        public virtual bool Step()
         {
             if (nextNode != null)
+            {
                 currentNode = nextNode;
+            }
+            else
+            {
+                return false;
+            }
+
             RuntimeNode tempPrev = currentNode;
             nextNode = currentNode.Evaluate(virtualizedGraph.virtualId);
             
@@ -70,6 +77,7 @@ namespace GraphFramework
             //We set previous node AFTER calling evaluate editor, effectively evaluate editor
             //checks the *previous previous* node.
             previousNode = tempPrev;
+            return true;
         }
     }
 }
