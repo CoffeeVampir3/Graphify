@@ -84,27 +84,47 @@ namespace GraphFramework.Editor
         protected internal void UpdatePorts()
         {
             var fieldsAndData = GetFieldInfoFor(RuntimeData.GetType());
-            
+            HashSet<string> portNames = new HashSet<string>();
+            HashSet<string> fieldnames = new HashSet<string>();
+
+            foreach (var port in inputPorts)
+            {
+                portNames.Add(port.serializedValueFieldInfo.FieldName);
+            }
+
+            foreach (var port in outputPorts)
+            {
+                portNames.Add(port.serializedValueFieldInfo.FieldName);
+            }
+
+            //Add new.
             for (int i = 0; i < fieldsAndData.fieldInfo.Count; i++)
             {
                 var field = fieldsAndData.fieldInfo[i];
                 var cap = fieldsAndData.caps[i];
                 var dir = fieldsAndData.directions[i];
-
-                bool shouldCreateNewPortModel = inputPorts.All(
-                    pm => pm.serializedValueFieldInfo.FieldName != field.Name);
-
-                if (shouldCreateNewPortModel)
-                {
-                    if (outputPorts.Any(pm => pm.serializedValueFieldInfo.FieldName == field.Name))
-                    {
-                        shouldCreateNewPortModel = false;
-                    }
-                }
-                if (shouldCreateNewPortModel)
-                {
-                    Debug.Log("Yes.");
+                fieldnames.Add(field.Name);
+                
+                if(!portNames.Contains(field.Name)) {
                     CreatePortModel(field, dir, cap);
+                }
+            }
+
+            //Remove old
+            for (int i = inputPorts.Count - 1; i >= 0; i--)
+            {
+                var port = inputPorts[i];
+                if (!fieldnames.Contains(port.serializedValueFieldInfo.FieldName))
+                {
+                    inputPorts.Remove(port);
+                }
+            }
+            for (int i = outputPorts.Count - 1; i >= 0; i--)
+            {
+                var port = outputPorts[i];
+                if (!fieldnames.Contains(port.serializedValueFieldInfo.FieldName))
+                {
+                    outputPorts.Remove(port);
                 }
             }
         }
@@ -128,8 +148,6 @@ namespace GraphFramework.Editor
                 GetGenericClassConstructorArguments(typeof(ValuePort<>));
             var pm = new PortModel(Orientation.Horizontal, dir, 
                 cap, portValueType.FirstOrDefault(), field);
-            
-            Debug.Log("Added.");
             portCreationAction.Invoke(pm);
         }
 
