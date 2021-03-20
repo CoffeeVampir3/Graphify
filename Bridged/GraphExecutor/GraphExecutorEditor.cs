@@ -20,7 +20,7 @@ namespace GraphFramework
                 BindingFlags.Static | BindingFlags.Public);
         
         private MethodInfo genericHasInstancesOpen = null;
-        //Unity didin't provide a function to do this, so we make a generic delegate for our
+        //Unity doesnt provide a function to do this, so we make a generic delegate for our
         //window type's HasOpenInstances -- then we cache that delegate.
         private bool IsEditorWindowOpen(Type t)
         {

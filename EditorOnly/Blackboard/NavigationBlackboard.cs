@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine.UIElements;
 
@@ -132,7 +131,7 @@ namespace GraphFramework.Editor
         private void DelayedRefresh()
         {
             listBase.itemsSource ??= graphify.nodes.ToList();
-            if (listBase.itemsSource.Count != graphify.nodes.Count() || currentStackCount != previosuStackCount)
+            if (listBase.itemsSource.Count != graphify.nodes.ToList().Count || currentStackCount != previosuStackCount)
             {
                 previosuStackCount = currentStackCount;
                 listBase.Clear();
