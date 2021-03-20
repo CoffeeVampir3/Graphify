@@ -451,6 +451,8 @@ namespace GraphFramework.Editor
                 CreateStackFromModelInternal(model);
             }
             
+            //Update root node model ports and build the root node.
+            graphModel.rootNodeModel.UpdatePorts();
             CreateNodeFromModelAsRoot(graphModel.rootNodeModel);
 
             foreach (var model in graphModel.nodeModels.ToArray())
