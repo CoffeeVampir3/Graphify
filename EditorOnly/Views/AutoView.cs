@@ -10,64 +10,6 @@ namespace GraphFramework.Editor
 {
     internal static class AutoView
     {
-        private static VisualElement CreateDrawer<T>(SerializedProperty prop) 
-            where T : BindableElement, new()
-        {
-            T drawer = new T();
-            drawer.BindProperty(prop);
-            return drawer;
-        }
-
-        private static VisualElement WrapDrawer(string rootName, VisualElement ve)
-        {
-            Foldout fv = new Foldout {text = rootName};
-            fv.Add(ve);
-            return fv;
-        }
-        
-        private static bool FixBrokenPropertyDrawers(SerializedProperty prop, out VisualElement drawer)
-        {
-            string rootName = ObjectNames.NicifyVariableName(prop.propertyPath);
-            if(prop.hasChildren)
-                prop.NextVisible(true);
-
-            switch (prop.propertyType)
-            {
-                case SerializedPropertyType.Vector2:
-                    drawer = WrapDrawer(rootName, CreateDrawer<Vector2Field>(prop));
-                    return true;
-                case SerializedPropertyType.Vector3:
-                    drawer = WrapDrawer(rootName, CreateDrawer<Vector3Field>(prop));
-                    return true;
-                case SerializedPropertyType.Rect:
-                    drawer = WrapDrawer(rootName, CreateDrawer<RectField>(prop));
-                    return true;
-                case SerializedPropertyType.Bounds:
-                    drawer = WrapDrawer(rootName, CreateDrawer<BoundsField>(prop));
-                    return true;
-                case SerializedPropertyType.Vector2Int:
-                    drawer = WrapDrawer(rootName, CreateDrawer<Vector2IntField>(prop));
-                    return true;
-                case SerializedPropertyType.Vector3Int:
-                    drawer = WrapDrawer(rootName, CreateDrawer<Vector3IntField>(prop));
-                    return true;
-                case SerializedPropertyType.RectInt:
-                    drawer = WrapDrawer(rootName, CreateDrawer<RectIntField>(prop));
-                    return true;
-                case SerializedPropertyType.BoundsInt:
-                    drawer = WrapDrawer(rootName, CreateDrawer<BoundsIntField>(prop));
-                    return true;
-                case SerializedPropertyType.String:
-                    var tDrawer = CreateDrawer<TextField>(prop);
-                    tDrawer.AddToClassList("textInputBox");
-                    drawer = WrapDrawer(rootName, tDrawer);
-                    return true;
-            }
-
-            drawer = null;
-            return false;
-        }
-        
         #region Directional Attribute Handler
         
         private static readonly Dictionary<string, DirectionalAttribute> nameToDirAttrib
@@ -111,19 +53,6 @@ namespace GraphFramework.Editor
             {
                 var copiedProp = it.Copy();
 
-                //Some of unity's property drawers are broken, they will create visual
-                //artifacts and possibly crash unity. So we fix those.
-                if (FixBrokenPropertyDrawers(copiedProp, out var drawer))
-                {
-                    //Check the actual iterator as the copied prop is subnested and we're only
-                    //checking prototype information which is the same per type.
-                    if(ShouldDrawBackingField(it))
-                        generateTo.Add(drawer);
-                    continue;
-                }
-                
-                copiedProp = it.Copy();
-                
                 //Otherwise lay out like normal.
                 var propertyField = new PropertyField(copiedProp) 
                     { name = it.propertyPath };
