@@ -2,12 +2,16 @@
 
 # Turn Anything Into a Graph!
 
-Graphify is an ultra-lightweight Unity Api for quickly and easily making anything into a graph! It's 100% built using Unity's new UI Toolkit, and allows users to easily extend the graph using their own UI Toolkit code. Games can be very computationally expensive, so the graph has completely seperated the runtime and the editor components, meaning there's absolutely nothing that will slow down your games runtime! With an easy to use API based on Siccity's xNode API there's nothing that can hold you back from graphifying your game.
+Graphify is an ultra-lightweight Unity Api for quickly and easily making anything into a graph! It's 100% built using Unity's new UI Toolkit, and allows users to easily extend the graph using their own UI Toolkit code. Games can be very computationally expensive, so the graph has been designed to be nearly free at runtime, consistenting of a virtualization scheme and fast evaluation means you can create and run thousands of graphs at a time with no issues.
 
-### Installing:
+# Installing:
 
-Download and unzip in any unity directory. Package versions coming soo
+Install via UPM using `https://github.com/CoffeeVampir3/Graphify.git#upm` with the built-in unity package manager:
 
-### Where Are The Docs?!
+![Upm Example](https://github.com/CoffeeVampir3/Graphify/blob/fd0724535993881a4246be2c831fa5d4082450ef/packageManagerExample.png?raw=true)
 
-See the [Quickstart Guide](https://github.com/CoffeeVampir3/Graphify/wiki/Quickstart-Guide) for a fast start or see the [Comprehensive Wiki](https://github.com/CoffeeVampir3/Graphify/wiki/Home)
+![Upm Add Example](https://github.com/CoffeeVampir3/Graphify/blob/fd0724535993881a4246be2c831fa5d4082450ef/packageAddExample.png?raw=true)
+
+# Where Are The Docs?!
+
+In the Wiki! Check out the [Quickstart Guide](https://github.com/CoffeeVampir3/Graphify/wiki/Quickstart-Guide) for a fast start or see [Comprehensive Wiki](https://github.com/CoffeeVampir3/Graphify/wiki/Home)
