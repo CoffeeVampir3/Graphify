@@ -63,19 +63,19 @@ namespace GraphFramework
             {
                 currentNode = nextNode;
             }
-            else
-            {
-                return false;
-            }
 
             RuntimeNode tempPrev = currentNode;
             nextNode = currentNode.Evaluate(virtualizedGraph.virtualId);
             
-            //This is our gateway into editor code, using this method we can get 100% of the
-            //editor linker branch to compile out.
             #if UNITY_EDITOR
             EvaluateEditor();
             #endif
+
+            if (nextNode == null)
+                return false;
+            
+            //This is our gateway into editor code, using this method we can get 100% of the
+            //editor linker branch to compile out.
             //We set previous node AFTER calling evaluate editor, effectively evaluate editor
             //checks the *previous previous* node.
             previousNode = tempPrev;
