@@ -8,7 +8,7 @@ Graphify is an ultra-lightweight Unity Api for quickly and easily making anythin
 
 ![Animated Playmode Example](https://github.com/CoffeeVampir3/Graphify/blob/7c5460cafd562dbcda706d300d151158997d7031/bWRdpX42Gy.gif)
 
-With Graphify you're able to visualize a graph while it's running in playmode, and make permenant changes to it on-the fly! No more having to recompile 60 times to see the fruits of your labour!
+Say goodbye to recompiling! With Graphify you're able to visualize a graph while it's running in playmode, and make permenant changes to it in real time!
 
 # Installing:
 
