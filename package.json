@@ -2,7 +2,9 @@
   "name": "com.graphframework.graphify",
   "version": "1.0.0",
   "displayName":  "Graphify",
-  "version": "1.0.0",
   "unity": "2019.3",
-  "description": "Graphify your game! See https://github.com/CoffeeVampir3/Graphify for details."
+  "description": "Graphify your game! See https://github.com/CoffeeVampir3/Graphify for details.",
+  "dependencies": {
+    "com.unity.ui" : "1.0.0-preview.14"
+  }
 }
