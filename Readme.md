@@ -6,7 +6,7 @@ Graphify is an ultra-lightweight Unity Api for quickly and easily making anythin
 
 # Installing:
 
-Install via UPM `https://github.com/CoffeeVampir3/Graphify.git#upm` using the built-in unity package manager:
+Install via UPM using `https://github.com/CoffeeVampir3/Graphify.git#upm` with the built-in unity package manager:
 
 ![Upm Example](https://github.com/CoffeeVampir3/Graphify/blob/fd0724535993881a4246be2c831fa5d4082450ef/packageManagerExample.png?raw=true)
 
