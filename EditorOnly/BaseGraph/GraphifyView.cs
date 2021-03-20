@@ -179,7 +179,7 @@ namespace GraphFramework.Editor
 
         public void ResetVirtualGraph(int graphId)
         {
-            foreach (var elem in graphElements)
+            foreach (var elem in graphElements.ToList())
             {
                 if (elem is NodeView nv)
                 {
@@ -431,7 +431,7 @@ namespace GraphFramework.Editor
 
         private void ClearGraph()
         {
-            foreach (var elem in graphElements)
+            foreach (var elem in graphElements.ToList())
             {
                 RemoveElement(elem);
             }
@@ -771,7 +771,7 @@ namespace GraphFramework.Editor
         {
             var compPorts = new List<Port>();
 
-            foreach (var port in ports)
+            foreach (var port in ports.ToList())
             {
                 if (startPort == port || startPort.node == port.node) continue;
                 if (startPort.portType != port.portType && startPort.portType != anyType) continue;
