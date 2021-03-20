@@ -9,7 +9,6 @@ namespace GraphFramework.Editor
     /// <summary>
     /// A class that allows us to save global settings for our graph controller (by type)
     /// </summary>
-    [CreateAssetMenu]
     public class GraphSettings : ScriptableObject
     {
         [HideInInspector]
@@ -17,7 +16,7 @@ namespace GraphFramework.Editor
         [SerializeField, HideInInspector] 
         private bool isDefault = false;
         public StyleSheet graphViewStyle;
-
+        
         private static GraphSettings CreateGraphSettings(System.Type controllerType, List<GraphSettings> allSettings)
         {
             var defaultSettings = allSettings.FirstOrDefault(
@@ -45,17 +44,7 @@ namespace GraphFramework.Editor
         {
             var allSettings = AssetHelper.FindAssetsOf<GraphSettings>();
 
-            System.Type graphControllerType = graphModel.serializedGraphController.GetType();
-            
-            var graphSettings = allSettings.FirstOrDefault(
-                e => e.registeredToControllerType.type == graphControllerType);
-
-            if (graphSettings == null)
-            {
-                graphSettings = CreateGraphSettings(graphControllerType, allSettings);
-            }
-            
-            return graphSettings;
+            return allSettings.FirstOrDefault();
         }
     }
 }
