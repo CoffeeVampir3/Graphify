@@ -14,4 +14,4 @@ Install via UPM using `https://github.com/CoffeeVampir3/Graphify.git#upm` with t
 
 # Where Are The Docs?!
 
-See the [Quickstart Guide](https://github.com/CoffeeVampir3/Graphify/wiki/Quickstart-Guide) for a fast start or see the [Comprehensive Wiki](https://github.com/CoffeeVampir3/Graphify/wiki/Home)
+In the Wiki! Check out the [Quickstart Guide](https://github.com/CoffeeVampir3/Graphify/wiki/Quickstart-Guide) for a fast start or see [Comprehensive Wiki](https://github.com/CoffeeVampir3/Graphify/wiki/Home)
