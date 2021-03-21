@@ -82,7 +82,7 @@ namespace GraphFramework
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T FirstValue()
         {
-            return links.Count > 0 ? links[0].GetValueAs<T>() : default;
+            return links[0].TryGetValue<T>(out var value) ? value : default;
         }
 
         /// <summary>
