@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace GraphFramework
 {
-    public partial class GraphExecutor
+    public partial class GraphEvaluator
     {
         private EditorWindow linkedEditorWindow;
         private GraphModel graphModelData;

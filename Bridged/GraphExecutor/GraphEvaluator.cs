@@ -8,7 +8,7 @@ namespace GraphFramework
     /// mode this class also creates our editor/graph link.
     /// </summary>
     [Serializable]
-    public partial class GraphExecutor
+    public partial class GraphEvaluator
     {
         public GraphController graphController;
         public RuntimeNode currentNode = null;
