@@ -110,7 +110,7 @@ namespace GraphFramework.Editor
                    out var customEditorType) && 
                Activator.CreateInstance(customEditorType) is CustomNodeView editor) 
             {
-                editor.CreateView(serializedNode);
+                editor.CreateView(serializedNode, nodeModel.RuntimeData);
                 extensionContainer.Add(editor);
                 return;
             }

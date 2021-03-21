@@ -8,12 +8,17 @@ namespace GraphFramework
     /// mode this class also creates our editor/graph link.
     /// </summary>
     [Serializable]
-    public partial class GraphExecutor
+    public partial class GraphEvaluator
     {
         public GraphController graphController;
-        public RuntimeNode currentNode = null;
-        public RuntimeNode nextNode = null;
-        public RuntimeNode previousNode = null;
+        private RuntimeNode currentNode = null;
+        private RuntimeNode nextNode = null;
+        private RuntimeNode previousNode = null;
+
+        public RuntimeNode Current => currentNode;
+        public RuntimeNode Next => nextNode;
+        public RuntimeNode Prev => previousNode;
+        
         //Allows you to look at specific graphs operating, rather than all of them at once.
         public bool shouldLinkEditor = false;
         [NonSerialized]
@@ -25,16 +30,16 @@ namespace GraphFramework
             Reset();
         }
         
-        public void Reset()
-        {
-            currentNode = graphController.rootNode;
-            nextNode = null;
-            previousNode = null;
-            #if UNITY_EDITOR
-            if(virtualizedGraph != null)
-                EditorLinkedResetGraph(virtualizedGraph.virtualId);
-            #endif
-        }
+    public void Reset()
+    {
+        currentNode = graphController.rootNode;
+        nextNode = null;
+        previousNode = null;
+        #if UNITY_EDITOR
+        if(virtualizedGraph != null)
+            EditorLinkedResetGraph(virtualizedGraph.virtualId);
+        #endif
+    }
 
         #region Editor Link
         
@@ -55,9 +60,9 @@ namespace GraphFramework
 
         /// <summary>
         /// Evaluates the current node and walks the graph to whatever node is returned by
-        /// the evaluated node. Returns true if it can keep walking or false if there's no more nodes.
+        /// the evaluated node. Returns the next node that will be evaluated or null if none.
         /// </summary>
-        public virtual bool Step()
+        public virtual RuntimeNode Step()
         {
             if (nextNode != null)
             {
@@ -76,10 +81,10 @@ namespace GraphFramework
             #endif
 
             if (nextNode == null)
-                return false;
+                return null;
             
             previousNode = tempPrev;
-            return true;
+            return nextNode;
         }
     }
 }
