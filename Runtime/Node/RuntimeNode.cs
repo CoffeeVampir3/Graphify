@@ -7,6 +7,7 @@ namespace GraphFramework
 {
     public abstract class RuntimeNode : ScriptableObject
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         /// <summary>
         /// Evaluates a node for the given graph id.
         /// </summary>
@@ -14,10 +15,14 @@ namespace GraphFramework
         {
             //Make sure we're looking up the right graph index when we lookup our port values.
             ValuePort.CurrentGraphIndex = graphIndex;
-            return OnEvaluate();
+            return OnEvaluate(graphIndex);
         }
 
-        protected virtual RuntimeNode OnEvaluate()
+        /// <summary>
+        /// Evaluates a node.
+        /// </summary>
+        /// <param name="contextId">The context Id of the Virtual Graph this node belongs to.</param>
+        protected virtual RuntimeNode OnEvaluate(int contextId)
         {
             return null;
         }
