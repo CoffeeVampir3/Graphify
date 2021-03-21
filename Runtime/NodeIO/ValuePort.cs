@@ -68,11 +68,12 @@ namespace GraphFramework
         public override void Reset(int graphId) => virtualizedMutablePortValues[graphId] = portValue;
 
         /// <summary>
-        /// Sets the local value of this port.
+        /// The local value of this port.
         /// </summary>
         public T LocalValue
         {
             set => virtualizedMutablePortValues[CurrentGraphIndex] = value;
+            get => virtualizedMutablePortValues[CurrentGraphIndex];
         }
 
         /// <summary>
