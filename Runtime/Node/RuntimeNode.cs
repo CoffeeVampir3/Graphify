@@ -19,9 +19,9 @@ namespace GraphFramework
         }
 
         /// <summary>
-        /// Evaluates a node.
+        /// Evaluates a node. Because of how virtualization works, if you need to store context-sensitive data
+        /// in the node, use the provided contextId to store the values in a dictionary or lookup scheme.
         /// </summary>
-        /// <param name="contextId">The context Id of the Virtual Graph this node belongs to.</param>
         protected virtual RuntimeNode OnEvaluate(int contextId)
         {
             return null;
