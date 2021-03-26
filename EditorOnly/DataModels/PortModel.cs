@@ -29,7 +29,7 @@ namespace GraphFramework.Editor
             Direction direction, 
             Port.Capacity capacity,
             Type portValueType, 
-            FieldInfo fieldInfo)
+            FieldInfo fieldInfo, string portGuid)
         {
             this.orientation = orientation;
             this.direction = direction;
@@ -37,7 +37,7 @@ namespace GraphFramework.Editor
             this.portValueType = new SerializableType(portValueType);
             this.serializedValueFieldInfo = new SerializedFieldInfo(fieldInfo);
             this.portName = ObjectNames.NicifyVariableName(fieldInfo.Name);
-            this.portGUID = Guid.NewGuid().ToString();
+            this.portGUID = portGuid;
         }
     }
 }

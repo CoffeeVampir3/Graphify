@@ -13,6 +13,11 @@ namespace GraphFramework
         protected internal List<Link> links = new List<Link>();
         public static int CurrentGraphIndex { get; set; }
 
+        public void Clear()
+        {
+            links.Clear();
+        }
+
         /// <summary>
         /// The list of links this port has.
         /// </summary>

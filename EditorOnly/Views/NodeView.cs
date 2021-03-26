@@ -77,8 +77,7 @@ namespace GraphFramework.Editor
         
         private void CreatePortsFromModel()
         {
-            CreatePortsFromModelList(nodeModel.inputPorts);
-            CreatePortsFromModelList(nodeModel.outputPorts);
+            CreatePortsFromModelList(nodeModel.portModels);
         }
 
         private Port AddPort(Orientation orientation,

@@ -306,10 +306,10 @@ namespace GraphFramework.Editor
                 }
                 else
                 {
-                    var pIndex = inModel.inputPorts.IndexOf(inPort);
-                    if (targetInModel.inputPorts.Count <= pIndex)
+                    var pIndex = inModel.portModels.IndexOf(inPort);
+                    if (targetInModel.portModels.Count <= pIndex)
                         continue;
-                    targetInPort = targetInModel.inputPorts[pIndex];
+                    targetInPort = targetInModel.portModels[pIndex];
                 }
                 
                 if (!oldModelToCopiedModel.TryGetValue(outModel, out var targetOutModel))
@@ -319,10 +319,10 @@ namespace GraphFramework.Editor
                 }
                 else
                 {
-                    var pIndex = outModel.outputPorts.IndexOf(outPort);
-                    if (targetOutModel.outputPorts.Count <= pIndex)
+                    var pIndex = outModel.portModels.IndexOf(outPort);
+                    if (targetOutModel.portModels.Count <= pIndex)
                         continue;
-                    targetOutPort = targetOutModel.outputPorts[pIndex];
+                    targetOutPort = targetOutModel.portModels[pIndex];
                 }
                 
                 if (!targetInModel.View.TryGetModelToPort(targetInPort.portGUID, out var realInPort) ||
@@ -450,7 +450,8 @@ namespace GraphFramework.Editor
             {
                 CreateStackFromModelInternal(model);
             }
-            
+
+            NodeModel.PreGraphBuild();
             //Update root node model ports and build the root node.
             graphModel.rootNodeModel.UpdatePorts();
             CreateNodeFromModelAsRoot(graphModel.rootNodeModel);
@@ -521,14 +522,9 @@ namespace GraphFramework.Editor
                     }
                 }
 
-                for (var index = 0; index < node.inputPorts.Count; index++)
+                for (var index = 0; index < node.portModels.Count; index++)
                 {
-                    DeleteUndoneLinks(node.inputPorts[index]);
-                }
-
-                for (var index = 0; index < node.outputPorts.Count; index++)
-                {
-                    DeleteUndoneLinks(node.outputPorts[index]);
+                    DeleteUndoneLinks(node.portModels[index]);
                 }
             }
 

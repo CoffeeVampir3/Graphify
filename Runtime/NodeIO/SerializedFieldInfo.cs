@@ -14,9 +14,8 @@ namespace GraphFramework
         private string fieldName;
         [SerializeField]
         private SerializableType declaringType;
-
         public string FieldName => fieldName;
-        
+
         public FieldInfo FieldFromInfo => declaringType.type.GetField(fieldName, 
             BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
