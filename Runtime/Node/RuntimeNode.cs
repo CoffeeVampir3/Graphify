@@ -14,7 +14,7 @@ namespace GraphFramework
         internal RuntimeNode Evaluate(int graphIndex)
         {
             //Make sure we're looking up the right graph index when we lookup our port values.
-            ValuePort.CurrentGraphIndex = graphIndex;
+            BasePort.CurrentGraphIndex = graphIndex;
             return OnEvaluate(graphIndex);
         }
 

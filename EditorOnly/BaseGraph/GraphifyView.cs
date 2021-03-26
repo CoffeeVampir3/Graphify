@@ -502,11 +502,11 @@ namespace GraphFramework.Editor
                 void DeleteUndoneLinks(PortModel port)
                 {
                     var localPortInfo = port.serializedValueFieldInfo.FieldFromInfo;
-                    if (!(localPortInfo.GetValue(node.RuntimeData) is ValuePort valuePort))
+                    if (!(localPortInfo.GetValue(node.RuntimeData) is BasePort basePort))
                         return;
-                    for (int i = valuePort.links.Count - 1; i >= 0; i--)
+                    for (int i = basePort.links.Count - 1; i >= 0; i--)
                     {
-                        var link = valuePort.links[i];
+                        var link = basePort.links[i];
                         if (graphKnownGuidToLink.ContainsKey(link.GUID))
                         {
                             //We found a port containing this connection, so we mark it traversed.
@@ -516,7 +516,7 @@ namespace GraphFramework.Editor
 
                         //The graph doesn't know about this connection, so it's undone. Remove it
                         //from the value port.
-                        valuePort.links.Remove(link);
+                        basePort.links.Remove(link);
                         anyLinksRemoved = true;
                     }
                 }
@@ -541,7 +541,7 @@ namespace GraphFramework.Editor
             var unaccountedForLinks = untraversedLinks.Except(traversedLinks);
             foreach (var conn in unaccountedForLinks)
             {
-                ValuePort localPort = conn.GetLocalPort();
+                BasePort localPort = conn.GetLocalPort();
                 //Guards against the same connection being added twice.
                 if (localPort.links.Any(localConn => localConn.GUID == conn.GUID)) continue;
                 localPort.links.Add(conn);

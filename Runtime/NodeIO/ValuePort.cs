@@ -10,50 +10,10 @@ using UnityEngine;
 namespace GraphFramework
 {
     /// <summary>
-    /// An I/O port for the graph. This holds the semantic links as well as the set of virtualized values.
-    /// </summary>
-    [Serializable]
-    public abstract class ValuePort
-    {
-        //Internals shared with graph editor.
-        [SerializeReference, HideInInspector]
-        protected internal List<Link> links = new List<Link>();
-        public static int CurrentGraphIndex { get; set; }
-
-        /// <summary>
-        /// The list of links this port has.
-        /// </summary>
-        public List<Link> Links => links;
-
-        /// <summary>
-        /// Resets the value of a virtual port back to it's original value.
-        /// </summary>
-        public abstract void Reset(int graphId);
-
-        /// <summary>
-        /// Returns true if this port has any links.
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool IsLinked()
-        {
-            return links.Count > 0;
-        }
-
-        /// <summary>
-        /// Returns true if this port has more than one link.
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool HasMultipleLinks()
-        {
-            return links.Count > 1;
-        }
-    }
-
-    /// <summary>
     /// A port with a backing value.
     /// </summary>
     [Serializable]
-    public class ValuePort<T> : ValuePort
+    public class ValuePort<T> : BasePort, PortWithValue<T>
     {
         //Backing value of the port, the is used as the initialization value for the port.
         [SerializeField]
@@ -76,31 +36,23 @@ namespace GraphFramework
             get => virtualizedMutablePortValues[CurrentGraphIndex];
         }
 
-        /// <summary>
-        /// Returns the value of the first link or default.
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public T FirstValue()
+        public bool TryGetValue(Link link, out T value)
         {
-            return links[0].TryGetValue<T>(out var value) ? value : default;
+            //DEBUG !!!!!!
+            //TODO:: BAD
+            link.BindRemote();
+            if (link.distantEndValueKey is PortWithValue<T> valuePort)
+            {
+                return valuePort.TryGetValue(CurrentGraphIndex, link, out value);
+            }
+
+            value = default;
+            return false;
         }
 
-        /// <summary>
-        /// Returns the node for the first link or null.
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public RuntimeNode FirstNode()
+        bool PortWithValue<T>.TryGetValue(int graphId, Link link, out T value)
         {
-            return links.Count > 0 ? links[0].Node : null;
-        }
-        
-        /// <summary>
-        /// Returns the first link or null.
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Link FirstLink()
-        {
-            return links.Count > 0 ? links[0] : null;
+            return virtualizedMutablePortValues.TryGetValue(graphId, out value);
         }
     }
 }

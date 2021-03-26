@@ -10,7 +10,7 @@ namespace GraphFramework
     {
         [SerializeField, HideInInspector]
         public RuntimeNode rootNode;
-        [SerializeReference, HideInInspector] 
+        [SerializeReference] 
         protected internal List<Link> links = new List<Link>();
         [NonSerialized] 
         private int currentVirtualGraphIndex = int.MinValue;

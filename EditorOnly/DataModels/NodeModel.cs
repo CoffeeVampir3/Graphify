@@ -158,7 +158,7 @@ namespace GraphFramework.Editor
                     return;
             }
 
-            if (!typeof(ValuePort).IsAssignableFrom(field.FieldType))
+            if (!typeof(BasePort).IsAssignableFrom(field.FieldType))
             {
                 Debug.LogError("Attempted to construct port that is not assignable to value port.");
             }
@@ -225,7 +225,7 @@ namespace GraphFramework.Editor
                 var dir = fieldsAndData.directions[i];
                 CreatePortModel(field, dir, cap);
                 if (!clearCopy) continue;
-                if (field.GetValue(RuntimeData) is ValuePort vp)
+                if (field.GetValue(RuntimeData) is BasePort vp)
                 {
                     vp.links.Clear();
                 }
@@ -277,10 +277,10 @@ namespace GraphFramework.Editor
         #region Connections
 
         [NonSerialized]
-        private Dictionary<PortModel, ValuePort> cachedValuePorts = 
-            new Dictionary<PortModel, ValuePort>();
+        private Dictionary<PortModel, BasePort> cachedValuePorts = 
+            new Dictionary<PortModel, BasePort>();
         private bool TryResolveValuePortFromModels(PortModel portModel,
-            out ValuePort valuePort)
+            out BasePort valuePort)
         {
             if (cachedValuePorts.TryGetValue(portModel, out valuePort))
             {
@@ -289,7 +289,7 @@ namespace GraphFramework.Editor
             try
             {
                 var inputPortInfo = portModel.serializedValueFieldInfo.FieldFromInfo;
-                valuePort = inputPortInfo.GetValue(RuntimeData) as ValuePort;
+                valuePort = inputPortInfo.GetValue(RuntimeData) as BasePort;
                 cachedValuePorts.Add(portModel, valuePort);
                 return true;
             }
