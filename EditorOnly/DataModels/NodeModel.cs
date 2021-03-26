@@ -158,8 +158,11 @@ namespace GraphFramework.Editor
                     return;
             }
 
-            var portValueType = field.FieldType.
-                GetGenericClassConstructorArguments(typeof(ValuePort<>));
+            if (!typeof(ValuePort).IsAssignableFrom(field.FieldType))
+            {
+                Debug.LogError("Attempted to construct port that is not assignable to value port.");
+            }
+            var portValueType = field.FieldType.GetGenericArguments();
             var pm = new PortModel(Orientation.Horizontal, unityDirection, 
                 CapacityToUnity(cap), portValueType.FirstOrDefault(), field);
             portCreationAction.Invoke(pm);
