@@ -2,7 +2,7 @@
 {
     public interface MovableView
     {
-        public void OnDirty();
-        public void Display();
+        void OnDirty();
+        void Display();
     }
 }
