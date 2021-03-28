@@ -2,6 +2,6 @@
   "name": "com.graphframework.graphify",
   "version": "2.0.0",
   "displayName":  "Graphify",
-  "unity": "2019.3",
+  "unity": "2020.3.1f1",
   "description": "Graphify your game! See https://github.com/CoffeeVampir3/Graphify for details."
 }
