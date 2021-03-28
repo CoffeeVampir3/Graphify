@@ -65,7 +65,7 @@ namespace GraphFramework.Editor
             AssetDatabase.AddObjectToAsset(RuntimeData, graphModel);
             EditorUtility.SetDirty(graphModel);
             
-            graphModel.serializedGraphController.nodes.Add(RuntimeData);
+            graphModel.serializedGraphBlueprint.nodes.Add(RuntimeData);
         }
         
         /// <summary>
@@ -77,12 +77,12 @@ namespace GraphFramework.Editor
             AssetDatabase.AddObjectToAsset(RuntimeData, graphModel);
             EditorUtility.SetDirty(graphModel);
             
-            graphModel.serializedGraphController.nodes.Add(RuntimeData);
+            graphModel.serializedGraphBlueprint.nodes.Add(RuntimeData);
         }
 
         public void Delete(GraphModel graphModel)
         {
-            graphModel.serializedGraphController.nodes.Remove(RuntimeData);
+            graphModel.serializedGraphBlueprint.nodes.Remove(RuntimeData);
         }
 
         #endregion
@@ -128,11 +128,13 @@ namespace GraphFramework.Editor
             
             var fieldInfo = GetFieldInfoFor(RuntimeData.GetType());
             HashSet<string> fieldNames = new HashSet<string>();
+            Dictionary<string, Type> stringToType = new Dictionary<string, Type>();
             bool anyChanges = false;
             
             foreach (var info in fieldInfo.fieldInfo)
             {
                 fieldNames.Add(info.Name);
+                stringToType.Add(info.Name, info.FieldType);
             }
             fieldNameToOldGuid.Clear();
             for (int i = portModels.Count - 1; i >= 0; i--)
@@ -141,6 +143,16 @@ namespace GraphFramework.Editor
                 fieldNameToOldGuid.Add(port.serializedValueFieldInfo.FieldName, port.portGUID);
                 //Field removed or renamed
                 if (!fieldNames.Contains(port.serializedValueFieldInfo.FieldName))
+                {
+                    anyChanges = true;
+                    break;
+                }
+
+                if (!stringToType.TryGetValue(port.serializedValueFieldInfo.FieldName, out var newType)) 
+                    continue;
+                
+                //Field type changed.
+                if (port.portCompleteType.type != newType)
                 {
                     anyChanges = true;
                     break;
@@ -207,7 +219,7 @@ namespace GraphFramework.Editor
                 return dynModel;
             }
             var pm = new PortModel(Orientation.Horizontal, unityDirection, 
-                CapacityToUnity(cap), portValueType.FirstOrDefault(), field, guid);
+                CapacityToUnity(cap), portValueType.FirstOrDefault(),field, guid);
             portCreationAction.Invoke(pm);
             return pm;
         }

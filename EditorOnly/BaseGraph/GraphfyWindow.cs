@@ -33,7 +33,7 @@ namespace GraphFramework.Editor
             //to load the graph, if the window isint loaded we use this delay call.
             OnWindowLayoutFinished = () =>
             {
-                serializedGraphSelector.SetValueWithoutNotify(model.serializedGraphController);
+                serializedGraphSelector.SetValueWithoutNotify(model.serializedGraphBlueprint);
                 graphView.LoadGraph(model);
             };
             
@@ -156,7 +156,7 @@ namespace GraphFramework.Editor
         {
             OnWindowLayoutFinished = () =>
             {
-                var gc = AssetDatabase.LoadAssetAtPath<GraphController>(gcPath);
+                var gc = AssetDatabase.LoadAssetAtPath<GraphBlueprint>(gcPath);
 
                 if (gc == null)
                     return;
@@ -188,7 +188,7 @@ namespace GraphFramework.Editor
                 return;
             }
             
-            var gc = serializedGraphSelector.value as GraphController;
+            var gc = serializedGraphSelector.value as GraphBlueprint;
             var path = AssetDatabase.GetAssetPath(gc);
             domainSafeWorkingAssetPath = string.IsNullOrEmpty(path) ? null : path;
 
@@ -200,7 +200,7 @@ namespace GraphFramework.Editor
         {
             var toolbar = new Toolbar();
             
-            serializedGraphSelector = new ObjectField {objectType = typeof(GraphController)};
+            serializedGraphSelector = new ObjectField {objectType = typeof(GraphBlueprint)};
             serializedGraphSelector.RegisterValueChangedCallback(OnObjectSelectorValueChanged);
             
             toolbar.Add(new Button( FoldoutAllItems ) 

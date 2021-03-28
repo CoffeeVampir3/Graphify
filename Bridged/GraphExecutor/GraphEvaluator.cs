@@ -10,7 +10,7 @@ namespace GraphFramework
     [Serializable]
     public partial class GraphEvaluator
     {
-        public GraphController graphController;
+        public GraphBlueprint graphBlueprint;
         private RuntimeNode currentNode = null;
         private RuntimeNode nextNode = null;
         private RuntimeNode previousNode = null;
@@ -26,13 +26,13 @@ namespace GraphFramework
         
         public void Initialize()
         {
-            virtualizedGraph = graphController.CreateVirtualGraph();
+            virtualizedGraph = graphBlueprint.CreateVirtualGraph();
             Reset();
         }
         
     public void Reset()
     {
-        currentNode = graphController.rootNode;
+        currentNode = graphBlueprint.rootNode;
         nextNode = null;
         previousNode = null;
         #if UNITY_EDITOR

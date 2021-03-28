@@ -104,7 +104,7 @@ namespace GraphFramework.Editor
                 graphModel.viewPosition = viewTransform.position;
                 graphModel.viewZoom = viewTransform.scale;
                 EditorUtility.SetDirty(graphModel);
-                EditorUtility.SetDirty(graphModel.serializedGraphController);
+                EditorUtility.SetDirty(graphModel.serializedGraphBlueprint);
                 CleanUndoRemnants();
             }
             AssetDatabase.SaveAssets();
@@ -187,7 +187,7 @@ namespace GraphFramework.Editor
                 }
             }
             graphModel.rootNodeModel?.View?.AddToClassList("CurrentNode");
-            graphModel.serializedGraphController.ForceInitializeId(graphId);
+            graphModel.serializedGraphBlueprint.InitializeId(graphId);
         }
         
         /// <summary>

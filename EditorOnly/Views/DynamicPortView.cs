@@ -1,33 +1,50 @@
-﻿using UnityEngine.UIElements;
+﻿using System;
+using UnityEditor.Experimental.GraphView;
+using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace GraphFramework.Editor
 {
     public class DynamicPortView : VisualElement
     {
-        public DynamicPortView(string portName, DynamicPortModel model)
+        public DynamicPortView(string portName, DynamicPortModel model, Direction dir)
         {
             VisualElement buttonContainer = new VisualElement();
             Label title = new Label{text = portName};
-            buttonContainer.style.flexGrow = 1;
-            buttonContainer.style.flexDirection = new StyleEnum<FlexDirection>(FlexDirection.Row);
+            buttonContainer.style.alignContent = new StyleEnum<Align>(Align.Stretch);
             Button plusButton = new Button {text = "+"};
             Button minusButton = new Button {text = "-"};
-            plusButton.style.flexGrow = .05f;
-            minusButton.style.flexGrow = .05f;
-            plusButton.style.alignSelf = new StyleEnum<Align>(Align.FlexEnd);
-            minusButton.style.alignSelf = new StyleEnum<Align>(Align.FlexEnd);
-            buttonContainer.style.alignSelf = new StyleEnum<Align>(Align.Center);
-
+            plusButton.style.fontSize = 12f;
+            minusButton.style.fontSize = 15f;
+            plusButton.style.width = 18f;
+            plusButton.style.height = 18f;
+            minusButton.style.width = 18f;
+            minusButton.style.height = 18f;
+            plusButton.style.unityTextAlign = new StyleEnum<TextAnchor>(TextAnchor.MiddleCenter);
+            minusButton.style.unityTextAlign = new StyleEnum<TextAnchor>(TextAnchor.MiddleCenter);
             plusButton.clicked += model.OnAddClicked;
             minusButton.clicked += model.OnRemoveClicked;
-
             buttonContainer.Add(title);
-            buttonContainer.Add(plusButton);
-            buttonContainer.Add(minusButton);
+
+            switch (dir)
+            {
+                case Direction.Input:
+                    buttonContainer.style.flexDirection = new StyleEnum<FlexDirection>(FlexDirection.RowReverse);
+                    buttonContainer.Add(minusButton);
+                    buttonContainer.Add(plusButton);
+                    break;
+                case Direction.Output:
+                    buttonContainer.style.flexDirection = new StyleEnum<FlexDirection>(FlexDirection.Row);
+                    buttonContainer.Add(plusButton);
+                    buttonContainer.Add(minusButton);
+                    break;
+            }
             
             style.flexGrow = 1;
             style.flexDirection = new StyleEnum<FlexDirection>(FlexDirection.Column);
-            this.Add(buttonContainer);
+            style.justifyContent = new StyleEnum<Justify>(Justify.FlexStart);
+            style.alignItems = new StyleEnum<Align>(Align.FlexStart);
+            Add(buttonContainer);
         }
     }
 }

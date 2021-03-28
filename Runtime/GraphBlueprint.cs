@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace GraphFramework
 {
-    public abstract class GraphController : ScriptableObject
+    public abstract class GraphBlueprint : ScriptableObject
     {
         [SerializeField, HideInInspector]
         public RuntimeNode rootNode;
@@ -24,7 +24,7 @@ namespace GraphFramework
         /// <summary>
         /// An initialization you can use to frontload the graph.
         /// </summary>
-        public void PrecachedInitialization()
+        public void Precache()
         {
             if (graphInitialized)
                 return;
@@ -37,6 +37,14 @@ namespace GraphFramework
                     if (typeof(BasePort).IsAssignableFrom(field.FieldType))
                     {
                         var port = field.GetValue(node) as BasePort;
+                        if (port == null)
+                        {
+                            #if UNITY_EDITOR
+                            Debug.LogError(node?.name + " was skipped during graph + " + this.name + " because it was null.");
+                            #endif
+                            continue;
+                        }
+
                         foreach (var link in port.links)
                         {
                             cachedLinks.Add(link);
@@ -60,25 +68,27 @@ namespace GraphFramework
                 return;
             }
 
-            ForceInitializeId(graphId);
-        }
-
-        internal void ForceInitializeId(int graphId)
-        {
             foreach (var node in nodes)
             {
                 var type = node.GetType();
                 foreach (var field in type.GetFields())
                 {
-                    if (typeof(BasePort).IsAssignableFrom(field.FieldType))
+                    if (!typeof(BasePort).IsAssignableFrom(field.FieldType)) 
+                        continue;
+                    
+                    var port = field.GetValue(node) as BasePort;
+                    if (port == null)
                     {
-                        var port = field.GetValue(node) as BasePort;
-                        foreach (var link in port.links)
-                        {
-                            cachedLinks.Add(link);
-                            link.BindRemote();
-                            link.Reset(graphId);
-                        }
+                        #if UNITY_EDITOR
+                        Debug.LogError(node?.name + " was skipped during graph + " + this.name + " because it was null.");
+                        #endif
+                        continue;
+                    }
+                    foreach (var link in port.links)
+                    {
+                        cachedLinks.Add(link);
+                        link.BindRemote();
+                        link.Reset(graphId);
                     }
                 }
             }

@@ -2,6 +2,6 @@
 
 namespace GraphFramework
 {
-    [RegisterTo(typeof(GraphControllerWithProperties), "Properties/Char")]
+    [RegisterTo(typeof(GraphBlueprintWithProperties), "Properties/Char")]
     public class RuntimeCharProperty : RuntimeProperty<char> { }
 }

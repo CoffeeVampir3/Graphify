@@ -6,7 +6,7 @@ namespace GraphFramework.Editor
     /// <summary>
     /// Handles the case when any graph controller asset is double-clicked.
     /// </summary>
-    internal class GraphClickedHandler : AssetClickedHandler<GraphController>
+    internal class GraphClickedHandler : AssetClickedHandler<GraphBlueprint>
     {
         [OnOpenAsset(1)]
         public static bool OnSerializedGraphOpened(int instanceID, int line)
