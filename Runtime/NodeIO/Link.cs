@@ -15,7 +15,7 @@ namespace GraphFramework
         internal RuntimeNode node;
         [SerializeReference]
         internal SerializedFieldInfo portField;
-
+        
         internal LinkBinder(RuntimeNode remote,
             SerializedFieldInfo field)
         {
@@ -82,23 +82,13 @@ namespace GraphFramework
         /// Creates the value key binding from serialization.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void BindRemote()
+        internal bool BindRemote()
         {
             //Binding multiple times would not create errors, it's just an avoidable cost.
-            if (valueBound) return;
+            if (valueBound) return false;
             distantEndValueKey = remoteLinkBinder.Bind();
             valueBound = true;
-        }
-
-        /// <summary>
-        /// Initializes the link (if necessary) and sets the mutable port values to the initialization value
-        /// of the node
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void CreateVirtualizedLinks(int graphId)
-        {
-            BindRemote();
-            Reset(graphId);
+            return true;
         }
 
         /// <summary>

@@ -35,7 +35,7 @@ namespace GraphFramework.Editor
             var model = new NodeModel {nodeTitle = initialName};
             model.CreateRuntimeData(graphModel, runtimeDataType);
             model.CreatePortModelsFromReflection();
-            
+
             return model;
         }
 
@@ -64,6 +64,8 @@ namespace GraphFramework.Editor
             RuntimeData.name = nodeTitle;
             AssetDatabase.AddObjectToAsset(RuntimeData, graphModel);
             EditorUtility.SetDirty(graphModel);
+            
+            graphModel.serializedGraphController.nodes.Add(RuntimeData);
         }
         
         /// <summary>
@@ -74,6 +76,13 @@ namespace GraphFramework.Editor
             RuntimeData = ScriptableObject.Instantiate(toCopy);
             AssetDatabase.AddObjectToAsset(RuntimeData, graphModel);
             EditorUtility.SetDirty(graphModel);
+            
+            graphModel.serializedGraphController.nodes.Add(RuntimeData);
+        }
+
+        public void Delete(GraphModel graphModel)
+        {
+            graphModel.serializedGraphController.nodes.Remove(RuntimeData);
         }
 
         #endregion

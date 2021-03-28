@@ -30,7 +30,10 @@ namespace GraphFramework
         /// <summary>
         /// Resets the value of the virtual port for this graph id to the original port value.
         /// </summary>
-        public override void Reset(int graphId) => virtualizedMutablePortValues[graphId] = portValue;
+        public override void Reset(int graphId)
+        {
+            virtualizedMutablePortValues[graphId] = portValue;
+        }
 
         /// <summary>
         /// The local value of this port.
@@ -43,9 +46,12 @@ namespace GraphFramework
 
         public bool TryGetValue(Link link, out T value)
         {
-            //DEBUG !!!!!!
-            //TODO:: BAD
-            link.BindRemote();
+            #if UNITY_EDITOR
+            if (link.BindRemote())
+            {
+                link.Reset(CurrentGraphIndex);
+            }
+            #endif
             if (link.distantEndValueKey is PortWithValue<T> valuePort)
             {
                 return valuePort.TryGetValue(CurrentGraphIndex, link, out value);
@@ -55,8 +61,51 @@ namespace GraphFramework
             return false;
         }
 
+        /// <summary>
+        /// Returns the value of the first link or default.
+        /// </summary>
+        public T FirstValue()
+        {
+            #if UNITY_EDITOR
+            if (links[0] != null && links[0].BindRemote())
+            {
+                links[0].Reset(CurrentGraphIndex);
+            }
+            #endif
+            if (!(links[0]?.distantEndValueKey is PortWithValue<T> valuePort)) return default;
+            if(valuePort.TryGetValue(CurrentGraphIndex, links[0], out var value))
+                return value;
+
+            return default;
+        }
+
+        /// <summary>
+        /// Trys to get the value of the first link.
+        /// </summary>
+        public bool TryGetFirstValue(out T value)
+        {
+            #if UNITY_EDITOR
+            if (links[0] != null && links[0].BindRemote())
+            {
+                links[0].Reset(CurrentGraphIndex);
+            }
+            #endif
+            if (links[0]?.distantEndValueKey is PortWithValue<T> valuePort)
+                return valuePort.TryGetValue(CurrentGraphIndex, links[0], out value);
+            
+            value = default;
+            return false;
+        }
+
         bool PortWithValue<T>.TryGetValue(int graphId, Link link, out T value)
         {
+            //Guard clause for editor adding new links in editor.
+            #if UNITY_EDITOR
+            if (link.BindRemote())
+            {
+                link.Reset(graphId);
+            }
+            #endif
             return virtualizedMutablePortValues.TryGetValue(graphId, out value);
         }
     }

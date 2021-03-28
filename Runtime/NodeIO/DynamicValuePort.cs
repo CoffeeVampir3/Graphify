@@ -27,9 +27,12 @@ namespace GraphFramework
         
         public bool TryGetValue(Link link, out T value)
         {
-            //DEBUG !!!!!!
-            //TODO:: BAD
-            link.BindRemote();
+            #if UNITY_EDITOR
+            if (link.BindRemote())
+            {
+                link.Reset(CurrentGraphIndex);
+            }
+            #endif
             if (link.distantEndValueKey is PortWithValue<T> valuePort)
             {
                 return valuePort.TryGetValue(CurrentGraphIndex, link, out value);
@@ -41,6 +44,13 @@ namespace GraphFramework
 
         bool PortWithValue<T>.TryGetValue(int graphId, Link link, out T value)
         {
+            //Guard clause for editor adding new links in editor.
+            #if UNITY_EDITOR
+            if (link.BindRemote())
+            {
+                link.Reset(graphId);
+            }
+            #endif
             if (link.remoteDynamicIndex < 0 || link.remoteDynamicIndex >= portValues.Count)
             {
                 value = default;

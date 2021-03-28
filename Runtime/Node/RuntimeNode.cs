@@ -1,8 +1,10 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
-//Internals visible to graphify bridge so we can hide away potentially dangerous evaluate call.
+//Internals visible so we can hide away potentially dangerous stuff
 [assembly: InternalsVisibleTo("GraphFramework.GraphifyBridge")]
+[assembly: InternalsVisibleTo("GraphFramework.GraphifyEditor")]
 namespace GraphFramework
 {
     public abstract class RuntimeNode : ScriptableObject
