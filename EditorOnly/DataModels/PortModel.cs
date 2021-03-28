@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
@@ -9,27 +10,33 @@ namespace GraphFramework.Editor
     [Serializable]
     public class PortModel
     {
-        [SerializeReference]
-        protected internal Orientation orientation;
-        [SerializeReference]
-        protected internal Direction direction;
-        [SerializeReference]
-        protected internal Port.Capacity capacity;
         [SerializeReference] 
         protected internal SerializableType portValueType = null;
         [SerializeReference] 
-        protected internal string portName;
-        [SerializeReference] 
         protected internal SerializedFieldInfo serializedValueFieldInfo;
+        [SerializeField] 
+        protected internal List<string> linkGuids = new List<string>();
+        [SerializeField] 
+        protected internal string portName;
         //Lookup is done via GUID because undo/redo creates a different copy.
-        [SerializeReference] 
+        [SerializeField] 
         protected internal string portGUID;
+        [SerializeField] 
+        protected internal int dynamicIndex;
+        [SerializeField]
+        protected internal Orientation orientation;
+        [SerializeField]
+        protected internal Direction direction;
+        [SerializeField]
+        protected internal Port.Capacity capacity;
 
         public PortModel(Orientation orientation, 
             Direction direction, 
             Port.Capacity capacity,
             Type portValueType, 
-            FieldInfo fieldInfo)
+            FieldInfo fieldInfo, 
+            string portGuid,
+            int dynamicIndex = -1)
         {
             this.orientation = orientation;
             this.direction = direction;
@@ -37,7 +44,8 @@ namespace GraphFramework.Editor
             this.portValueType = new SerializableType(portValueType);
             this.serializedValueFieldInfo = new SerializedFieldInfo(fieldInfo);
             this.portName = ObjectNames.NicifyVariableName(fieldInfo.Name);
-            this.portGUID = Guid.NewGuid().ToString();
+            this.portGUID = portGuid;
+            this.dynamicIndex = dynamicIndex;
         }
     }
 }

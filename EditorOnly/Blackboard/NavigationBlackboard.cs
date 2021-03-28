@@ -30,7 +30,7 @@ namespace GraphFramework.Editor
             listBase.AddToClassList("list-base");
             Add(listBase);
             SetupListView();
-            schedule.Execute(DelayedRefresh).Every(100);
+            schedule.Execute(DelayedRefresh).Every(125);
         }
 
         private void OnGeoInit(GeometryChangedEvent geo)

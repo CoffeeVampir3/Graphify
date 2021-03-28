@@ -10,12 +10,80 @@ namespace GraphFramework
     {
         [SerializeField, HideInInspector]
         public RuntimeNode rootNode;
-        [SerializeReference, HideInInspector] 
-        protected internal List<Link> links = new List<Link>();
+        [SerializeField]
+        public List<RuntimeNode> nodes = new List<RuntimeNode>();
         [NonSerialized] 
         private int currentVirtualGraphIndex = int.MinValue;
         [NonSerialized] 
         private readonly Stack<int> releasedIndices = new Stack<int>();
+        [NonSerialized] 
+        private bool graphInitialized = false;
+        [NonSerialized] 
+        internal readonly List<Link> cachedLinks = new List<Link>();
+
+        /// <summary>
+        /// An initialization you can use to frontload the graph.
+        /// </summary>
+        public void PrecachedInitialization()
+        {
+            if (graphInitialized)
+                return;
+            
+            foreach (var node in nodes)
+            {
+                var type = node.GetType();
+                foreach (var field in type.GetFields())
+                {
+                    if (typeof(BasePort).IsAssignableFrom(field.FieldType))
+                    {
+                        var port = field.GetValue(node) as BasePort;
+                        foreach (var link in port.links)
+                        {
+                            cachedLinks.Add(link);
+                            link.BindRemote();
+                        }
+                    }
+                }
+            }
+
+            graphInitialized = true;
+        }
+
+        internal void InitializeId(int graphId)
+        {
+            if (graphInitialized)
+            {
+                foreach (var link in cachedLinks)
+                {
+                    link.Reset(graphId);
+                }
+                return;
+            }
+
+            ForceInitializeId(graphId);
+        }
+
+        internal void ForceInitializeId(int graphId)
+        {
+            foreach (var node in nodes)
+            {
+                var type = node.GetType();
+                foreach (var field in type.GetFields())
+                {
+                    if (typeof(BasePort).IsAssignableFrom(field.FieldType))
+                    {
+                        var port = field.GetValue(node) as BasePort;
+                        foreach (var link in port.links)
+                        {
+                            cachedLinks.Add(link);
+                            link.BindRemote();
+                            link.Reset(graphId);
+                        }
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Creates and initializes a virtualized graph.
         /// </summary>
@@ -33,10 +101,8 @@ namespace GraphFramework
             }
 
             VirtualGraph vg = new VirtualGraph(this, nextGraphIndex);
-            foreach (var link in links)
-            {
-                link.CreateVirtualizedLinks(vg.virtualId);
-            }
+            InitializeId(vg.virtualId);
+            
             return vg;
         }
         

@@ -187,10 +187,7 @@ namespace GraphFramework.Editor
                 }
             }
             graphModel.rootNodeModel?.View?.AddToClassList("CurrentNode");
-            foreach (var link in graphModel.serializedGraphController.links)
-            {
-                link.Reset(graphId);
-            }
+            graphModel.serializedGraphController.ForceInitializeId(graphId);
         }
         
         /// <summary>
@@ -285,7 +282,6 @@ namespace GraphFramework.Editor
                 AddToSelection(clone.View);
             }
             
-            
             foreach (var edgeGuid in box.edgeGuids)
             {
                 //Resolve the original edge into its model components
@@ -306,10 +302,10 @@ namespace GraphFramework.Editor
                 }
                 else
                 {
-                    var pIndex = inModel.inputPorts.IndexOf(inPort);
-                    if (targetInModel.inputPorts.Count <= pIndex)
+                    var pIndex = inModel.portModels.IndexOf(inPort);
+                    if (targetInModel.portModels.Count <= pIndex || pIndex < 0)
                         continue;
-                    targetInPort = targetInModel.inputPorts[pIndex];
+                    targetInPort = targetInModel.portModels[pIndex];
                 }
                 
                 if (!oldModelToCopiedModel.TryGetValue(outModel, out var targetOutModel))
@@ -319,10 +315,10 @@ namespace GraphFramework.Editor
                 }
                 else
                 {
-                    var pIndex = outModel.outputPorts.IndexOf(outPort);
-                    if (targetOutModel.outputPorts.Count <= pIndex)
+                    var pIndex = outModel.portModels.IndexOf(outPort);
+                    if (targetOutModel.portModels.Count <= pIndex || pIndex < 0)
                         continue;
-                    targetOutPort = targetOutModel.outputPorts[pIndex];
+                    targetOutPort = targetOutModel.portModels[pIndex];
                 }
                 
                 if (!targetInModel.View.TryGetModelToPort(targetInPort.portGUID, out var realInPort) ||
@@ -342,6 +338,22 @@ namespace GraphFramework.Editor
                     AddToSelection(newEdge);
                 }
             }
+        }
+
+        public void DeletePortEdges(NodeModel nodeModel, PortModel portModel)
+        {
+            if (!nodeModel.View.TryGetModelToPort(portModel.portGUID, out Port p))
+                return;
+
+            for (int i = p.connections.Count() - 1; i >= 0; i--)
+            {
+                var edge = p.connections.ElementAt(i);
+                if(edgeToModel.TryGetValue(edge, out var edgeModel))
+                {
+                    DeleteEdge(edge, edgeModel);
+                }
+            }
+            DeleteElements(p.connections);
         }
         
         #endregion
@@ -450,7 +462,8 @@ namespace GraphFramework.Editor
             {
                 CreateStackFromModelInternal(model);
             }
-            
+
+            NodeModel.PreGraphBuild();
             //Update root node model ports and build the root node.
             graphModel.rootNodeModel.UpdatePorts();
             CreateNodeFromModelAsRoot(graphModel.rootNodeModel);
@@ -484,13 +497,13 @@ namespace GraphFramework.Editor
             //Map guid->connection since we're going to be doing lots of lookups and
             //this is a more efficient data format.
             var graphKnownGuidToLink = new Dictionary<string, Link>();
-            var untraversedLinks = new List<Link>(graphModel.serializedGraphController.links);
-            var traversedLinks = new List<Link>(graphModel.serializedGraphController.links);
+            var untraversedLinks = new List<Link>(graphModel.links);
+            var traversedLinks = new List<Link>(graphModel.links);
             bool anyLinksRemoved = false;
             
-            for (var i = 0; i < graphModel.serializedGraphController.links.Count; i++)
+            for (var i = 0; i < graphModel.links.Count; i++)
             {
-                var link = graphModel.serializedGraphController.links[i];
+                var link = graphModel.links[i];
                 graphKnownGuidToLink.Add(link.GUID, link);
             }
 
@@ -502,11 +515,11 @@ namespace GraphFramework.Editor
                 void DeleteUndoneLinks(PortModel port)
                 {
                     var localPortInfo = port.serializedValueFieldInfo.FieldFromInfo;
-                    if (!(localPortInfo.GetValue(node.RuntimeData) is ValuePort valuePort))
+                    if (!(localPortInfo.GetValue(node.RuntimeData) is BasePort basePort))
                         return;
-                    for (int i = valuePort.links.Count - 1; i >= 0; i--)
+                    for (int i = basePort.links.Count - 1; i >= 0; i--)
                     {
-                        var link = valuePort.links[i];
+                        var link = basePort.links[i];
                         if (graphKnownGuidToLink.ContainsKey(link.GUID))
                         {
                             //We found a port containing this connection, so we mark it traversed.
@@ -516,19 +529,14 @@ namespace GraphFramework.Editor
 
                         //The graph doesn't know about this connection, so it's undone. Remove it
                         //from the value port.
-                        valuePort.links.Remove(link);
+                        basePort.links.Remove(link);
                         anyLinksRemoved = true;
                     }
                 }
 
-                for (var index = 0; index < node.inputPorts.Count; index++)
+                for (var index = 0; index < node.portModels.Count; index++)
                 {
-                    DeleteUndoneLinks(node.inputPorts[index]);
-                }
-
-                for (var index = 0; index < node.outputPorts.Count; index++)
-                {
-                    DeleteUndoneLinks(node.outputPorts[index]);
+                    DeleteUndoneLinks(node.portModels[index]);
                 }
             }
 
@@ -541,7 +549,7 @@ namespace GraphFramework.Editor
             var unaccountedForLinks = untraversedLinks.Except(traversedLinks);
             foreach (var conn in unaccountedForLinks)
             {
-                ValuePort localPort = conn.GetLocalPort();
+                BasePort localPort = conn.GetLocalPort();
                 //Guards against the same connection being added twice.
                 if (localPort.links.Any(localConn => localConn.GUID == conn.GUID)) continue;
                 localPort.links.Add(conn);
@@ -570,6 +578,7 @@ namespace GraphFramework.Editor
             runtimeNodeToView.Remove(model.RuntimeData);
             graphModel.nodeModels.Remove(model);
             viewToModel.Remove(model.View);
+            model.Delete(graphModel);
             //Base graph view handles removal of the visual element itself.
         }
 
@@ -585,11 +594,11 @@ namespace GraphFramework.Editor
         /// </summary>
         private void DeleteConnectionByGuid(string guid)
         {
-            for (int j = graphModel.serializedGraphController.links.Count - 1; j >= 0; j--)
+            for (int j = graphModel.links.Count - 1; j >= 0; j--)
             {
-                Link currentLink = graphModel.serializedGraphController.links[j];
+                Link currentLink = graphModel.links[j];
                 if (currentLink.GUID != guid) continue;
-                graphModel.serializedGraphController.links.Remove(currentLink);
+                graphModel.links.Remove(currentLink);
                 return;
             }
         }
@@ -622,9 +631,11 @@ namespace GraphFramework.Editor
             {
                 return false;
             }
-
-            var localConnection = inModel.LinkPortTo(inputPort, outModel, outputPort);
-            var remoteConnection = outModel.LinkPortTo(outputPort, inModel, inputPort);
+            
+            var localConnection = inModel.
+                LinkPortTo(inputPort, outModel, outputPort);
+            var remoteConnection = outModel.
+                LinkPortTo(outputPort, inModel, inputPort);
             
             //If we're trying to reconnect a port that was already connected, discard the old connection first.
             if (edgeToModel.TryGetValue(edge, out var oldEdgeModel))
@@ -641,8 +652,8 @@ namespace GraphFramework.Editor
 
             edgeToModel.Add(edge, modelEdge);
             graphModel.edgeModels.Add(modelEdge);
-            graphModel.serializedGraphController.links.Add(localConnection);
-            graphModel.serializedGraphController.links.Add(remoteConnection);
+            graphModel.links.Add(localConnection);
+            graphModel.links.Add(remoteConnection);
             return true;
         }
 

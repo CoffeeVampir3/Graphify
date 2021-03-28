@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
+using UnityEditor.UIElements;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace GraphFramework.Editor
@@ -12,7 +14,11 @@ namespace GraphFramework.Editor
         private readonly Dictionary<Port, PortModel> portToModel = new Dictionary<Port, PortModel>();
         //Lookup via string because undo/redo creates a different copy.
         private readonly Dictionary<string, Port> modelGuidToPort = new Dictionary<string, Port>();
-        
+        private readonly Dictionary<string, DynamicPortModel> nameToDynamicPort =
+            new Dictionary<string, DynamicPortModel>();
+        private readonly Dictionary<IntegerField, string> sizeControllerToName = 
+            new Dictionary<IntegerField, string>();
+
         public NodeView(NodeModel model)
         {
             nodeModel = model;
@@ -66,41 +72,63 @@ namespace GraphFramework.Editor
         {
             foreach (var portModel in ports)
             {
-                Port p = AddPort(portModel.orientation, portModel.direction, 
-                    portModel.capacity, portModel.portValueType.type);
-                p.portName = portModel.portName;
+                VisualElement portElement;
+                if (portModel is DynamicPortModel dynModel)
+                {
+                    nameToDynamicPort.Add(portModel.serializedValueFieldInfo.FieldName, dynModel);
+                    portElement = dynModel.InitializeView(nodeModel, this);
+                }
+                else
+                {
+                    Port p = CreatePort(portModel);
+                    p.portName = portModel.portName;
+                    portElement = p;
+                }
 
-                portToModel.Add(p, portModel);
-                modelGuidToPort.Add(portModel.portGUID, p);
+                switch (portModel.direction)
+                {
+                    case Direction.Input:
+                        inputContainer.Add(portElement);
+                        break;
+                    case Direction.Output:
+                        outputContainer.Add(portElement);
+                        break;
+                }
             }
         }
         
         private void CreatePortsFromModel()
         {
-            CreatePortsFromModelList(nodeModel.inputPorts);
-            CreatePortsFromModelList(nodeModel.outputPorts);
+            CreatePortsFromModelList(nodeModel.portModels);
         }
 
-        private Port AddPort(Orientation orientation,
-            Direction direction,
-            Port.Capacity capacity,
-            System.Type type)
+        protected internal Port CreatePort(PortModel model)
         {
-            var port = InstantiatePort(orientation, direction, capacity, type);
-            switch (direction)
-            {
-                case Direction.Input:
-                    inputContainer.Add(port);
-                    break;
-                case Direction.Output:
-                    outputContainer.Add(port);
-                    break;
-            }
-
+            var port = InstantiatePort(model.orientation, model.direction, 
+                model.capacity, model.portValueType.type);
+            portToModel.Add(port, model);
+            modelGuidToPort.Add(model.portGUID, port);
             return port;
         }
 
-        #endregion 
+        protected internal void RemovePort(PortModel model)
+        {
+            if (!TryGetModelToPort(model.portGUID, out var port))
+                return;
+            port.parent.Remove(port);
+            portToModel.Remove(port);
+            modelGuidToPort.Remove(model.portGUID);
+        }
+
+        #endregion
+
+        internal protected void RegisterDynamicPort(string fieldName, IntegerField sizeController)
+        {
+            if (!nameToDynamicPort.TryGetValue(fieldName, out var dynPort))
+                return;
+            sizeControllerToName.Add(sizeController, fieldName);
+            dynPort.SetupSizeController(sizeController);
+        }
 
         private void CreateEditorFromNodeData()
         {
@@ -115,7 +143,8 @@ namespace GraphFramework.Editor
                 return;
             }
             
-            AutoView.Generate(serializedNode, nodeModel.RuntimeData, extensionContainer);
+            //Auto view.
+            this.Generate(serializedNode, nodeModel.RuntimeData, extensionContainer);
         }
 
         /// <summary>
