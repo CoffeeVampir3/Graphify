@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
@@ -62,7 +61,7 @@ namespace GraphFramework.Editor
             return port;
         }
 
-        private void DeleteLinksFromPort(IReadOnlyCollection<string> guidsToDelete)
+        private void DeleteLinksFromPort(PortModel port)
         {
             BasePort basePort = GetBasePort();
             if (basePort == null)
@@ -74,9 +73,11 @@ namespace GraphFramework.Editor
 
             for (int i = basePort.links.Count - 1; i >= 0; i--)
             {
-                if (guidsToDelete.Contains(basePort.links[i].GUID))
+                if (port.linkGuids.Contains(basePort.links[i].GUID))
                 {
                     basePort.links.RemoveAt(i);
+                    var parentView = nodeView.GetFirstAncestorOfType<GraphifyView>();
+                    parentView.DeletePortEdges(nodeModel, port);
                 }
             }
         }
@@ -123,7 +124,7 @@ namespace GraphFramework.Editor
             for (int i = dynamicPorts.Count - 1; i >= newSize; i--)
             {
                 PortModel model = dynamicPorts[i];
-                DeleteLinksFromPort(model.linkGuids);
+                DeleteLinksFromPort(model);
                 nodeView.RemovePort(model);
                 dynamicPorts.RemoveAt(i);
             }

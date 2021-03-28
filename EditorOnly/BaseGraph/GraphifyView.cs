@@ -342,6 +342,22 @@ namespace GraphFramework.Editor
                 }
             }
         }
+
+        public void DeletePortEdges(NodeModel nodeModel, PortModel portModel)
+        {
+            if (!nodeModel.View.TryGetModelToPort(portModel.portGUID, out Port p))
+                return;
+
+            for (int i = p.connections.Count() - 1; i >= 0; i--)
+            {
+                var edge = p.connections.ElementAt(i);
+                if(edgeToModel.TryGetValue(edge, out var edgeModel))
+                {
+                    DeleteEdge(edge, edgeModel);
+                }
+            }
+            DeleteElements(p.connections);
+        }
         
         #endregion
 
