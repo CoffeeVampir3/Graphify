@@ -3,6 +3,6 @@ using UnityEngine;
 
 namespace GraphFramework
 {
-    [RegisterTo(typeof(GraphControllerWithProperties), "Properties/Vector 3")]
+    [RegisterTo(typeof(GraphBlueprintWithProperties), "Properties/Vector 3")]
     public class RuntimeVec3Property : RuntimeProperty<Vector3> { }
 }

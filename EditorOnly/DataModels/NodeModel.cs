@@ -65,7 +65,7 @@ namespace GraphFramework.Editor
             AssetDatabase.AddObjectToAsset(RuntimeData, graphModel);
             EditorUtility.SetDirty(graphModel);
             
-            graphModel.serializedGraphController.nodes.Add(RuntimeData);
+            graphModel.serializedGraphBlueprint.nodes.Add(RuntimeData);
         }
         
         /// <summary>
@@ -77,12 +77,12 @@ namespace GraphFramework.Editor
             AssetDatabase.AddObjectToAsset(RuntimeData, graphModel);
             EditorUtility.SetDirty(graphModel);
             
-            graphModel.serializedGraphController.nodes.Add(RuntimeData);
+            graphModel.serializedGraphBlueprint.nodes.Add(RuntimeData);
         }
 
         public void Delete(GraphModel graphModel)
         {
-            graphModel.serializedGraphController.nodes.Remove(RuntimeData);
+            graphModel.serializedGraphBlueprint.nodes.Remove(RuntimeData);
         }
 
         #endregion

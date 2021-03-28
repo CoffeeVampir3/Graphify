@@ -5,20 +5,20 @@
     /// </summary>
     public class VirtualGraph
     {
-        private readonly GraphController parentGraphController;
+        private readonly GraphBlueprint parentGraphBlueprint;
         public readonly int virtualId;
         
         // Do not attempt to construct virtual graphs outside of the graph controller,
         // the parent graph controller must allocate the port virtualizations first.
-        internal VirtualGraph(GraphController parent, int id)
+        internal VirtualGraph(GraphBlueprint parent, int id)
         {
-            parentGraphController = parent;
+            parentGraphBlueprint = parent;
             virtualId = id;
         }
 
         ~VirtualGraph()
         {
-            parentGraphController.ReleaseVirtualGraph(this);
+            parentGraphBlueprint.ReleaseVirtualGraph(this);
         }
     }
 }

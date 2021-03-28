@@ -3,6 +3,6 @@ using UnityEngine;
 
 namespace GraphFramework
 {
-    [RegisterTo(typeof(GraphControllerWithProperties), "Properties/Animation Curve")]
+    [RegisterTo(typeof(GraphBlueprintWithProperties), "Properties/Animation Curve")]
     public class RuntimeAnimationCurveProperty : RuntimeProperty<AnimationCurve> { }
 }

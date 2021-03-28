@@ -33,7 +33,7 @@ namespace GraphFramework
             }
             catch
             {
-                Debug.Log("Failed to created generic method for EditorWindow.HasOpenInstances for type: " + t.Name);
+                Debug.LogError("Failed to created generic method for EditorWindow.HasOpenInstances for type: " + t.Name);
                 return false;
             }
 

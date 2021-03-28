@@ -25,7 +25,7 @@ namespace GraphFramework.Editor
         [SerializeReference] 
         protected internal List<Link> links = new List<Link>();
         [SerializeReference]
-        protected internal GraphController serializedGraphController;
+        protected internal GraphBlueprint serializedGraphBlueprint;
         [SerializeReference]
         protected internal NodeModel rootNodeModel;
 
@@ -36,13 +36,13 @@ namespace GraphFramework.Editor
         /// <param name="editorWindowType">The editor window type to use when this opens.</param>
         /// <param name="graphControllerType">The graph controller this model is associated to.</param>
         /// <returns>The new GraphModel</returns>
-        public static GraphModel BootstrapController(GraphController graphController)
+        public static GraphModel BootstrapController(GraphBlueprint graphBlueprint)
         {
             GraphModel graphModel = CreateInstance<GraphModel>();
             graphModel.name = "Editor Model";
-            graphModel.serializedGraphController = graphController;
+            graphModel.serializedGraphBlueprint = graphBlueprint;
 
-            var rootType = NodeRegistrationResolver.GetRegisteredRootNodeType(graphController.GetType());
+            var rootType = NodeRegistrationResolver.GetRegisteredRootNodeType(graphBlueprint.GetType());
             if (rootType == null)
             {
                 //Get registered root node type will generate an error, just return here.
@@ -52,13 +52,13 @@ namespace GraphFramework.Editor
             graphModel.graphWindowType = new SerializableType(typeof(GraphfyWindow));
             
             EditorUtility.SetDirty(graphModel);
-            EditorUtility.SetDirty(graphModel.serializedGraphController);
+            EditorUtility.SetDirty(graphModel.serializedGraphBlueprint);
             try
             {
                 AssetDatabase.StartAssetEditing();
-                AssetDatabase.AddObjectToAsset(graphModel, graphController);
+                AssetDatabase.AddObjectToAsset(graphModel, graphBlueprint);
                 graphModel.rootNodeModel = NodeModel.InstantiateModel("Root Node", graphModel, rootType);
-                graphModel.serializedGraphController.rootNode = graphModel.rootNodeModel.RuntimeData;
+                graphModel.serializedGraphBlueprint.rootNode = graphModel.rootNodeModel.RuntimeData;
                 EditorUtility.SetDirty(graphModel.rootNodeModel.RuntimeData);
             }
             finally

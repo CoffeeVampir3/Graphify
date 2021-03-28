@@ -3,6 +3,6 @@ using UnityEngine;
 
 namespace GraphFramework
 {
-    [RegisterTo(typeof(GraphControllerWithProperties), "Properties/Material")]
+    [RegisterTo(typeof(GraphBlueprintWithProperties), "Properties/Material")]
     public class RuntimeMaterialProperty : RuntimeProperty<Material> { }
 }
