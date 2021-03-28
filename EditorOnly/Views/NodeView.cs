@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
@@ -125,19 +124,10 @@ namespace GraphFramework.Editor
 
         internal protected void RegisterDynamicPort(string fieldName, IntegerField sizeController)
         {
-            sizeControllerToName.Add(sizeController, fieldName);
-        }
-        
-        internal protected void OnDynamicPortResize(ChangeEvent<int> change)
-        {
-            if (!(change.currentTarget is IntegerField sizeController))
-                return;
-            if (!sizeControllerToName.TryGetValue(sizeController, out var fieldName))
-                return;
             if (!nameToDynamicPort.TryGetValue(fieldName, out var dynPort))
                 return;
-
-            dynPort.Resize(change.newValue);
+            sizeControllerToName.Add(sizeController, fieldName);
+            dynPort.SetupSizeController(sizeController);
         }
 
         private void CreateEditorFromNodeData()

@@ -46,10 +46,6 @@ namespace GraphFramework.Editor
                     return;
                 
                 view.RegisterDynamicPort(pf.bindingPath, iField);
-                iField.RegisterValueChangedCallback(view.OnDynamicPortResize);
-                    var evt = ChangeEvent<int>.GetPooled(0, iField.value);
-                evt.target = iField;
-                iField.SendEvent(evt);
                 pf.UnregisterCallback<GeometryChangedEvent>(OnDynamicGeometryChanged);
             }
 
