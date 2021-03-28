@@ -31,7 +31,7 @@ namespace GraphFramework.Editor
         {
             nodeView = view;
             nodeModel = model;
-            portView = new DynamicPortView(portName, this);
+            portView = new DynamicPortView(portName, this, this.direction);
 
             for (int i = 0; i < dynamicPorts.Count; i++)
             {

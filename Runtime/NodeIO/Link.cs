@@ -60,22 +60,22 @@ namespace GraphFramework
         [SerializeField]
         internal int remoteDynamicIndex;
         [SerializeField]
-        internal int localDynamicIndex;
+        internal int localPortIndex;
         //This is the field we bind at runtime, which acts as a pointer to our data values.
         [NonSerialized]
         protected internal BasePort distantEndValueKey;
         [NonSerialized] 
         private bool valueBound = false;
 
-        public int DynamicIndex => localDynamicIndex;
+        public int PortIndex => localPortIndex;
 
-        public Link(RuntimeNode localSide, SerializedFieldInfo localPortField, int localDynamicIndex,
+        public Link(RuntimeNode localSide, SerializedFieldInfo localPortField, int localPortIndex,
             RuntimeNode remoteSide, SerializedFieldInfo remotePortField, int remoteDynamicIndex)
         {
             linkedTo = remoteSide;
             localLinkBinder = new LinkBinder(localSide, localPortField);
             remoteLinkBinder = new LinkBinder(remoteSide, remotePortField);
-            this.localDynamicIndex = localDynamicIndex;
+            this.localPortIndex = localPortIndex;
             this.remoteDynamicIndex = remoteDynamicIndex;
             GUID = Guid.NewGuid().ToString();
         }

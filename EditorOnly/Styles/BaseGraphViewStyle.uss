@@ -10,11 +10,11 @@ GridBackground {
 }
 
 .unity-button {
-    background-color: rgba(0, 173, 181, .5);
+    background-color: rgba(68, 68, 68, .7);
 }
 
 .unity-button:hover {
-    background-color: rgba(0, 173, 181, .88);
+    background-color: rgba(0, 173, 181, .3);
 }
 
 .edge.edgierEdge {
