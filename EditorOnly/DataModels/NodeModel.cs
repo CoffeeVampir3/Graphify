@@ -119,13 +119,11 @@ namespace GraphFramework.Editor
             
             var fieldInfo = GetFieldInfoFor(RuntimeData.GetType());
             HashSet<string> fieldNames = new HashSet<string>();
-            Dictionary<string, Type> fieldNameToType = new Dictionary<string, Type>();
             bool anyChanges = false;
             
             foreach (var info in fieldInfo.fieldInfo)
             {
                 fieldNames.Add(info.Name);
-                fieldNameToType.Add(info.Name, info.FieldType);
             }
             fieldNameToOldGuid.Clear();
             for (int i = portModels.Count - 1; i >= 0; i--)
@@ -138,11 +136,6 @@ namespace GraphFramework.Editor
                     anyChanges = true;
                     break;
                 }
-                if (!fieldNameToType.TryGetValue(port.serializedValueFieldInfo.FieldName, out var type)) continue;
-                if (port.portValueType.type == type.GetGenericArguments().FirstOrDefault()) continue;
-                //Type changed
-                anyChanges = true;
-                break;
             }
 
             //Field added
@@ -185,10 +178,10 @@ namespace GraphFramework.Editor
             {
                 Debug.LogError("Attempted to construct port that is not assignable to value port.");
             }
-
-            string guid;
-            if (update && fieldNameToOldGuid.TryGetValue(field.Name, out guid))
+            
+            if (update && fieldNameToOldGuid.TryGetValue(field.Name, out var guid))
             {
+                //Empty
             }
             else
             {
@@ -196,6 +189,14 @@ namespace GraphFramework.Editor
             }
             
             var portValueType = field.FieldType.GetGenericArguments();
+            //If we add more port types this should become a factory.
+            if (typeof(DynamicValuePort).IsAssignableFrom(field.FieldType))
+            {
+                var dynModel = new DynamicPortModel(Orientation.Horizontal, unityDirection, 
+                    CapacityToUnity(cap), portValueType.FirstOrDefault(), field, guid);
+                portCreationAction.Invoke(dynModel);
+                return dynModel;
+            }
             var pm = new PortModel(Orientation.Horizontal, unityDirection, 
                 CapacityToUnity(cap), portValueType.FirstOrDefault(), field, guid);
             portCreationAction.Invoke(pm);
@@ -247,8 +248,8 @@ namespace GraphFramework.Editor
         /// <summary>
         /// Analyses the reflection data and creates the appropriate ports based on it automagically.
         /// </summary>
-        /// <param name="clearCopy">Copied models should use true, clears all port links if true.</param>
-        protected internal void CreatePortModelsFromReflection(bool clearCopy = false, bool update = false)
+        /// <param name="clearLinks">Copied models should use true, clears all port links if true.</param>
+        protected internal void CreatePortModelsFromReflection(bool clearLinks = false, bool update = false)
         {
             var fieldsAndData = GetFieldInfoFor(RuntimeData.GetType());
             
@@ -258,7 +259,7 @@ namespace GraphFramework.Editor
                 var cap = fieldsAndData.caps[i];
                 var dir = fieldsAndData.directions[i];
                 var portModel = CreatePortModel(field, dir, cap, update);
-                if (!clearCopy) continue;
+                if (!clearLinks) continue;
                 ClearPort(portModel);
             }
         }
@@ -354,6 +355,7 @@ namespace GraphFramework.Editor
                 Link currentLink = valuePort.links[i];
                 if (currentLink.GUID != guid) continue;
                 valuePort.links.Remove(currentLink);
+                inPort.linkGuids.Remove(guid);
                 return;
             }
         }
@@ -365,8 +367,14 @@ namespace GraphFramework.Editor
         /// <returns>The created link</returns>
         public Link LinkPortTo(PortModel myInputPort, NodeModel outputModel, PortModel outputPort)
         {
-            var localConnection = new Link(RuntimeData, myInputPort.serializedValueFieldInfo,
-                outputModel.RuntimeData, outputPort.serializedValueFieldInfo);
+            var localConnection = new Link(RuntimeData, 
+                myInputPort.serializedValueFieldInfo,
+                myInputPort.dynamicIndex,
+                outputModel.RuntimeData, 
+                outputPort.serializedValueFieldInfo,
+                outputPort.dynamicIndex);
+
+            myInputPort.linkGuids.Add(localConnection.GUID);
             
             //Guaranteed to be cached if CanPortConnectTo returned true.
             var inputValuePort = cachedValuePorts[myInputPort];

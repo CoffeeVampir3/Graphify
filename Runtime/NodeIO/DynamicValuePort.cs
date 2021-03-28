@@ -4,8 +4,13 @@ using UnityEngine;
 
 namespace GraphFramework
 {
+    //Forwarding class for type compare.
+    public abstract class DynamicValuePort : BasePort
+    {
+    }
+
     [Serializable]
-    public class DynamicValuePort<T> : BasePort, PortWithValue<T>
+    public class DynamicValuePort<T> : DynamicValuePort, PortWithValue<T>
     {
         //Backing value of the port, the is used as the initialization value for the port.
         [SerializeField] 

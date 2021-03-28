@@ -9,11 +9,16 @@ using UnityEngine;
 [assembly: InternalsVisibleTo("GraphFramework.GraphifyEditor")]
 namespace GraphFramework
 {
+    //Forwarding class for type compare.
+    public abstract class ValuePort : BasePort
+    {
+    }
+
     /// <summary>
     /// A port with a backing value.
     /// </summary>
     [Serializable]
-    public class ValuePort<T> : BasePort, PortWithValue<T>
+    public class ValuePort<T> : ValuePort, PortWithValue<T>
     {
         //Backing value of the port, the is used as the initialization value for the port.
         [SerializeField]

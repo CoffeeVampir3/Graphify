@@ -285,7 +285,6 @@ namespace GraphFramework.Editor
                 AddToSelection(clone.View);
             }
             
-            
             foreach (var edgeGuid in box.edgeGuids)
             {
                 //Resolve the original edge into its model components
@@ -307,7 +306,7 @@ namespace GraphFramework.Editor
                 else
                 {
                     var pIndex = inModel.portModels.IndexOf(inPort);
-                    if (targetInModel.portModels.Count <= pIndex)
+                    if (targetInModel.portModels.Count <= pIndex || pIndex < 0)
                         continue;
                     targetInPort = targetInModel.portModels[pIndex];
                 }
@@ -320,7 +319,7 @@ namespace GraphFramework.Editor
                 else
                 {
                     var pIndex = outModel.portModels.IndexOf(outPort);
-                    if (targetOutModel.portModels.Count <= pIndex)
+                    if (targetOutModel.portModels.Count <= pIndex || pIndex < 0)
                         continue;
                     targetOutPort = targetOutModel.portModels[pIndex];
                 }
