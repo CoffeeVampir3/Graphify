@@ -2,6 +2,6 @@
 {
     public interface MovableModel
     {
-        public void UpdatePosition();
+        void UpdatePosition();
     }
 }
