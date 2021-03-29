@@ -25,6 +25,9 @@ namespace GraphFramework
             virtualizedMutablePortValues[graphId] = portValues;
         }
         
+        /// <summary>
+        /// Tries to get the value of the given link or default.
+        /// </summary>
         public bool TryGetValue(Link link, out T value)
         {
             #if UNITY_EDITOR
@@ -34,6 +37,26 @@ namespace GraphFramework
             }
             #endif
             if (link.distantEndValueKey is PortWithValue<T> valuePort)
+            {
+                return valuePort.TryGetValue(CurrentGraphIndex, link, out value);
+            }
+
+            value = default;
+            return false;
+        }
+
+        /// <summary>
+        /// Tries to get the value of the given link as SomeType or default.
+        /// </summary>
+        public bool TryGetValueAs<SomeType>(Link link, out SomeType value)
+        {
+            #if UNITY_EDITOR
+            if (link.BindRemote())
+            {
+                link.Reset(CurrentGraphIndex);
+            }
+            #endif
+            if (link.distantEndValueKey is PortWithValue<SomeType> valuePort)
             {
                 return valuePort.TryGetValue(CurrentGraphIndex, link, out value);
             }

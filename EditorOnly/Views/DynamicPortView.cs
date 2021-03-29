@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEditor.Experimental.GraphView;
+﻿using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -32,18 +31,20 @@ namespace GraphFramework.Editor
                     buttonContainer.style.flexDirection = new StyleEnum<FlexDirection>(FlexDirection.RowReverse);
                     buttonContainer.Add(minusButton);
                     buttonContainer.Add(plusButton);
+                    style.justifyContent = new StyleEnum<Justify>(Justify.FlexStart);
+                    style.alignItems = new StyleEnum<Align>(Align.FlexStart);
                     break;
                 case Direction.Output:
                     buttonContainer.style.flexDirection = new StyleEnum<FlexDirection>(FlexDirection.Row);
                     buttonContainer.Add(plusButton);
                     buttonContainer.Add(minusButton);
+                    style.justifyContent = new StyleEnum<Justify>(Justify.FlexEnd);
+                    style.alignItems = new StyleEnum<Align>(Align.FlexEnd);
                     break;
             }
             
             style.flexGrow = 1;
             style.flexDirection = new StyleEnum<FlexDirection>(FlexDirection.Column);
-            style.justifyContent = new StyleEnum<Justify>(Justify.FlexStart);
-            style.alignItems = new StyleEnum<Align>(Align.FlexStart);
             Add(buttonContainer);
         }
     }
