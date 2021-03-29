@@ -31,7 +31,7 @@ namespace GraphFramework.Editor
         {
             nodeView = view;
             nodeModel = model;
-            portView = new DynamicPortView(portName, this, this.direction);
+            portView = new DynamicPortView(portName, this, direction);
 
             for (int i = 0; i < dynamicPorts.Count; i++)
             {
@@ -45,7 +45,7 @@ namespace GraphFramework.Editor
         public void SetupSizeController(IntegerField sizeController)
         {
             sizeField = sizeController;
-            sizeField.RegisterValueChangedCallback(Resize);
+            sizeField.RegisterValueChangedCallback(ResizeSurrogate);
             var evt = ChangeEvent<int>.GetPooled(0, sizeField.value);
             evt.target = sizeField;
             sizeField.SendEvent(evt);
@@ -84,25 +84,42 @@ namespace GraphFramework.Editor
 
         public void OnAddClicked()
         {
-            var evt = ChangeEvent<int>.GetPooled(sizeField.value, sizeField.value+1);
-            sizeField.SetValueWithoutNotify(sizeField.value+1);
-            evt.target = sizeField;
-            sizeField.SendEvent(evt);
+            if (sizeField != null)
+            {
+                var evt = ChangeEvent<int>.GetPooled(sizeField.value, sizeField.value+1);
+                sizeField.SetValueWithoutNotify(sizeField.value+1);
+                evt.target = sizeField;
+                sizeField.SendEvent(evt);
+                return;
+            }
+            
+            Resize(dynamicPorts.Count+1);
         }
 
         public void OnRemoveClicked()
         {
-            if (sizeField.value <= 0)
+            if (sizeField != null && sizeField.value <= 0)
+            {
+                var evt = ChangeEvent<int>.GetPooled(sizeField.value, sizeField.value-1);
+                sizeField.SetValueWithoutNotify(sizeField.value-1);
+                evt.target = sizeField;
+                sizeField.SendEvent(evt);
                 return;
-            var evt = ChangeEvent<int>.GetPooled(sizeField.value, sizeField.value-1);
-            sizeField.SetValueWithoutNotify(sizeField.value-1);
-            evt.target = sizeField;
-            sizeField.SendEvent(evt);
+            }
+
+            if (dynamicPorts.Count > 0)
+            {
+                Resize(dynamicPorts.Count-1);
+            }
         }
 
-        public void Resize(ChangeEvent<int> change)
+        public void ResizeSurrogate(ChangeEvent<int> change)
         {
-            var newSize = change.newValue;
+            Resize(change.newValue);
+        }
+
+        public void Resize(int newSize)
+        {
             if (newSize == dynamicPorts.Count)
                 return;
 
