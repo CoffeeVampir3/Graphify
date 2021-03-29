@@ -19,8 +19,12 @@ namespace GraphFramework.Editor
         
         private static bool ShouldDrawBackingField(SerializedProperty it)
         {
-            return nameToDirAttrib.TryGetValue(it.propertyPath, out var attrib) && 
-                   attrib.showBackingValue;
+            if (!nameToDirAttrib.TryGetValue(it.propertyPath, out var attrib))
+            {
+                return true;
+            }
+
+            return attrib.showBackingValue;
         }
 
         /// <summary>
