@@ -67,7 +67,28 @@ namespace GraphFramework
         [NonSerialized] 
         private bool valueBound = false;
 
+        /// <summary>
+        /// The dynamic index of this port. Is -1 if this port is not dynamic.
+        /// </summary>
         public int PortIndex => localPortIndex;
+        
+        /// <summary>
+        /// The node this link is connected to.
+        /// </summary>
+        public RuntimeNode Node => linkedTo;
+        
+        /// <summary>
+        /// Resets the value of this link for the given graph Id to their initial value.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Reset(int graphId)
+        {
+            #if UNITY_EDITOR
+            //Safeguard for editor mutations, protects against added element edge case.
+            BindRemote();
+            #endif
+            distantEndValueKey.Reset(graphId);
+        }
 
         public Link(RuntimeNode localSide, SerializedFieldInfo localPortField, int localPortIndex,
             RuntimeNode remoteSide, SerializedFieldInfo remotePortField, int remoteDynamicIndex)
@@ -93,31 +114,13 @@ namespace GraphFramework
             return true;
         }
 
-        /// <summary>
-        /// Resets the value of this link for the given graph Id to their initial value.
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Reset(int graphId)
-        {
-            #if UNITY_EDITOR
-            //Safeguard for editor mutations, protects against added element edge case.
-            BindRemote();
-            #endif
-            distantEndValueKey.Reset(graphId);
-        }
-
         //Not cached because caching is not safe here. This ideally is not useful at runtime.
         /// <summary>
         /// Gets the local side of this connection, ideally don't call this ever you shouldn't have to.
         /// </summary>
-        public BasePort GetLocalPort()
+        internal BasePort GetLocalPort()
         {
             return localLinkBinder.Bind();
         }
-
-        /// <summary>
-        /// The node this link is connected to.
-        /// </summary>
-        public RuntimeNode Node => linkedTo;
     }
 }
