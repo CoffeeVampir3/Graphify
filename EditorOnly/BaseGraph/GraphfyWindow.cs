@@ -15,15 +15,6 @@ namespace GraphFramework.Editor
         private Action OnWindowLayoutFinished = null;
         private string domainSafeWorkingAssetPath;
 
-        [MenuItem("Graphs/Test Graph")]
-        public static void OpenGraph()
-        {
-            var window = GetWindow<GraphfyWindow>();
-            window.titleContent = new GUIContent("C0ff33");
-            
-            window.Focus();
-        }
-        
         /// <summary>
         /// Loads the provided graph model to this window.
         /// </summary>
