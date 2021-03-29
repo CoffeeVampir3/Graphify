@@ -5,7 +5,7 @@ namespace GraphFramework
 {
     public class RuntimeProperty<T> : RuntimeNode
     {
-        [Out, SerializeField] 
+        [Out(true), SerializeField] 
         protected ValuePort<T> propertyValue = new ValuePort<T>();
     }
 }
