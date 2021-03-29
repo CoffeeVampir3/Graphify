@@ -55,6 +55,7 @@ namespace GraphFramework.Editor
             InitializeSearchWindow();
 
             navigationBlackboard = new NavigationBlackboard(this);
+            navigationBlackboard.SetPosition(new Rect(0, 150, 100, 300));
             Add(navigationBlackboard);
         }
         
