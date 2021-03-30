@@ -351,10 +351,13 @@ namespace GraphFramework.Editor
                 var edge = p.connections.ElementAt(i);
                 if(edgeToModel.TryGetValue(edge, out var edgeModel))
                 {
+                    //Manually delete edges because otherwise bad things.
                     DeleteEdge(edge, edgeModel);
+                    edge.input.Disconnect(edge);
+                    edge.output.Disconnect(edge);
+                    edge.parent.Remove(edge);
                 }
             }
-            DeleteElements(p.connections);
         }
         
         #endregion

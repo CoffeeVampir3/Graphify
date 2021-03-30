@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
-using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace GraphFramework.Editor
@@ -16,8 +15,6 @@ namespace GraphFramework.Editor
         private readonly Dictionary<string, Port> modelGuidToPort = new Dictionary<string, Port>();
         private readonly Dictionary<string, DynamicPortModel> nameToDynamicPort =
             new Dictionary<string, DynamicPortModel>();
-        private readonly Dictionary<IntegerField, string> sizeControllerToName = 
-            new Dictionary<IntegerField, string>();
 
         public NodeView(NodeModel model)
         {
@@ -122,11 +119,10 @@ namespace GraphFramework.Editor
 
         #endregion
 
-        internal protected void RegisterDynamicPort(string fieldName, IntegerField sizeController)
+        protected internal void RegisterDynamicPort(string fieldName, IntegerField sizeController)
         {
             if (!nameToDynamicPort.TryGetValue(fieldName, out var dynPort))
                 return;
-            sizeControllerToName.Add(sizeController, fieldName);
             dynPort.SetupSizeController(sizeController);
         }
 
