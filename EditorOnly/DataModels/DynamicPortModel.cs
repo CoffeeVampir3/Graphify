@@ -37,7 +37,7 @@ namespace GraphFramework.Editor
 
             portView.RegisterCallback<AttachToPanelEvent>(e =>
             {
-                this.parentGraph = nodeView.GetFirstAncestorOfType<GraphifyView>();
+                parentGraph = portView.GetFirstAncestorOfType<GraphifyView>();
             });
 
             for (int i = 0; i < dynamicPorts.Count; i++)

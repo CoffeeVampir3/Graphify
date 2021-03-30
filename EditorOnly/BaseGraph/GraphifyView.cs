@@ -578,11 +578,12 @@ namespace GraphFramework.Editor
         
         private void DeleteNode(NodeModel model)
         {
+            model.Delete(graphModel);
+            
             Undo.DestroyObjectImmediate(model.RuntimeData);
             runtimeNodeToView.Remove(model.RuntimeData);
             graphModel.nodeModels.Remove(model);
             viewToModel.Remove(model.View);
-            model.Delete(graphModel);
             //Base graph view handles removal of the visual element itself.
         }
 
