@@ -12,15 +12,17 @@ namespace GraphFramework.Editor
     public class DynamicPortModel : PortModel
     {
         [SerializeReference]
-        public List<PortModel> dynamicPorts = new List<PortModel>();
-        [NonSerialized]
-        public DynamicPortView portView;
-        [NonSerialized]
-        public NodeView nodeView;
-        [NonSerialized]
-        public NodeModel nodeModel;
+        internal List<PortModel> dynamicPorts = new List<PortModel>();
         [NonSerialized] 
-        public IntegerField sizeField;
+        internal GraphifyView parentGraph;
+        [NonSerialized]
+        internal DynamicPortView portView;
+        [NonSerialized]
+        internal NodeView nodeView;
+        [NonSerialized]
+        internal NodeModel nodeModel;
+        [NonSerialized] 
+        internal IntegerField sizeField;
 
         public PortModel ModelByIndex(int i)
         {
@@ -32,6 +34,11 @@ namespace GraphFramework.Editor
             nodeView = view;
             nodeModel = model;
             portView = new DynamicPortView(portName, this, direction);
+
+            portView.RegisterCallback<AttachToPanelEvent>(e =>
+            {
+                this.parentGraph = nodeView.GetFirstAncestorOfType<GraphifyView>();
+            });
 
             for (int i = 0; i < dynamicPorts.Count; i++)
             {
@@ -61,6 +68,14 @@ namespace GraphFramework.Editor
             return port;
         }
 
+        internal void DeleteAllLinks()
+        {
+            for (int i = dynamicPorts.Count - 1; i >= 0; i--)
+            {
+                DeleteLinksFromPort(dynamicPorts[i]);
+            }
+        }
+
         private void DeleteLinksFromPort(PortModel port)
         {
             BasePort basePort = GetBasePort();
@@ -70,14 +85,13 @@ namespace GraphFramework.Editor
                     "Attempted to clean links from: " + portName + " but it had a corrupted link record!");
                 return;
             }
-
-            for (int i = basePort.links.Count - 1; i >= 0; i--)
+            
+            for (int i = basePort.links.ToArray().Length - 1; i >= 0; i--)
             {
                 if (port.linkGuids.Contains(basePort.links[i].GUID))
                 {
                     basePort.links.RemoveAt(i);
-                    var parentView = nodeView.GetFirstAncestorOfType<GraphifyView>();
-                    parentView.DeletePortEdges(nodeModel, port);
+                    parentGraph.DeletePortEdges(nodeModel, port);
                 }
             }
         }
