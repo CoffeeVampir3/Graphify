@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using UnityEditor.Experimental.GraphView;
+﻿using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -7,12 +6,8 @@ namespace GraphFramework.Editor
 {
     public class DynamicPortView : VisualElement
     {
-        private DynamicPortModel model;
-        
         public DynamicPortView(string portName, DynamicPortModel model, Direction dir)
         {
-            this.model = model;
-            
             VisualElement buttonContainer = new VisualElement();
             Label title = new Label{text = portName};
             buttonContainer.style.alignContent = new StyleEnum<Align>(Align.Stretch);
@@ -51,13 +46,6 @@ namespace GraphFramework.Editor
             style.flexGrow = 1;
             style.flexDirection = new StyleEnum<FlexDirection>(FlexDirection.Column);
             Add(buttonContainer);
-            
-            RegisterCallback<DetachFromPanelEvent>(OnDetachFromPanel);
-        }
-
-        public void OnDetachFromPanel(DetachFromPanelEvent panelEvent)
-        {
-            model.DeleteAllLinks();
         }
     }
 }

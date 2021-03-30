@@ -82,6 +82,14 @@ namespace GraphFramework.Editor
 
         public void Delete(GraphModel graphModel)
         {
+            foreach (var model in portModels)
+            {
+                if (model is DynamicPortModel dynPort)
+                {
+                    dynPort.DeleteAllLinks();
+                }
+            }
+            
             graphModel.serializedGraphBlueprint.nodes.Remove(RuntimeData);
         }
 
