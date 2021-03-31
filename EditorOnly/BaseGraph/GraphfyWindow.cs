@@ -25,6 +25,8 @@ namespace GraphFramework.Editor
             OnWindowLayoutFinished = () =>
             {
                 serializedGraphSelector.SetValueWithoutNotify(model.serializedGraphBlueprint);
+                var path = AssetDatabase.GetAssetPath(model.serializedGraphBlueprint);
+                domainSafeWorkingAssetPath = string.IsNullOrEmpty(path) ? null : path;
                 graphView.LoadGraph(model);
             };
             
@@ -95,6 +97,20 @@ namespace GraphFramework.Editor
                 
                 LoadGraphControllerInternal(domainSafeWorkingAssetPath);
             };
+
+            EditorApplication.playModeStateChanged += (e) =>
+            {
+                if (e != PlayModeStateChange.EnteredPlayMode)
+                    return;
+                rootVisualElement.Clear();
+                EnableGraphView();
+
+                //Check if we were working on something before the domain reloaded.
+                if (string.IsNullOrEmpty(domainSafeWorkingAssetPath))
+                    return;
+
+                LoadGraphControllerInternal(domainSafeWorkingAssetPath);
+            };
         }
 
         private void InitializeView()
@@ -157,8 +173,10 @@ namespace GraphFramework.Editor
                 {
                     editorGraph = GraphModel.BootstrapController(gc);
                 }
-
+                
                 serializedGraphSelector.SetValueWithoutNotify(gc);
+                rootVisualElement.schedule.Execute(
+                        () => serializedGraphSelector.SetValueWithoutNotify(gc)).StartingIn(100);
                 graphView.LoadGraph(editorGraph);
             };
             
