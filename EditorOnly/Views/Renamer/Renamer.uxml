@@ -1,5 +1,0 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
-    <ui:TextField picking-mode="Ignore" label="Name:" value="Default Name" text="Default Name" name="nameField" style="flex-direction: row; justify-content: center; align-self: center; flex-grow: 1; flex-shrink: 1; align-items: flex-start; padding-top: 15px;" />
-    <ui:Button text="Okay (Enter)" display-tooltip-when-elided="true" name="okayButton" style="background-color: rgb(43, 99, 7); position: absolute; top: 52px; left: 172px; height: 20px; width: 118px;" />
-    <ui:Button text="Cancel (Esc)" display-tooltip-when-elided="true" name="cancelButton" style="background-color: rgb(128, 78, 78); position: absolute; top: 52px; left: 16px; height: 20px; width: 80px;" />
-</ui:UXML>
