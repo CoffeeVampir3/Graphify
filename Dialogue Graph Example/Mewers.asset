@@ -1,0 +1,2165 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-6627784759133639326
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e01e196a301501d49b5dfeae2806c078, type: 3}
+  m_Name: Dialogue Node
+  m_EditorClassIdentifier: 
+  stringIn:
+    links:
+    - id: 0
+    - id: 1
+    portValue: 
+  stringOut:
+    links:
+    - id: 2
+    - id: 3
+    portValues: []
+  testDialogue: 22
+  references:
+    version: 1
+    00000000:
+      type: {class: Link, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        linkedTo: {fileID: 3126881754916992234}
+        remoteLinkBinder:
+          id: 4
+        localLinkBinder:
+          id: 5
+        GUID: 3937502d-fbf8-4a88-8021-3123359420d0
+        remoteDynamicIndex: 1
+        localPortIndex: -1
+    00000001:
+      type: {class: Link, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        linkedTo: {fileID: -4249853153355082753}
+        remoteLinkBinder:
+          id: 6
+        localLinkBinder:
+          id: 7
+        GUID: 6c1f3ea1-dbae-46a7-9a00-520173d939ec
+        remoteDynamicIndex: 1
+        localPortIndex: -1
+    00000002:
+      type: {class: Link, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        linkedTo: {fileID: 7350527880730455112}
+        remoteLinkBinder:
+          id: 8
+        localLinkBinder:
+          id: 9
+        GUID: 20620fc0-24a8-4beb-ac38-1f8ac0fa1a1d
+        remoteDynamicIndex: -1
+        localPortIndex: 0
+    00000003:
+      type: {class: Link, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        linkedTo: {fileID: -1888440936650912105}
+        remoteLinkBinder:
+          id: 10
+        localLinkBinder:
+          id: 11
+        GUID: 85c5e8b7-c975-4a12-a104-964db28dac74
+        remoteDynamicIndex: -1
+        localPortIndex: 2
+    00000004:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: 3126881754916992234}
+        portField:
+          id: 12
+    00000005:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -6627784759133639326}
+        portField:
+          id: 13
+    00000006:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -4249853153355082753}
+        portField:
+          id: 14
+    00000007:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -6627784759133639326}
+        portField:
+          id: 15
+    00000008:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: 7350527880730455112}
+        portField:
+          id: 16
+    00000009:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -6627784759133639326}
+        portField:
+          id: 17
+    0000000A:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -1888440936650912105}
+        portField:
+          id: 18
+    0000000B:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -6627784759133639326}
+        portField:
+          id: 19
+    0000000C:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringOut
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    0000000D:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringIn
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    0000000E:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringOut
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    0000000F:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringIn
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    00000010:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringIn
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    00000011:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringOut
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    00000012:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringIn
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    00000013:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringOut
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+--- !u!114 &-6416225062186728598
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 374fcfc2976e4d73a513c464818c44fc, type: 3}
+  m_Name: Editor Model
+  m_EditorClassIdentifier: 
+  graphWindowType:
+    serializedTypeName: GraphFramework.Editor.GraphfyWindow, GraphFramework.GraphifyEditor,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  viewPosition: {x: 156, y: 134, z: 0}
+  viewZoom: {x: 0.65751624, y: 0.65751624, z: 1}
+  nodeModels:
+  - id: 0
+  - id: 1
+  - id: 2
+  - id: 3
+  - id: 4
+  - id: 5
+  stackModels: []
+  edgeModels:
+  - id: 6
+  - id: 7
+  - id: 8
+  - id: 9
+  - id: 10
+  - id: 11
+  - id: 12
+  - id: 13
+  links:
+  - id: 14
+  - id: 15
+  - id: 16
+  - id: 17
+  - id: 18
+  - id: 19
+  - id: 20
+  - id: 21
+  - id: 22
+  - id: 23
+  - id: 24
+  - id: 25
+  - id: 26
+  - id: 27
+  - id: 28
+  - id: 29
+  serializedGraphBlueprint: {fileID: 11400000}
+  rootNodeModel:
+    id: 30
+  references:
+    version: 1
+    00000000:
+      type: {class: NodeModel, ns: GraphFramework.Editor, asm: GraphFramework.GraphifyEditor}
+      data:
+        RuntimeData: {fileID: 3126881754916992234}
+        portModels:
+        - id: 31
+        - id: 32
+        stackedOn:
+          id: 33
+        isExpanded: 1
+        nodeTitle: Dialogue Node
+        position:
+          serializedVersion: 2
+          x: 540
+          y: 3
+          width: 189
+          height: 143
+    00000001:
+      type: {class: NodeModel, ns: GraphFramework.Editor, asm: GraphFramework.GraphifyEditor}
+      data:
+        RuntimeData: {fileID: -4249853153355082753}
+        portModels:
+        - id: 34
+        - id: 35
+        stackedOn:
+          id: 33
+        isExpanded: 1
+        nodeTitle: Dialogue Node
+        position:
+          serializedVersion: 2
+          x: 200
+          y: 105
+          width: 230
+          height: 143
+    00000002:
+      type: {class: NodeModel, ns: GraphFramework.Editor, asm: GraphFramework.GraphifyEditor}
+      data:
+        RuntimeData: {fileID: -4918612800306196733}
+        portModels:
+        - id: 36
+        - id: 37
+        stackedOn:
+          id: 33
+        isExpanded: 1
+        nodeTitle: Dialogue Node
+        position:
+          serializedVersion: 2
+          x: 795
+          y: 46
+          width: 189
+          height: 119
+    00000003:
+      type: {class: NodeModel, ns: GraphFramework.Editor, asm: GraphFramework.GraphifyEditor}
+      data:
+        RuntimeData: {fileID: -6627784759133639326}
+        portModels:
+        - id: 38
+        - id: 39
+        stackedOn:
+          id: 33
+        isExpanded: 1
+        nodeTitle: Dialogue Node
+        position:
+          serializedVersion: 2
+          x: 794.9405
+          y: 169.86087
+          width: 150
+          height: 150
+    00000004:
+      type: {class: NodeModel, ns: GraphFramework.Editor, asm: GraphFramework.GraphifyEditor}
+      data:
+        RuntimeData: {fileID: 7350527880730455112}
+        portModels:
+        - id: 40
+        - id: 41
+        stackedOn:
+          id: 33
+        isExpanded: 1
+        nodeTitle: Dialogue Node
+        position:
+          serializedVersion: 2
+          x: 1105
+          y: 175
+          width: 189
+          height: 95
+    00000005:
+      type: {class: NodeModel, ns: GraphFramework.Editor, asm: GraphFramework.GraphifyEditor}
+      data:
+        RuntimeData: {fileID: -1888440936650912105}
+        portModels:
+        - id: 42
+        - id: 43
+        stackedOn:
+          id: 33
+        isExpanded: 1
+        nodeTitle: Dialogue Node
+        position:
+          serializedVersion: 2
+          x: 1107.3281
+          y: 295.7893
+          width: 150
+          height: 150
+    00000006:
+      type: {class: EdgeModel, ns: GraphFramework.Editor, asm: GraphFramework.GraphifyEditor}
+      data:
+        inputModel:
+          id: 1
+        outputModel:
+          id: 30
+        inputPortModel:
+          id: 34
+        outputPortModel:
+          id: 44
+        inputConnectionGuid: a0c87e78-3b83-46d4-8c7b-41ecc2b12834
+        outputConnectionGuid: 84830398-e30f-481a-9b9b-4ffbd8044a39
+    00000007:
+      type: {class: EdgeModel, ns: GraphFramework.Editor, asm: GraphFramework.GraphifyEditor}
+      data:
+        inputModel:
+          id: 2
+        outputModel:
+          id: 0
+        inputPortModel:
+          id: 36
+        outputPortModel:
+          id: 45
+        inputConnectionGuid: 35507c0a-4d44-4446-bda9-61bac318c855
+        outputConnectionGuid: 5c0ee179-d610-4058-8093-660e0ed2b93a
+    00000008:
+      type: {class: EdgeModel, ns: GraphFramework.Editor, asm: GraphFramework.GraphifyEditor}
+      data:
+        inputModel:
+          id: 3
+        outputModel:
+          id: 0
+        inputPortModel:
+          id: 38
+        outputPortModel:
+          id: 46
+        inputConnectionGuid: 3937502d-fbf8-4a88-8021-3123359420d0
+        outputConnectionGuid: 9eaee9a6-cf7e-474c-bc26-608c8cef1fb7
+    00000009:
+      type: {class: EdgeModel, ns: GraphFramework.Editor, asm: GraphFramework.GraphifyEditor}
+      data:
+        inputModel:
+          id: 4
+        outputModel:
+          id: 3
+        inputPortModel:
+          id: 40
+        outputPortModel:
+          id: 47
+        inputConnectionGuid: 772160ad-873a-47e8-a2d9-5691dcdcb343
+        outputConnectionGuid: 20620fc0-24a8-4beb-ac38-1f8ac0fa1a1d
+    0000000A:
+      type: {class: EdgeModel, ns: GraphFramework.Editor, asm: GraphFramework.GraphifyEditor}
+      data:
+        inputModel:
+          id: 5
+        outputModel:
+          id: 3
+        inputPortModel:
+          id: 42
+        outputPortModel:
+          id: 48
+        inputConnectionGuid: 7d0d1591-7d31-4c1c-a634-9c160b8abc01
+        outputConnectionGuid: 85c5e8b7-c975-4a12-a104-964db28dac74
+    0000000B:
+      type: {class: EdgeModel, ns: GraphFramework.Editor, asm: GraphFramework.GraphifyEditor}
+      data:
+        inputModel:
+          id: 0
+        outputModel:
+          id: 1
+        inputPortModel:
+          id: 31
+        outputPortModel:
+          id: 49
+        inputConnectionGuid: d88ff2fa-44af-4dcd-85bc-ded7a35daaf4
+        outputConnectionGuid: d7c7565f-97fb-4815-9dd1-2d9f4c59b9c3
+    0000000C:
+      type: {class: EdgeModel, ns: GraphFramework.Editor, asm: GraphFramework.GraphifyEditor}
+      data:
+        inputModel:
+          id: 3
+        outputModel:
+          id: 1
+        inputPortModel:
+          id: 38
+        outputPortModel:
+          id: 50
+        inputConnectionGuid: 6c1f3ea1-dbae-46a7-9a00-520173d939ec
+        outputConnectionGuid: 55d4adf9-6781-473a-8e71-4363152dd771
+    0000000D:
+      type: {class: EdgeModel, ns: GraphFramework.Editor, asm: GraphFramework.GraphifyEditor}
+      data:
+        inputModel:
+          id: 4
+        outputModel:
+          id: 2
+        inputPortModel:
+          id: 40
+        outputPortModel:
+          id: 51
+        inputConnectionGuid: 385218d9-61ea-43da-988b-ede4483a1662
+        outputConnectionGuid: 15096830-4d15-4e84-b33f-f6717fecdff4
+    0000000E:
+      type: {class: Link, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        linkedTo: {fileID: 7729862445621074241}
+        remoteLinkBinder:
+          id: 52
+        localLinkBinder:
+          id: 53
+        GUID: a0c87e78-3b83-46d4-8c7b-41ecc2b12834
+        remoteDynamicIndex: -1
+        localPortIndex: -1
+    0000000F:
+      type: {class: Link, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        linkedTo: {fileID: -4249853153355082753}
+        remoteLinkBinder:
+          id: 54
+        localLinkBinder:
+          id: 55
+        GUID: 84830398-e30f-481a-9b9b-4ffbd8044a39
+        remoteDynamicIndex: -1
+        localPortIndex: -1
+    00000010:
+      type: {class: Link, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        linkedTo: {fileID: 3126881754916992234}
+        remoteLinkBinder:
+          id: 56
+        localLinkBinder:
+          id: 57
+        GUID: 35507c0a-4d44-4446-bda9-61bac318c855
+        remoteDynamicIndex: 0
+        localPortIndex: -1
+    00000011:
+      type: {class: Link, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        linkedTo: {fileID: -4918612800306196733}
+        remoteLinkBinder:
+          id: 58
+        localLinkBinder:
+          id: 59
+        GUID: 5c0ee179-d610-4058-8093-660e0ed2b93a
+        remoteDynamicIndex: -1
+        localPortIndex: 0
+    00000012:
+      type: {class: Link, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        linkedTo: {fileID: 3126881754916992234}
+        remoteLinkBinder:
+          id: 60
+        localLinkBinder:
+          id: 61
+        GUID: 3937502d-fbf8-4a88-8021-3123359420d0
+        remoteDynamicIndex: 1
+        localPortIndex: -1
+    00000013:
+      type: {class: Link, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        linkedTo: {fileID: -6627784759133639326}
+        remoteLinkBinder:
+          id: 62
+        localLinkBinder:
+          id: 63
+        GUID: 9eaee9a6-cf7e-474c-bc26-608c8cef1fb7
+        remoteDynamicIndex: -1
+        localPortIndex: 1
+    00000014:
+      type: {class: Link, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        linkedTo: {fileID: -6627784759133639326}
+        remoteLinkBinder:
+          id: 64
+        localLinkBinder:
+          id: 65
+        GUID: 772160ad-873a-47e8-a2d9-5691dcdcb343
+        remoteDynamicIndex: 0
+        localPortIndex: -1
+    00000015:
+      type: {class: Link, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        linkedTo: {fileID: 7350527880730455112}
+        remoteLinkBinder:
+          id: 66
+        localLinkBinder:
+          id: 67
+        GUID: 20620fc0-24a8-4beb-ac38-1f8ac0fa1a1d
+        remoteDynamicIndex: -1
+        localPortIndex: 0
+    00000016:
+      type: {class: Link, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        linkedTo: {fileID: -6627784759133639326}
+        remoteLinkBinder:
+          id: 68
+        localLinkBinder:
+          id: 69
+        GUID: 7d0d1591-7d31-4c1c-a634-9c160b8abc01
+        remoteDynamicIndex: 2
+        localPortIndex: -1
+    00000017:
+      type: {class: Link, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        linkedTo: {fileID: -1888440936650912105}
+        remoteLinkBinder:
+          id: 70
+        localLinkBinder:
+          id: 71
+        GUID: 85c5e8b7-c975-4a12-a104-964db28dac74
+        remoteDynamicIndex: -1
+        localPortIndex: 2
+    00000018:
+      type: {class: Link, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        linkedTo: {fileID: -4249853153355082753}
+        remoteLinkBinder:
+          id: 72
+        localLinkBinder:
+          id: 73
+        GUID: d88ff2fa-44af-4dcd-85bc-ded7a35daaf4
+        remoteDynamicIndex: 0
+        localPortIndex: -1
+    00000019:
+      type: {class: Link, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        linkedTo: {fileID: 3126881754916992234}
+        remoteLinkBinder:
+          id: 74
+        localLinkBinder:
+          id: 75
+        GUID: d7c7565f-97fb-4815-9dd1-2d9f4c59b9c3
+        remoteDynamicIndex: -1
+        localPortIndex: 0
+    0000001A:
+      type: {class: Link, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        linkedTo: {fileID: -4249853153355082753}
+        remoteLinkBinder:
+          id: 76
+        localLinkBinder:
+          id: 77
+        GUID: 6c1f3ea1-dbae-46a7-9a00-520173d939ec
+        remoteDynamicIndex: 1
+        localPortIndex: -1
+    0000001B:
+      type: {class: Link, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        linkedTo: {fileID: -6627784759133639326}
+        remoteLinkBinder:
+          id: 78
+        localLinkBinder:
+          id: 79
+        GUID: 55d4adf9-6781-473a-8e71-4363152dd771
+        remoteDynamicIndex: -1
+        localPortIndex: 1
+    0000001C:
+      type: {class: Link, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        linkedTo: {fileID: -4918612800306196733}
+        remoteLinkBinder:
+          id: 80
+        localLinkBinder:
+          id: 81
+        GUID: 385218d9-61ea-43da-988b-ede4483a1662
+        remoteDynamicIndex: 0
+        localPortIndex: -1
+    0000001D:
+      type: {class: Link, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        linkedTo: {fileID: 7350527880730455112}
+        remoteLinkBinder:
+          id: 82
+        localLinkBinder:
+          id: 83
+        GUID: 15096830-4d15-4e84-b33f-f6717fecdff4
+        remoteDynamicIndex: -1
+        localPortIndex: 0
+    0000001E:
+      type: {class: NodeModel, ns: GraphFramework.Editor, asm: GraphFramework.GraphifyEditor}
+      data:
+        RuntimeData: {fileID: 7729862445621074241}
+        portModels:
+        - id: 44
+        stackedOn:
+          id: 33
+        isExpanded: 1
+        nodeTitle: Root Node
+        position:
+          serializedVersion: 2
+          x: 0
+          y: 0
+          width: 0
+          height: 0
+    0000001F:
+      type: {class: PortModel, ns: GraphFramework.Editor, asm: GraphFramework.GraphifyEditor}
+      data:
+        portValueType:
+          id: 84
+        portCompleteType:
+          id: 85
+        serializedValueFieldInfo:
+          id: 86
+        linkGuids:
+        - d88ff2fa-44af-4dcd-85bc-ded7a35daaf4
+        portName: String In
+        portGUID: f7dafebb-8bb3-4f13-a591-840f7078a851
+        dynamicIndex: -1
+        orientation: 0
+        direction: 0
+        capacity: 1
+    00000020:
+      type: {class: DynamicPortModel, ns: GraphFramework.Editor, asm: GraphFramework.GraphifyEditor}
+      data:
+        portValueType:
+          id: 87
+        portCompleteType:
+          id: 88
+        serializedValueFieldInfo:
+          id: 89
+        linkGuids: []
+        portName: String Out
+        portGUID: 856ec860-3c69-4399-bc3d-2d9c4352b014
+        dynamicIndex: -1
+        orientation: 0
+        direction: 1
+        capacity: 0
+        dynamicPorts:
+        - id: 45
+        - id: 46
+    00000021:
+      type: {class: , ns: , asm: }
+    00000022:
+      type: {class: PortModel, ns: GraphFramework.Editor, asm: GraphFramework.GraphifyEditor}
+      data:
+        portValueType:
+          id: 90
+        portCompleteType:
+          id: 91
+        serializedValueFieldInfo:
+          id: 92
+        linkGuids:
+        - a0c87e78-3b83-46d4-8c7b-41ecc2b12834
+        portName: String In
+        portGUID: a413b1b0-6026-4f58-8f99-8a1ece660792
+        dynamicIndex: -1
+        orientation: 0
+        direction: 0
+        capacity: 1
+    00000023:
+      type: {class: DynamicPortModel, ns: GraphFramework.Editor, asm: GraphFramework.GraphifyEditor}
+      data:
+        portValueType:
+          id: 93
+        portCompleteType:
+          id: 94
+        serializedValueFieldInfo:
+          id: 95
+        linkGuids: []
+        portName: String Out
+        portGUID: d4df42fd-4fa1-4848-baf7-3156fd05dc06
+        dynamicIndex: -1
+        orientation: 0
+        direction: 1
+        capacity: 0
+        dynamicPorts:
+        - id: 49
+        - id: 50
+    00000024:
+      type: {class: PortModel, ns: GraphFramework.Editor, asm: GraphFramework.GraphifyEditor}
+      data:
+        portValueType:
+          id: 96
+        portCompleteType:
+          id: 97
+        serializedValueFieldInfo:
+          id: 98
+        linkGuids:
+        - 35507c0a-4d44-4446-bda9-61bac318c855
+        portName: String In
+        portGUID: 5f0a5245-6673-4635-8716-be04788bfa03
+        dynamicIndex: -1
+        orientation: 0
+        direction: 0
+        capacity: 1
+    00000025:
+      type: {class: DynamicPortModel, ns: GraphFramework.Editor, asm: GraphFramework.GraphifyEditor}
+      data:
+        portValueType:
+          id: 99
+        portCompleteType:
+          id: 100
+        serializedValueFieldInfo:
+          id: 101
+        linkGuids: []
+        portName: String Out
+        portGUID: eed6a5cf-d173-48f7-af6c-2dbc385a5068
+        dynamicIndex: -1
+        orientation: 0
+        direction: 1
+        capacity: 0
+        dynamicPorts:
+        - id: 51
+    00000026:
+      type: {class: PortModel, ns: GraphFramework.Editor, asm: GraphFramework.GraphifyEditor}
+      data:
+        portValueType:
+          id: 102
+        portCompleteType:
+          id: 103
+        serializedValueFieldInfo:
+          id: 104
+        linkGuids:
+        - 3937502d-fbf8-4a88-8021-3123359420d0
+        - 6c1f3ea1-dbae-46a7-9a00-520173d939ec
+        portName: String In
+        portGUID: 88d35e9b-6ffd-4ea5-a3c0-1180eb01eaa1
+        dynamicIndex: -1
+        orientation: 0
+        direction: 0
+        capacity: 1
+    00000027:
+      type: {class: DynamicPortModel, ns: GraphFramework.Editor, asm: GraphFramework.GraphifyEditor}
+      data:
+        portValueType:
+          id: 105
+        portCompleteType:
+          id: 106
+        serializedValueFieldInfo:
+          id: 107
+        linkGuids: []
+        portName: String Out
+        portGUID: 068d37ef-c211-430f-8506-5a5ca8fb2462
+        dynamicIndex: -1
+        orientation: 0
+        direction: 1
+        capacity: 0
+        dynamicPorts:
+        - id: 47
+        - id: 108
+        - id: 48
+    00000028:
+      type: {class: PortModel, ns: GraphFramework.Editor, asm: GraphFramework.GraphifyEditor}
+      data:
+        portValueType:
+          id: 109
+        portCompleteType:
+          id: 110
+        serializedValueFieldInfo:
+          id: 111
+        linkGuids:
+        - 772160ad-873a-47e8-a2d9-5691dcdcb343
+        - 385218d9-61ea-43da-988b-ede4483a1662
+        portName: String In
+        portGUID: 25ca2faa-72ff-46e7-bfd2-8dc854c35088
+        dynamicIndex: -1
+        orientation: 0
+        direction: 0
+        capacity: 1
+    00000029:
+      type: {class: DynamicPortModel, ns: GraphFramework.Editor, asm: GraphFramework.GraphifyEditor}
+      data:
+        portValueType:
+          id: 112
+        portCompleteType:
+          id: 113
+        serializedValueFieldInfo:
+          id: 114
+        linkGuids: []
+        portName: String Out
+        portGUID: 18b191c5-c4e7-4398-9284-97d8e550b832
+        dynamicIndex: -1
+        orientation: 0
+        direction: 1
+        capacity: 0
+        dynamicPorts: []
+    0000002A:
+      type: {class: PortModel, ns: GraphFramework.Editor, asm: GraphFramework.GraphifyEditor}
+      data:
+        portValueType:
+          id: 115
+        portCompleteType:
+          id: 116
+        serializedValueFieldInfo:
+          id: 117
+        linkGuids:
+        - 7d0d1591-7d31-4c1c-a634-9c160b8abc01
+        portName: String In
+        portGUID: 98443350-ad89-4acf-8d87-e272f88352ad
+        dynamicIndex: -1
+        orientation: 0
+        direction: 0
+        capacity: 1
+    0000002B:
+      type: {class: DynamicPortModel, ns: GraphFramework.Editor, asm: GraphFramework.GraphifyEditor}
+      data:
+        portValueType:
+          id: 118
+        portCompleteType:
+          id: 119
+        serializedValueFieldInfo:
+          id: 120
+        linkGuids: []
+        portName: String Out
+        portGUID: a26c62a4-71ce-4bd0-88bb-052f6f6332b5
+        dynamicIndex: -1
+        orientation: 0
+        direction: 1
+        capacity: 0
+        dynamicPorts: []
+    0000002C:
+      type: {class: PortModel, ns: GraphFramework.Editor, asm: GraphFramework.GraphifyEditor}
+      data:
+        portValueType:
+          id: 121
+        portCompleteType:
+          id: 122
+        serializedValueFieldInfo:
+          id: 123
+        linkGuids:
+        - 84830398-e30f-481a-9b9b-4ffbd8044a39
+        portName: Root Out
+        portGUID: 301e8dd7-c106-488d-9409-648d177cc1f5
+        dynamicIndex: -1
+        orientation: 0
+        direction: 1
+        capacity: 0
+    0000002D:
+      type: {class: PortModel, ns: GraphFramework.Editor, asm: GraphFramework.GraphifyEditor}
+      data:
+        portValueType:
+          id: 124
+        portCompleteType:
+          id: 125
+        serializedValueFieldInfo:
+          id: 126
+        linkGuids:
+        - 5c0ee179-d610-4058-8093-660e0ed2b93a
+        portName: String Out
+        portGUID: 45d7deec-7f5c-46d3-abeb-a9763432952d
+        dynamicIndex: 0
+        orientation: 0
+        direction: 1
+        capacity: 0
+    0000002E:
+      type: {class: PortModel, ns: GraphFramework.Editor, asm: GraphFramework.GraphifyEditor}
+      data:
+        portValueType:
+          id: 127
+        portCompleteType:
+          id: 128
+        serializedValueFieldInfo:
+          id: 129
+        linkGuids:
+        - 9eaee9a6-cf7e-474c-bc26-608c8cef1fb7
+        portName: String Out
+        portGUID: 62ebc428-c2b5-4d27-8262-031ab400ad3f
+        dynamicIndex: 1
+        orientation: 0
+        direction: 1
+        capacity: 0
+    0000002F:
+      type: {class: PortModel, ns: GraphFramework.Editor, asm: GraphFramework.GraphifyEditor}
+      data:
+        portValueType:
+          id: 130
+        portCompleteType:
+          id: 131
+        serializedValueFieldInfo:
+          id: 132
+        linkGuids:
+        - 20620fc0-24a8-4beb-ac38-1f8ac0fa1a1d
+        portName: String Out
+        portGUID: 97d1c37b-be93-4f79-b06f-01abf271c837
+        dynamicIndex: 0
+        orientation: 0
+        direction: 1
+        capacity: 0
+    00000030:
+      type: {class: PortModel, ns: GraphFramework.Editor, asm: GraphFramework.GraphifyEditor}
+      data:
+        portValueType:
+          id: 133
+        portCompleteType:
+          id: 134
+        serializedValueFieldInfo:
+          id: 135
+        linkGuids:
+        - 85c5e8b7-c975-4a12-a104-964db28dac74
+        portName: String Out
+        portGUID: 152b2886-1eb1-4430-bedd-ccafd4f4772f
+        dynamicIndex: 2
+        orientation: 0
+        direction: 1
+        capacity: 0
+    00000031:
+      type: {class: PortModel, ns: GraphFramework.Editor, asm: GraphFramework.GraphifyEditor}
+      data:
+        portValueType:
+          id: 136
+        portCompleteType:
+          id: 137
+        serializedValueFieldInfo:
+          id: 138
+        linkGuids:
+        - d7c7565f-97fb-4815-9dd1-2d9f4c59b9c3
+        portName: String Out
+        portGUID: dd78ad74-2407-43a8-a300-6740db46a5e2
+        dynamicIndex: 0
+        orientation: 0
+        direction: 1
+        capacity: 0
+    00000032:
+      type: {class: PortModel, ns: GraphFramework.Editor, asm: GraphFramework.GraphifyEditor}
+      data:
+        portValueType:
+          id: 139
+        portCompleteType:
+          id: 140
+        serializedValueFieldInfo:
+          id: 141
+        linkGuids:
+        - 55d4adf9-6781-473a-8e71-4363152dd771
+        portName: String Out
+        portGUID: d692d759-c586-470b-84f2-276acb3a1de5
+        dynamicIndex: 1
+        orientation: 0
+        direction: 1
+        capacity: 0
+    00000033:
+      type: {class: PortModel, ns: GraphFramework.Editor, asm: GraphFramework.GraphifyEditor}
+      data:
+        portValueType:
+          id: 142
+        portCompleteType:
+          id: 143
+        serializedValueFieldInfo:
+          id: 144
+        linkGuids:
+        - 15096830-4d15-4e84-b33f-f6717fecdff4
+        portName: String Out
+        portGUID: 0212850a-59f2-48ab-a963-5e340ac35097
+        dynamicIndex: 0
+        orientation: 0
+        direction: 1
+        capacity: 0
+    00000034:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: 7729862445621074241}
+        portField:
+          id: 123
+    00000035:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -4249853153355082753}
+        portField:
+          id: 92
+    00000036:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -4249853153355082753}
+        portField:
+          id: 92
+    00000037:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: 7729862445621074241}
+        portField:
+          id: 123
+    00000038:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: 3126881754916992234}
+        portField:
+          id: 126
+    00000039:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -4918612800306196733}
+        portField:
+          id: 98
+    0000003A:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -4918612800306196733}
+        portField:
+          id: 98
+    0000003B:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: 3126881754916992234}
+        portField:
+          id: 126
+    0000003C:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: 3126881754916992234}
+        portField:
+          id: 129
+    0000003D:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -6627784759133639326}
+        portField:
+          id: 104
+    0000003E:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -6627784759133639326}
+        portField:
+          id: 104
+    0000003F:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: 3126881754916992234}
+        portField:
+          id: 129
+    00000040:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -6627784759133639326}
+        portField:
+          id: 132
+    00000041:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: 7350527880730455112}
+        portField:
+          id: 111
+    00000042:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: 7350527880730455112}
+        portField:
+          id: 111
+    00000043:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -6627784759133639326}
+        portField:
+          id: 132
+    00000044:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -6627784759133639326}
+        portField:
+          id: 135
+    00000045:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -1888440936650912105}
+        portField:
+          id: 117
+    00000046:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -1888440936650912105}
+        portField:
+          id: 117
+    00000047:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -6627784759133639326}
+        portField:
+          id: 135
+    00000048:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -4249853153355082753}
+        portField:
+          id: 138
+    00000049:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: 3126881754916992234}
+        portField:
+          id: 86
+    0000004A:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: 3126881754916992234}
+        portField:
+          id: 86
+    0000004B:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -4249853153355082753}
+        portField:
+          id: 138
+    0000004C:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -4249853153355082753}
+        portField:
+          id: 141
+    0000004D:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -6627784759133639326}
+        portField:
+          id: 104
+    0000004E:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -6627784759133639326}
+        portField:
+          id: 104
+    0000004F:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -4249853153355082753}
+        portField:
+          id: 141
+    00000050:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -4918612800306196733}
+        portField:
+          id: 144
+    00000051:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: 7350527880730455112}
+        portField:
+          id: 111
+    00000052:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: 7350527880730455112}
+        portField:
+          id: 111
+    00000053:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -4918612800306196733}
+        portField:
+          id: 144
+    00000054:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
+          PublicKeyToken=b77a5c561934e089
+    00000055:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: GraphFramework.ValuePort`1[[System.String, mscorlib,
+          Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], GraphFramework.GraphifyRuntime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    00000056:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringIn
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    00000057:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
+          PublicKeyToken=b77a5c561934e089
+    00000058:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: GraphFramework.DynamicValuePort`1[[System.String, mscorlib,
+          Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], GraphFramework.GraphifyRuntime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    00000059:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringOut
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    0000005A:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
+          PublicKeyToken=b77a5c561934e089
+    0000005B:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: GraphFramework.ValuePort`1[[System.String, mscorlib,
+          Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], GraphFramework.GraphifyRuntime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    0000005C:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringIn
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    0000005D:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
+          PublicKeyToken=b77a5c561934e089
+    0000005E:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: GraphFramework.DynamicValuePort`1[[System.String, mscorlib,
+          Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], GraphFramework.GraphifyRuntime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    0000005F:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringOut
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    00000060:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
+          PublicKeyToken=b77a5c561934e089
+    00000061:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: GraphFramework.ValuePort`1[[System.String, mscorlib,
+          Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], GraphFramework.GraphifyRuntime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    00000062:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringIn
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    00000063:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
+          PublicKeyToken=b77a5c561934e089
+    00000064:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: GraphFramework.DynamicValuePort`1[[System.String, mscorlib,
+          Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], GraphFramework.GraphifyRuntime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    00000065:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringOut
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    00000066:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
+          PublicKeyToken=b77a5c561934e089
+    00000067:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: GraphFramework.ValuePort`1[[System.String, mscorlib,
+          Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], GraphFramework.GraphifyRuntime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    00000068:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringIn
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    00000069:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
+          PublicKeyToken=b77a5c561934e089
+    0000006A:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: GraphFramework.DynamicValuePort`1[[System.String, mscorlib,
+          Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], GraphFramework.GraphifyRuntime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    0000006B:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringOut
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    0000006C:
+      type: {class: PortModel, ns: GraphFramework.Editor, asm: GraphFramework.GraphifyEditor}
+      data:
+        portValueType:
+          id: 145
+        portCompleteType:
+          id: 146
+        serializedValueFieldInfo:
+          id: 147
+        linkGuids: []
+        portName: String Out
+        portGUID: a36d09d1-f4b6-4150-b8f2-dee3d352503e
+        dynamicIndex: 1
+        orientation: 0
+        direction: 1
+        capacity: 0
+    0000006D:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
+          PublicKeyToken=b77a5c561934e089
+    0000006E:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: GraphFramework.ValuePort`1[[System.String, mscorlib,
+          Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], GraphFramework.GraphifyRuntime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    0000006F:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringIn
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    00000070:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
+          PublicKeyToken=b77a5c561934e089
+    00000071:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: GraphFramework.DynamicValuePort`1[[System.String, mscorlib,
+          Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], GraphFramework.GraphifyRuntime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    00000072:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringOut
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    00000073:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
+          PublicKeyToken=b77a5c561934e089
+    00000074:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: GraphFramework.ValuePort`1[[System.String, mscorlib,
+          Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], GraphFramework.GraphifyRuntime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    00000075:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringIn
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    00000076:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
+          PublicKeyToken=b77a5c561934e089
+    00000077:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: GraphFramework.DynamicValuePort`1[[System.String, mscorlib,
+          Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], GraphFramework.GraphifyRuntime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    00000078:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringOut
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    00000079:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: GraphFramework.Any, GraphFramework.GraphifyRuntime, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
+    0000007A:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: GraphFramework.ValuePort`1[[GraphFramework.Any, GraphFramework.GraphifyRuntime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], GraphFramework.GraphifyRuntime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    0000007B:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: rootOut
+        declaringType:
+          serializedTypeName: DefaultNamespace.DialogueRoot, Assembly-CSharp, Version=0.0.0.0,
+            Culture=neutral, PublicKeyToken=null
+    0000007C:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
+          PublicKeyToken=b77a5c561934e089
+    0000007D:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: GraphFramework.DynamicValuePort`1[[System.String, mscorlib,
+          Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], GraphFramework.GraphifyRuntime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    0000007E:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringOut
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    0000007F:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
+          PublicKeyToken=b77a5c561934e089
+    00000080:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: GraphFramework.DynamicValuePort`1[[System.String, mscorlib,
+          Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], GraphFramework.GraphifyRuntime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    00000081:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringOut
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    00000082:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
+          PublicKeyToken=b77a5c561934e089
+    00000083:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: GraphFramework.DynamicValuePort`1[[System.String, mscorlib,
+          Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], GraphFramework.GraphifyRuntime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    00000084:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringOut
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    00000085:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
+          PublicKeyToken=b77a5c561934e089
+    00000086:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: GraphFramework.DynamicValuePort`1[[System.String, mscorlib,
+          Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], GraphFramework.GraphifyRuntime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    00000087:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringOut
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    00000088:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
+          PublicKeyToken=b77a5c561934e089
+    00000089:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: GraphFramework.DynamicValuePort`1[[System.String, mscorlib,
+          Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], GraphFramework.GraphifyRuntime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    0000008A:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringOut
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    0000008B:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
+          PublicKeyToken=b77a5c561934e089
+    0000008C:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: GraphFramework.DynamicValuePort`1[[System.String, mscorlib,
+          Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], GraphFramework.GraphifyRuntime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    0000008D:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringOut
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    0000008E:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
+          PublicKeyToken=b77a5c561934e089
+    0000008F:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: GraphFramework.DynamicValuePort`1[[System.String, mscorlib,
+          Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], GraphFramework.GraphifyRuntime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    00000090:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringOut
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    00000091:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
+          PublicKeyToken=b77a5c561934e089
+    00000092:
+      type: {class: SerializableType, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        serializedTypeName: GraphFramework.DynamicValuePort`1[[System.String, mscorlib,
+          Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], GraphFramework.GraphifyRuntime,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    00000093:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringOut
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+--- !u!114 &-4918612800306196733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e01e196a301501d49b5dfeae2806c078, type: 3}
+  m_Name: Dialogue Node
+  m_EditorClassIdentifier: 
+  stringIn:
+    links:
+    - id: 0
+    portValue: 
+  stringOut:
+    links:
+    - id: 1
+    portValues: []
+  testDialogue: 21
+  references:
+    version: 1
+    00000000:
+      type: {class: Link, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        linkedTo: {fileID: 3126881754916992234}
+        remoteLinkBinder:
+          id: 2
+        localLinkBinder:
+          id: 3
+        GUID: 35507c0a-4d44-4446-bda9-61bac318c855
+        remoteDynamicIndex: 0
+        localPortIndex: -1
+    00000001:
+      type: {class: Link, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        linkedTo: {fileID: 7350527880730455112}
+        remoteLinkBinder:
+          id: 4
+        localLinkBinder:
+          id: 5
+        GUID: 15096830-4d15-4e84-b33f-f6717fecdff4
+        remoteDynamicIndex: -1
+        localPortIndex: 0
+    00000002:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: 3126881754916992234}
+        portField:
+          id: 6
+    00000003:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -4918612800306196733}
+        portField:
+          id: 7
+    00000004:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: 7350527880730455112}
+        portField:
+          id: 8
+    00000005:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -4918612800306196733}
+        portField:
+          id: 9
+    00000006:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringOut
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    00000007:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringIn
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    00000008:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringIn
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    00000009:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringOut
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+--- !u!114 &-4249853153355082753
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e01e196a301501d49b5dfeae2806c078, type: 3}
+  m_Name: Dialogue Node
+  m_EditorClassIdentifier: 
+  stringIn:
+    links:
+    - id: 0
+    portValue: 
+  stringOut:
+    links:
+    - id: 1
+    - id: 2
+    portValues: []
+  testDialogue: This is some dialogue!
+  references:
+    version: 1
+    00000000:
+      type: {class: Link, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        linkedTo: {fileID: 7729862445621074241}
+        remoteLinkBinder:
+          id: 3
+        localLinkBinder:
+          id: 4
+        GUID: a0c87e78-3b83-46d4-8c7b-41ecc2b12834
+        remoteDynamicIndex: -1
+        localPortIndex: -1
+    00000001:
+      type: {class: Link, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        linkedTo: {fileID: 3126881754916992234}
+        remoteLinkBinder:
+          id: 5
+        localLinkBinder:
+          id: 6
+        GUID: d7c7565f-97fb-4815-9dd1-2d9f4c59b9c3
+        remoteDynamicIndex: -1
+        localPortIndex: 0
+    00000002:
+      type: {class: Link, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        linkedTo: {fileID: -6627784759133639326}
+        remoteLinkBinder:
+          id: 7
+        localLinkBinder:
+          id: 8
+        GUID: 55d4adf9-6781-473a-8e71-4363152dd771
+        remoteDynamicIndex: -1
+        localPortIndex: 1
+    00000003:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: 7729862445621074241}
+        portField:
+          id: 9
+    00000004:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -4249853153355082753}
+        portField:
+          id: 10
+    00000005:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: 3126881754916992234}
+        portField:
+          id: 11
+    00000006:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -4249853153355082753}
+        portField:
+          id: 12
+    00000007:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -6627784759133639326}
+        portField:
+          id: 13
+    00000008:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -4249853153355082753}
+        portField:
+          id: 14
+    00000009:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: rootOut
+        declaringType:
+          serializedTypeName: DefaultNamespace.DialogueRoot, Assembly-CSharp, Version=0.0.0.0,
+            Culture=neutral, PublicKeyToken=null
+    0000000A:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringIn
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    0000000B:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringIn
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    0000000C:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringOut
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    0000000D:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringIn
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    0000000E:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringOut
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+--- !u!114 &-1888440936650912105
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e01e196a301501d49b5dfeae2806c078, type: 3}
+  m_Name: Dialogue Node
+  m_EditorClassIdentifier: 
+  stringIn:
+    links:
+    - id: 0
+    portValue: 
+  stringOut:
+    links: []
+    portValues: []
+  testDialogue: Pizza Party!
+  references:
+    version: 1
+    00000000:
+      type: {class: Link, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        linkedTo: {fileID: -6627784759133639326}
+        remoteLinkBinder:
+          id: 1
+        localLinkBinder:
+          id: 2
+        GUID: 7d0d1591-7d31-4c1c-a634-9c160b8abc01
+        remoteDynamicIndex: 2
+        localPortIndex: -1
+    00000001:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -6627784759133639326}
+        portField:
+          id: 3
+    00000002:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -1888440936650912105}
+        portField:
+          id: 4
+    00000003:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringOut
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    00000004:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringIn
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e725af8db63d8f45bbd6fb7423ea317, type: 3}
+  m_Name: Mewers
+  m_EditorClassIdentifier: 
+  rootNode: {fileID: 7729862445621074241}
+  nodes:
+  - {fileID: 7729862445621074241}
+  - {fileID: 3126881754916992234}
+  - {fileID: -4249853153355082753}
+  - {fileID: -4918612800306196733}
+  - {fileID: -6627784759133639326}
+  - {fileID: 7350527880730455112}
+  - {fileID: -1888440936650912105}
+--- !u!114 &3126881754916992234
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e01e196a301501d49b5dfeae2806c078, type: 3}
+  m_Name: Dialogue Node
+  m_EditorClassIdentifier: 
+  stringIn:
+    links:
+    - id: 0
+    portValue: 
+  stringOut:
+    links:
+    - id: 1
+    - id: 2
+    portValues: []
+  testDialogue: 11
+  references:
+    version: 1
+    00000000:
+      type: {class: Link, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        linkedTo: {fileID: -4249853153355082753}
+        remoteLinkBinder:
+          id: 3
+        localLinkBinder:
+          id: 4
+        GUID: d88ff2fa-44af-4dcd-85bc-ded7a35daaf4
+        remoteDynamicIndex: 0
+        localPortIndex: -1
+    00000001:
+      type: {class: Link, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        linkedTo: {fileID: -4918612800306196733}
+        remoteLinkBinder:
+          id: 5
+        localLinkBinder:
+          id: 6
+        GUID: 5c0ee179-d610-4058-8093-660e0ed2b93a
+        remoteDynamicIndex: -1
+        localPortIndex: 0
+    00000002:
+      type: {class: Link, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        linkedTo: {fileID: -6627784759133639326}
+        remoteLinkBinder:
+          id: 7
+        localLinkBinder:
+          id: 8
+        GUID: 9eaee9a6-cf7e-474c-bc26-608c8cef1fb7
+        remoteDynamicIndex: -1
+        localPortIndex: 1
+    00000003:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -4249853153355082753}
+        portField:
+          id: 9
+    00000004:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: 3126881754916992234}
+        portField:
+          id: 10
+    00000005:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -4918612800306196733}
+        portField:
+          id: 11
+    00000006:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: 3126881754916992234}
+        portField:
+          id: 12
+    00000007:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -6627784759133639326}
+        portField:
+          id: 13
+    00000008:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: 3126881754916992234}
+        portField:
+          id: 14
+    00000009:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringOut
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    0000000A:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringIn
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    0000000B:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringIn
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    0000000C:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringOut
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    0000000D:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringIn
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    0000000E:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringOut
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+--- !u!114 &7350527880730455112
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e01e196a301501d49b5dfeae2806c078, type: 3}
+  m_Name: Dialogue Node
+  m_EditorClassIdentifier: 
+  stringIn:
+    links:
+    - id: 0
+    - id: 1
+    portValue: 
+  stringOut:
+    links: []
+    portValues: []
+  testDialogue: Wow!
+  references:
+    version: 1
+    00000000:
+      type: {class: Link, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        linkedTo: {fileID: -6627784759133639326}
+        remoteLinkBinder:
+          id: 2
+        localLinkBinder:
+          id: 3
+        GUID: 772160ad-873a-47e8-a2d9-5691dcdcb343
+        remoteDynamicIndex: 0
+        localPortIndex: -1
+    00000001:
+      type: {class: Link, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        linkedTo: {fileID: -4918612800306196733}
+        remoteLinkBinder:
+          id: 4
+        localLinkBinder:
+          id: 5
+        GUID: 385218d9-61ea-43da-988b-ede4483a1662
+        remoteDynamicIndex: 0
+        localPortIndex: -1
+    00000002:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -6627784759133639326}
+        portField:
+          id: 6
+    00000003:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: 7350527880730455112}
+        portField:
+          id: 7
+    00000004:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -4918612800306196733}
+        portField:
+          id: 8
+    00000005:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: 7350527880730455112}
+        portField:
+          id: 9
+    00000006:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringOut
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    00000007:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringIn
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    00000008:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringOut
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    00000009:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringIn
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+--- !u!114 &7729862445621074241
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92b18fe3b13f4264b50f574a4d072c18, type: 3}
+  m_Name: Root Node
+  m_EditorClassIdentifier: 
+  rootOut:
+    links:
+    - id: 0
+  references:
+    version: 1
+    00000000:
+      type: {class: Link, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        linkedTo: {fileID: -4249853153355082753}
+        remoteLinkBinder:
+          id: 1
+        localLinkBinder:
+          id: 2
+        GUID: 84830398-e30f-481a-9b9b-4ffbd8044a39
+        remoteDynamicIndex: -1
+        localPortIndex: -1
+    00000001:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: -4249853153355082753}
+        portField:
+          id: 3
+    00000002:
+      type: {class: LinkBinder, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        node: {fileID: 7729862445621074241}
+        portField:
+          id: 4
+    00000003:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: stringIn
+        declaringType:
+          serializedTypeName: DialogueNode, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    00000004:
+      type: {class: SerializedFieldInfo, ns: GraphFramework, asm: GraphFramework.GraphifyRuntime}
+      data:
+        fieldName: rootOut
+        declaringType:
+          serializedTypeName: DefaultNamespace.DialogueRoot, Assembly-CSharp, Version=0.0.0.0,
+            Culture=neutral, PublicKeyToken=null
