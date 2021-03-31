@@ -51,7 +51,8 @@ namespace GraphFramework.Editor
                 portView.Add(p);
             }
             
-            Resize(0);
+            if(dynamicPorts.Count == 0)
+                Resize(0);
             
             return portView;
         }
