@@ -143,8 +143,7 @@ namespace GraphFramework.Editor
         {
             if (newSize == dynamicPorts.Count && newSize != 0)
                 return;
-
-            Debug.Log(minSize + " " + maxSize);
+            
             if (newSize > maxSize)
             {
                 newSize = maxSize;
@@ -152,7 +151,6 @@ namespace GraphFramework.Editor
             }
             if (newSize < minSize)
             {
-                Debug.Log("True.");
                 newSize = minSize;
                 sizeField?.SetValueWithoutNotify(newSize);
             }
