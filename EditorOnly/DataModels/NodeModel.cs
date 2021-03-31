@@ -6,6 +6,7 @@ using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using GraphFramework.Attributes;
+using GraphFramework.EditorOnly.Attributes;
 using Direction = GraphFramework.Attributes.Direction;
 
 namespace GraphFramework.Editor
@@ -119,6 +120,20 @@ namespace GraphFramework.Editor
         }
         protected internal void UpdatePorts()
         {
+
+            foreach (var port in portModels)
+            {
+                if (port is DynamicPortModel dynModel)
+                {
+                    var field = dynModel.serializedValueFieldInfo.FieldFromInfo;
+                    if (field == null) continue;
+                    var dynamicRange = field.GetCustomAttribute<DynamicRange>();
+                    if (dynamicRange == null) continue;
+                    dynModel.minSize = dynamicRange.min;
+                    dynModel.maxSize = dynamicRange.max;
+                }
+            }
+            
             //Fast path, we examine cached changes so this doesn't take an eternity.
             if (filthyPortsDictionary.TryGetValue(RuntimeData.GetType(), out var shouldChange))
             {
@@ -221,8 +236,14 @@ namespace GraphFramework.Editor
             //If we add more port types this should become a factory.
             if (typeof(DynamicValuePort).IsAssignableFrom(field.FieldType))
             {
+                var dynamicRange = field.GetCustomAttribute<DynamicRange>();
                 var dynModel = new DynamicPortModel(Orientation.Horizontal, unityDirection, 
                     CapacityToUnity(cap), portValueType.FirstOrDefault(), field, guid);
+                if (dynamicRange != null)
+                {
+                    dynModel.minSize = dynamicRange.min;
+                    dynModel.maxSize = dynamicRange.max;
+                }
                 portCreationAction.Invoke(dynModel);
                 return dynModel;
             }
