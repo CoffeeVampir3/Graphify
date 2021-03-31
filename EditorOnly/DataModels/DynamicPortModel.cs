@@ -13,6 +13,10 @@ namespace GraphFramework.Editor
     {
         [SerializeReference]
         internal List<PortModel> dynamicPorts = new List<PortModel>();
+        [SerializeField] 
+        internal int minSize = 0;
+        [SerializeField] 
+        internal int maxSize = int.MaxValue;
         [NonSerialized] 
         internal GraphifyView parentGraph;
         [NonSerialized]
@@ -136,6 +140,17 @@ namespace GraphFramework.Editor
         {
             if (newSize == dynamicPorts.Count)
                 return;
+
+            if (newSize > maxSize)
+            {
+                newSize = maxSize;
+                sizeField?.SetValueWithoutNotify(newSize);
+            }
+            if (newSize < minSize)
+            {
+                newSize = minSize;
+                sizeField?.SetValueWithoutNotify(newSize);
+            }
 
             if (newSize > dynamicPorts.Count)
             {
