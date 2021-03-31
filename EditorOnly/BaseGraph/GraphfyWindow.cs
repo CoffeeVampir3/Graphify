@@ -100,6 +100,11 @@ namespace GraphFramework.Editor
 
             EditorApplication.playModeStateChanged += (e) =>
             {
+                if (e == PlayModeStateChange.ExitingPlayMode)
+                {
+                    graphView.ClearAllNodesAfterPlaymodeEnds();
+                    return;
+                }
                 if (e != PlayModeStateChange.EnteredPlayMode)
                     return;
                 rootVisualElement.Clear();

@@ -152,6 +152,14 @@ namespace GraphFramework.Editor
             graphModel = null;
         }
 
+        protected internal virtual void ClearAllNodesAfterPlaymodeEnds()
+        {
+            foreach (var node in nodes.ToList())
+            {
+                node.RemoveFromClassList("CurrentNode");
+            }
+        }
+
         /// <summary>
         /// Attempts to add the "CurrentNode" css class the the provided runtime node.
         /// </summary>
