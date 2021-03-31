@@ -50,6 +50,9 @@ namespace GraphFramework.Editor
                 p.portName = dynamicPorts[i].portName + "-" + i;
                 portView.Add(p);
             }
+            
+            Resize(0);
+            
             return portView;
         }
 
@@ -138,9 +141,10 @@ namespace GraphFramework.Editor
 
         public void Resize(int newSize)
         {
-            if (newSize == dynamicPorts.Count)
+            if (newSize == dynamicPorts.Count && newSize != 0)
                 return;
 
+            Debug.Log(minSize + " " + maxSize);
             if (newSize > maxSize)
             {
                 newSize = maxSize;
@@ -148,6 +152,7 @@ namespace GraphFramework.Editor
             }
             if (newSize < minSize)
             {
+                Debug.Log("True.");
                 newSize = minSize;
                 sizeField?.SetValueWithoutNotify(newSize);
             }
