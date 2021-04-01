@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Graphify.Runtime;
 using UnityEditor;
 using UnityEngine;
 
@@ -29,7 +30,8 @@ namespace GraphFramework.Editor
             return items;
         }
 
-        public static T FindNestedAssetOfType<T>(Object mainAsset)
+        public static T FindNestedAssetOfType<T>(Object mainAsset, string searchGuid)
+        where T : HasAssetGuid
         {
             var path = AssetDatabase.GetAssetPath(mainAsset);
 
@@ -37,7 +39,8 @@ namespace GraphFramework.Editor
 
             foreach (var obj in objs)
             {
-                if (obj is T item)
+                if (!(obj is T item)) continue;
+                if(item.AssetGuid == searchGuid)
                     return item;
             }
 

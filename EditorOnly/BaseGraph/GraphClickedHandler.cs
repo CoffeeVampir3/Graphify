@@ -14,7 +14,7 @@ namespace GraphFramework.Editor
             if (!IsOpenedAssetTargetType(instanceID, out var controller))
                 return false;
             
-            var model = AssetHelper.FindNestedAssetOfType<GraphModel>(controller);
+            var model = AssetHelper.FindNestedAssetOfType<GraphModel>(controller, controller.editorGraphGuid);
             if (model == null)
             {
                 model = GraphModel.BootstrapController(controller);

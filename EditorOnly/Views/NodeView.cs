@@ -9,7 +9,7 @@ namespace GraphFramework.Editor
 {
     public class NodeView : Node, MovableView
     {
-        private readonly NodeModel nodeModel;
+        public readonly NodeModel nodeModel;
         private readonly Dictionary<Port, PortModel> portToModel = new Dictionary<Port, PortModel>();
         //Lookup via string because undo/redo creates a different copy.
         private readonly Dictionary<string, Port> modelGuidToPort = new Dictionary<string, Port>();
@@ -134,7 +134,7 @@ namespace GraphFramework.Editor
                    out var customEditorType) && 
                Activator.CreateInstance(customEditorType) is CustomNodeView editor) 
             {
-                editor.CreateView(serializedNode, nodeModel.RuntimeData);
+                editor.CreateView(serializedNode, nodeModel.RuntimeData, this);
                 extensionContainer.Add(editor);
                 return;
             }

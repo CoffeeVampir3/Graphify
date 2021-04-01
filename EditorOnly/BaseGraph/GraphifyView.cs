@@ -118,7 +118,7 @@ namespace GraphFramework.Editor
         /// <summary>
         /// Loads the provided GraphModel.
         /// </summary>
-        protected internal virtual void LoadGraph(GraphModel modelToLoad)
+        public virtual void LoadGraph(GraphModel modelToLoad)
         {
             UnloadGraph();
             graphModel = modelToLoad;
@@ -140,6 +140,7 @@ namespace GraphFramework.Editor
             Undo.ClearAll();
             viewTransform.position = graphModel.viewPosition;
             viewTransform.scale = graphModel.viewZoom;
+            graphModel.view = this;
             BuildGraph();
         }
 
