@@ -18,14 +18,6 @@ namespace GraphFramework.Editor
         protected internal string inputConnectionGuid;
         [SerializeReference]
         protected internal string outputConnectionGuid;
-        [NonSerialized] 
-        protected internal EdgeView view;
-
-        public EdgeView CreateView()
-        {
-            view = new EdgeView();
-            return view;
-        }
 
         public EdgeModel(NodeModel inputNode, PortModel inputPort, 
             NodeModel outputNode, PortModel outputPort,
