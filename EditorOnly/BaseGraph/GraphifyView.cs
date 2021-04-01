@@ -347,14 +347,13 @@ namespace GraphFramework.Editor
             for (int i = p.connections.Count() - 1; i >= 0; i--)
             {
                 var edge = p.connections.ElementAt(i);
-                if(edgeToModel.TryGetValue(edge, out var edgeModel))
-                {
-                    //Manually delete edges because otherwise bad things.
-                    DeleteEdge(edge, edgeModel);
-                    edge.input.Disconnect(edge);
-                    edge.output.Disconnect(edge);
-                    edge.parent.Remove(edge);
-                }
+                if (!edgeToModel.TryGetValue(edge, out var edgeModel)) continue;
+                
+                //Manually delete edges because otherwise bad things.
+                DeleteEdge(edge, edgeModel);
+                edge.input.Disconnect(edge);
+                edge.output.Disconnect(edge);
+                edge.parent.Remove(edge);
             }
         }
         
@@ -587,7 +586,7 @@ namespace GraphFramework.Editor
         /// Deletes a connection by GUID, used because the undo system can spawn a different
         /// reference object so it's not safe to compare by-object.
         /// </summary>
-        private void DeleteConnectionByGuid(string guid)
+        private void DeleteLinkByGuid(string guid)
         {
             for (int j = graphModel.links.Count - 1; j >= 0; j--)
             {
@@ -606,8 +605,8 @@ namespace GraphFramework.Editor
                 return;
             inModel.DeletePortLinkByGuid(inputPort, model.inputConnectionGuid);
             outModel.DeletePortLinkByGuid(outputPort, model.outputConnectionGuid);
-            DeleteConnectionByGuid(model.inputConnectionGuid);
-            DeleteConnectionByGuid(model.outputConnectionGuid);
+            DeleteLinkByGuid(model.inputConnectionGuid);
+            DeleteLinkByGuid(model.outputConnectionGuid);
         }
 
         private bool TryCreateConnection(Edge edge,
