@@ -169,8 +169,10 @@ namespace GraphFramework.Editor
             OnWindowLayoutFinished = () =>
             {
                 var blueprint = AssetDatabase.LoadAssetAtPath<GraphBlueprint>(path);
-                var model = GraphModel.GetModelFromBlueprintPath(blueprint);
+                if (blueprint == null)
+                    return;
                 
+                var model = GraphModel.GetModelFromBlueprintPath(blueprint);
                 if (model == null)
                 {
                     model = GraphModel.BootstrapController(blueprint);

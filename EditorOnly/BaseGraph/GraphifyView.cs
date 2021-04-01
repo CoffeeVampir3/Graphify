@@ -282,6 +282,26 @@ namespace GraphFramework.Editor
                 var clone = model.Clone(graphModel);
                 oldModelToCopiedModel.Add(model, clone);
                 CreateNewNode(clone);
+                
+                //Dynamic port model copy, since the ICollectible thing is mystery.
+                foreach (var modelPort in model.AllPortModels())
+                {
+                    if (!(modelPort is DynamicPortModel dynPm)) continue;
+                    var clonePort = clone.AllPortModels()
+                        .FirstOrDefault(cp => cp.portName == dynPm.portName) as DynamicPortModel;
+                    if (clonePort == null)
+                        continue;
+                    clonePort.Resize(dynPm.dynamicPorts.Count);
+                    for (var index = 0; index < dynPm.dynamicPorts.Count; index++)
+                    {
+                        var port = dynPm.dynamicPorts[index];
+                        foreach (var portCon in port.view.connections)
+                        {
+                            box.edgeGuids.Add(portCon.viewDataKey);
+                        }
+                    }
+                }
+                
                 AddToSelection(clone.View);
             }
             
@@ -289,10 +309,15 @@ namespace GraphFramework.Editor
             {
                 //Resolve the original edge into its model components
                 Edge originalEdge = GetEdgeByGuid(edgeGuid);
+                if (originalEdge == null)
+                {
+                    continue;
+                }
+                
                 ResolveEdge(originalEdge,
                     out var inModel, out var outModel,
                     out var inPort, out var outPort);
-                
+
                 PortModel targetInPort;
                 PortModel targetOutPort;
 
@@ -305,12 +330,12 @@ namespace GraphFramework.Editor
                 }
                 else
                 {
-                    var pIndex = inModel.portModels.IndexOf(inPort);
-                    if (targetInModel.portModels.Count <= pIndex || pIndex < 0)
+                    var pIndex = inModel.AllPortModels().IndexOf(inPort);
+                    if (targetInModel.AllPortModels().Count <= pIndex || pIndex < 0)
                         continue;
-                    targetInPort = targetInModel.portModels[pIndex];
+                    targetInPort = targetInModel.AllPortModels()[pIndex];
                 }
-                
+
                 if (!oldModelToCopiedModel.TryGetValue(outModel, out var targetOutModel))
                 {
                     targetOutModel = outModel;
@@ -318,10 +343,10 @@ namespace GraphFramework.Editor
                 }
                 else
                 {
-                    var pIndex = outModel.portModels.IndexOf(outPort);
-                    if (targetOutModel.portModels.Count <= pIndex || pIndex < 0)
+                    var pIndex = outModel.AllPortModels().IndexOf(outPort);
+                    if (targetOutModel.AllPortModels().Count <= pIndex || pIndex < 0)
                         continue;
-                    targetOutPort = targetOutModel.portModels[pIndex];
+                    targetOutPort = targetOutModel.AllPortModels()[pIndex];
                 }
 
                 var realInPort = targetInPort.view;
