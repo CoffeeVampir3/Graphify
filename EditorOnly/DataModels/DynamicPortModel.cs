@@ -33,9 +33,9 @@ namespace GraphFramework.Editor
             return dynamicPorts[i];
         }
 
-        public DynamicPortView InitializeView(NodeModel model, NodeView view)
+        public DynamicPortView InitializeView(NodeModel model, NodeView nv)
         {
-            nodeView = view;
+            nodeView = nv;
             nodeModel = model;
             portView = new DynamicPortView(portName, this, direction);
 
@@ -99,7 +99,7 @@ namespace GraphFramework.Editor
                 if (port.linkGuids.Contains(basePort.links[i].GUID))
                 {
                     basePort.links.RemoveAt(i);
-                    parentGraph.DeletePortEdges(nodeModel, port);
+                    parentGraph.DeletePortEdges(port);
                 }
             }
         }

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Graphify.Runtime;
 using UnityEditor;
 using UnityEngine;
 
@@ -8,7 +10,7 @@ namespace GraphFramework.Editor
     /// Serializable model of our editor graph, holds all the persistent model data for a graph
     /// has some extra data for debugging and utilities.
     /// </summary>
-    public class GraphModel : ScriptableObject
+    public class GraphModel : ScriptableObject, HasAssetGuid
     {
         [SerializeField] 
         public SerializableType graphWindowType;
@@ -23,11 +25,78 @@ namespace GraphFramework.Editor
         [SerializeReference] 
         protected internal List<EdgeModel> edgeModels = new List<EdgeModel>();
         [SerializeReference] 
+        public GraphModel parentGraph = null;
+        [SerializeReference]
+        public List<GraphModel> childGraphs = null;
+        [SerializeReference] 
         protected internal List<Link> links = new List<Link>();
         [SerializeReference]
-        protected internal GraphBlueprint serializedGraphBlueprint;
+        public GraphBlueprint serializedGraphBlueprint;
         [SerializeReference]
         protected internal NodeModel rootNodeModel;
+        [NonSerialized] 
+        public GraphifyView view = null;
+        [field: SerializeField]
+        public string AssetGuid { get; set; }
+
+        public void SetParent(GraphModel parentGraphModel, GraphBlueprint blueprint)
+        {
+            parentGraph = parentGraphModel;
+            serializedGraphBlueprint.parentGraph = blueprint;
+        }
+
+        public void AddChild(GraphModel childGraphModel, GraphBlueprint blueprint)
+        {
+            childGraphs.Add(childGraphModel);
+            serializedGraphBlueprint.childGraphs.Add(blueprint);
+        }
+
+        public static GraphModel GetModelFromBlueprintPath(GraphBlueprint blueprint)
+        {
+            if (blueprint == null)
+                return null;
+            return AssetHelper.FindNestedAssetOfType<GraphModel>(blueprint, blueprint.editorGraphGuid);
+        }
+
+        public GraphModel CreateChildGraph(NodeModel parentNode, Type blueprintType)
+        {
+            GraphModel graphModel = CreateInstance<GraphModel>();
+            GraphBlueprint graphBlueprint = CreateInstance(blueprintType) as GraphBlueprint;
+            if (graphBlueprint == null)
+                return null;
+
+            graphModel.AssetGuid = Guid.NewGuid().ToString();
+
+            graphModel.name = AssetGuid;
+            graphModel.serializedGraphBlueprint = graphBlueprint;
+            graphModel.serializedGraphBlueprint.Bootstrap(graphModel.AssetGuid);
+            graphBlueprint.name = graphBlueprint.AssetGuid;
+
+            graphModel.SetParent(this, graphBlueprint);
+            AddChild(graphModel, graphBlueprint);
+
+            graphModel.graphWindowType = new SerializableType(typeof(GraphfyWindow));
+            
+            EditorUtility.SetDirty(graphModel);
+            EditorUtility.SetDirty(graphModel.serializedGraphBlueprint);
+            try
+            {
+                AssetDatabase.StartAssetEditing();
+                AssetDatabase.AddObjectToAsset(graphModel, parentNode.RuntimeData);
+                AssetDatabase.AddObjectToAsset(graphBlueprint, parentNode.RuntimeData);
+                graphModel.rootNodeModel = parentNode;
+                graphModel.serializedGraphBlueprint.rootNode = graphModel.rootNodeModel.RuntimeData;
+                EditorUtility.SetDirty(graphModel.rootNodeModel.RuntimeData);
+            }
+            finally
+            {
+                AssetDatabase.StopAssetEditing();
+            }
+
+            AssetDatabase.SaveAssets();
+            
+            return graphModel;
+        }
 
         /// <summary>
         /// Bootstraps an empty GraphController with everything the editor needs to use it.
@@ -50,6 +119,9 @@ namespace GraphFramework.Editor
             }
             
             graphModel.graphWindowType = new SerializableType(typeof(GraphfyWindow));
+
+            graphModel.AssetGuid = Guid.NewGuid().ToString();
+            graphModel.serializedGraphBlueprint.Bootstrap(graphModel.AssetGuid);
             
             EditorUtility.SetDirty(graphModel);
             EditorUtility.SetDirty(graphModel.serializedGraphBlueprint);

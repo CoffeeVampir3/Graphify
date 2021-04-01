@@ -31,6 +31,14 @@ namespace GraphFramework.Editor
         protected internal Direction direction;
         [SerializeField]
         protected internal Port.Capacity capacity;
+        [NonSerialized] 
+        protected internal Port view;
+
+        public Port CreateView(NodeView nv)
+        {
+            view = nv.InstantiatePort(orientation, direction, capacity, portValueType.type);
+            return view;
+        }
 
         public PortModel(Orientation orientation, 
             Direction direction, 

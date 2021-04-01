@@ -13,7 +13,7 @@ namespace GraphFramework.Editor
             graphify = gv;
             graphView = gv;
             
-            this.AddToClassList("customBB");
+            AddToClassList("customBB");
             var blackboardSubNameLabel = this.Q<Label>("subTitleLabel");
             blackboardSubNameLabel.text = "";
             blackboardSubNameLabel.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
@@ -24,7 +24,7 @@ namespace GraphFramework.Editor
             var btn = this.Q<Button>();
             btn.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
 
-            this.RegisterCallback<GeometryChangedEvent>(OnGeoInit);
+            RegisterCallback<GeometryChangedEvent>(OnGeoInit);
             listBase.style.flexGrow = 1;
             listBase.style.flexShrink = 1;
             listBase.AddToClassList("list-base");
@@ -60,8 +60,7 @@ namespace GraphFramework.Editor
             bc.label.text = node.name;
             bc.targetNode = node;
 
-            if (node is NodeView nv && graphify.viewToModel.TryGetValue(nv, out var model) 
-                                    && model is NodeModel nm && nm.stackedOn != null)
+            if (node is NodeView nv && nv.nodeModel.stackedOn != null)
             {
                 ele.AddToClassList("stacked");
                 //Stack count lets us avoid rearranging the node list if the only change

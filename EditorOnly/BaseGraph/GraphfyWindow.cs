@@ -164,25 +164,24 @@ namespace GraphFramework.Editor
         /// Loads a graph controller via it's asset path, this gives us a persistent way to access
         /// it after a domain reload.
         /// </summary>
-        protected internal virtual void LoadGraphControllerInternal(string gcPath)
+        protected internal virtual void LoadGraphControllerInternal(string path)
         {
             OnWindowLayoutFinished = () =>
             {
-                var gc = AssetDatabase.LoadAssetAtPath<GraphBlueprint>(gcPath);
-
-                if (gc == null)
+                var blueprint = AssetDatabase.LoadAssetAtPath<GraphBlueprint>(path);
+                if (blueprint == null)
                     return;
                 
-                var editorGraph = AssetHelper.FindNestedAssetOfType<GraphModel>(gc);
-                if (editorGraph == null)
+                var model = GraphModel.GetModelFromBlueprintPath(blueprint);
+                if (model == null)
                 {
-                    editorGraph = GraphModel.BootstrapController(gc);
+                    model = GraphModel.BootstrapController(blueprint);
                 }
                 
-                serializedGraphSelector.SetValueWithoutNotify(gc);
+                serializedGraphSelector.SetValueWithoutNotify(blueprint);
                 rootVisualElement.schedule.Execute(
-                        () => serializedGraphSelector.SetValueWithoutNotify(gc)).StartingIn(100);
-                graphView.LoadGraph(editorGraph);
+                        () => serializedGraphSelector.SetValueWithoutNotify(blueprint)).StartingIn(100);
+                graphView.LoadGraph(model);
             };
             
             if (!isWindowLoaded) return;

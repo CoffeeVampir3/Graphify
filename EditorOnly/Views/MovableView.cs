@@ -4,5 +4,7 @@
     {
         void OnDirty();
         void Display();
+
+        MovableModel GetModel();
     }
 }

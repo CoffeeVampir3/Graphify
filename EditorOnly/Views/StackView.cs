@@ -7,22 +7,19 @@ namespace GraphFramework.Editor
 {
     public class StackView : StackNode, MovableView
     {
-        private readonly StackModel stackModel;
-        private readonly GraphifyView parentGraphView;
-        public StackView(StackModel model, GraphifyView graphView)
+        public readonly StackModel stackModel;
+
+        public StackView(StackModel model)
         {
             stackModel = model;
-            parentGraphView = graphView;
         }
         
         protected override bool AcceptsElement(GraphElement element, ref int proposedIndex, int maxIndex)
         {
             //Root node cannot be stacked because of a graph view bug allowing it to be deleted.
-            if (element is NodeView view &&
-                parentGraphView.viewToModel.TryGetValue(view, out var mModel) &&
-                mModel is NodeModel model && !(model.RuntimeData is RootNode))
+            if (element is NodeView view && !(view.nodeModel.RuntimeData is RootNode))
             {
-                return stackModel.IsTypeAllowed(model.RuntimeData.GetType());
+                return stackModel.IsTypeAllowed(view.nodeModel.RuntimeData.GetType());
             }
             
             return false;
@@ -63,10 +60,8 @@ namespace GraphFramework.Editor
             var selectables = selection as ISelectable[] ?? selection.ToArray();
             foreach (var s in selectables)
             {
-                if (!(s is NodeView view) ||
-                    !parentGraphView.viewToModel.TryGetValue(view, out var mModel) ||
-                    !(mModel is NodeModel model)) continue;
-                model.stackedOn = stackModel;
+                if (!(s is NodeView view)) continue;
+                view.nodeModel.stackedOn = stackModel;
             }
             
             RegisterCallback<GeometryChangedEvent>(OnStackOrderChanged);
@@ -82,11 +77,9 @@ namespace GraphFramework.Editor
             ge.RemoveFromClassList("firstInStack");
             ge.RemoveFromClassList("lastInStack");
 
-            if (ge is NodeView view &&
-                parentGraphView.viewToModel.TryGetValue(view, out var mModel) &&
-                mModel is NodeModel model)
+            if (ge is NodeView view)
             {
-                model.stackedOn = null;
+                view.nodeModel.stackedOn = null;
             }
             base.OnStartDragging(ge);
         }
@@ -116,6 +109,11 @@ namespace GraphFramework.Editor
         public void Display()
         {
             OnDirty();
+        }
+        
+        public MovableModel GetModel()
+        {
+            return stackModel;
         }
     }
 }

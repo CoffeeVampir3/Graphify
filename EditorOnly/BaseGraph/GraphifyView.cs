@@ -15,11 +15,7 @@ namespace GraphFramework.Editor
         protected readonly GraphSearchWindow searchWindow;
         protected readonly NavigationBlackboard navigationBlackboard;
         protected GraphSettings settings;
-
-        //Keeps track of all NodeView's and their relation to their model.
-        //Shared internals with StackView (readonly)
-        protected internal readonly Dictionary<MovableView, MovableModel> viewToModel =
-            new Dictionary<MovableView, MovableModel>();
+        
         //Edge -> EdgeModel
         protected readonly Dictionary<Edge, EdgeModel> edgeToModel =
             new Dictionary<Edge, EdgeModel>();
@@ -118,7 +114,7 @@ namespace GraphFramework.Editor
         /// <summary>
         /// Loads the provided GraphModel.
         /// </summary>
-        protected internal virtual void LoadGraph(GraphModel modelToLoad)
+        public virtual void LoadGraph(GraphModel modelToLoad)
         {
             UnloadGraph();
             graphModel = modelToLoad;
@@ -140,6 +136,7 @@ namespace GraphFramework.Editor
             Undo.ClearAll();
             viewTransform.position = graphModel.viewPosition;
             viewTransform.scale = graphModel.viewZoom;
+            graphModel.view = this;
             BuildGraph();
         }
 
@@ -281,13 +278,30 @@ namespace GraphFramework.Editor
             foreach (var viewGuid in box.viewGuids)
             {
                 if (!(GetElementByGuid(viewGuid) is NodeView nv)) continue;
-                if (!viewToModel.TryGetValue(nv, out var mModel))
-                    return;
-                if (!(mModel is NodeModel model))
-                    return;
+                var model = nv.nodeModel;
                 var clone = model.Clone(graphModel);
                 oldModelToCopiedModel.Add(model, clone);
                 CreateNewNode(clone);
+                
+                //Dynamic port model copy, since the ICollectible thing is mystery.
+                foreach (var modelPort in model.AllPortModels())
+                {
+                    if (!(modelPort is DynamicPortModel dynPm)) continue;
+                    var clonePort = clone.AllPortModels()
+                        .FirstOrDefault(cp => cp.portName == dynPm.portName) as DynamicPortModel;
+                    if (clonePort == null)
+                        continue;
+                    clonePort.Resize(dynPm.dynamicPorts.Count);
+                    for (var index = 0; index < dynPm.dynamicPorts.Count; index++)
+                    {
+                        var port = dynPm.dynamicPorts[index];
+                        foreach (var portCon in port.view.connections)
+                        {
+                            box.edgeGuids.Add(portCon.viewDataKey);
+                        }
+                    }
+                }
+                
                 AddToSelection(clone.View);
             }
             
@@ -295,10 +309,15 @@ namespace GraphFramework.Editor
             {
                 //Resolve the original edge into its model components
                 Edge originalEdge = GetEdgeByGuid(edgeGuid);
+                if (originalEdge == null)
+                {
+                    continue;
+                }
+                
                 ResolveEdge(originalEdge,
                     out var inModel, out var outModel,
                     out var inPort, out var outPort);
-                
+
                 PortModel targetInPort;
                 PortModel targetOutPort;
 
@@ -311,12 +330,12 @@ namespace GraphFramework.Editor
                 }
                 else
                 {
-                    var pIndex = inModel.portModels.IndexOf(inPort);
-                    if (targetInModel.portModels.Count <= pIndex || pIndex < 0)
+                    var pIndex = inModel.AllPortModels().IndexOf(inPort);
+                    if (targetInModel.AllPortModels().Count <= pIndex || pIndex < 0)
                         continue;
-                    targetInPort = targetInModel.portModels[pIndex];
+                    targetInPort = targetInModel.AllPortModels()[pIndex];
                 }
-                
+
                 if (!oldModelToCopiedModel.TryGetValue(outModel, out var targetOutModel))
                 {
                     targetOutModel = outModel;
@@ -324,18 +343,15 @@ namespace GraphFramework.Editor
                 }
                 else
                 {
-                    var pIndex = outModel.portModels.IndexOf(outPort);
-                    if (targetOutModel.portModels.Count <= pIndex || pIndex < 0)
+                    var pIndex = outModel.AllPortModels().IndexOf(outPort);
+                    if (targetOutModel.AllPortModels().Count <= pIndex || pIndex < 0)
                         continue;
-                    targetOutPort = targetOutModel.portModels[pIndex];
+                    targetOutPort = targetOutModel.AllPortModels()[pIndex];
                 }
-                
-                if (!targetInModel.View.TryGetModelToPort(targetInPort.portGUID, out var realInPort) ||
-                    !targetOutModel.View.TryGetModelToPort(targetOutPort.portGUID, out var realOutPort))
-                {
-                    continue;
-                }
-                
+
+                var realInPort = targetInPort.view;
+                var realOutPort = targetOutPort.view;
+
                 Edge newEdge = CreateNewEdge(realInPort, realOutPort);
                 if (TryCreateConnection(newEdge, 
                     targetInModel, targetOutModel, 
@@ -349,22 +365,20 @@ namespace GraphFramework.Editor
             }
         }
 
-        public void DeletePortEdges(NodeModel nodeModel, PortModel portModel)
+        public void DeletePortEdges(PortModel portModel)
         {
-            if (!nodeModel.View.TryGetModelToPort(portModel.portGUID, out Port p))
-                return;
+            Port p = portModel.view;
 
             for (int i = p.connections.Count() - 1; i >= 0; i--)
             {
                 var edge = p.connections.ElementAt(i);
-                if(edgeToModel.TryGetValue(edge, out var edgeModel))
-                {
-                    //Manually delete edges because otherwise bad things.
-                    DeleteEdge(edge, edgeModel);
-                    edge.input.Disconnect(edge);
-                    edge.output.Disconnect(edge);
-                    edge.parent.Remove(edge);
-                }
+                if (!edgeToModel.TryGetValue(edge, out var edgeModel)) continue;
+                
+                //Manually delete edges because otherwise bad things.
+                DeleteEdge(edge, edgeModel);
+                edge.input.Disconnect(edge);
+                edge.output.Disconnect(edge);
+                edge.parent.Remove(edge);
             }
         }
         
@@ -380,7 +394,6 @@ namespace GraphFramework.Editor
         {
             NodeView nv = model.CreateView();
             AddElement(nv);
-            viewToModel.Add(nv, model);
             runtimeNodeToView.Add(model.RuntimeData, nv);
 
             //If our model was stacked... well, stack it again.
@@ -399,9 +412,8 @@ namespace GraphFramework.Editor
 
         private void CreateStackFromModelInternal(StackModel model)
         {
-            StackView sv = model.CreateView(this);
+            StackView sv = model.CreateView();
             AddElement(sv);
-            viewToModel.Add(sv, model);
         }
 
         private void CreateNewStack(StackModel model)
@@ -442,15 +454,13 @@ namespace GraphFramework.Editor
 
         private void CreateEdgeFromModelInternal(EdgeModel model)
         {
-            if (model.inputModel?.View == null || model.outputModel?.View == null ||
-                !model.inputModel.View.TryGetModelToPort(model.inputPortModel.portGUID, out var inputPort) ||
-                !model.outputModel.View.TryGetModelToPort(model.outputPortModel.portGUID, out var outputPort))
+            if (model.inputModel?.View == null || model.outputModel?.View == null 
+                || model.inputPortModel.view == null || model.outputPortModel.view == null)
             {
                 graphModel.edgeModels.Remove(model);
                 return;
             }
-
-            CreateConnectedEdge(model, inputPort, outputPort);
+            CreateConnectedEdge(model, model.inputPortModel.view, model.outputPortModel.view);
         }
 
         private void ClearGraph()
@@ -461,7 +471,6 @@ namespace GraphFramework.Editor
             }
 
             runtimeNodeToView.Clear();
-            viewToModel.Clear();
             edgeToModel.Clear();
         }
         
@@ -591,13 +600,10 @@ namespace GraphFramework.Editor
             Undo.DestroyObjectImmediate(model.RuntimeData);
             runtimeNodeToView.Remove(model.RuntimeData);
             graphModel.nodeModels.Remove(model);
-            viewToModel.Remove(model.View);
-            //Base graph view handles removal of the visual element itself.
         }
 
         private void DeleteStack(StackModel stack)
         {
-            viewToModel.Remove(stack.View);
             graphModel.stackModels.Remove(stack);
         }
 
@@ -605,7 +611,7 @@ namespace GraphFramework.Editor
         /// Deletes a connection by GUID, used because the undo system can spawn a different
         /// reference object so it's not safe to compare by-object.
         /// </summary>
-        private void DeleteConnectionByGuid(string guid)
+        private void DeleteLinkByGuid(string guid)
         {
             for (int j = graphModel.links.Count - 1; j >= 0; j--)
             {
@@ -624,8 +630,8 @@ namespace GraphFramework.Editor
                 return;
             inModel.DeletePortLinkByGuid(inputPort, model.inputConnectionGuid);
             outModel.DeletePortLinkByGuid(outputPort, model.outputConnectionGuid);
-            DeleteConnectionByGuid(model.inputConnectionGuid);
-            DeleteConnectionByGuid(model.outputConnectionGuid);
+            DeleteLinkByGuid(model.inputConnectionGuid);
+            DeleteLinkByGuid(model.outputConnectionGuid);
         }
 
         private bool TryCreateConnection(Edge edge,
@@ -673,23 +679,17 @@ namespace GraphFramework.Editor
         /// <summary>
         /// Resolves an edge connection to its related models
         /// </summary>
-        private bool ResolveEdge(Edge edge,
+        private static bool ResolveEdge(Edge edge,
             out NodeModel inModel, out NodeModel outModel,
             out PortModel inputPort, out PortModel outputPort)
         {
             if (edge.input.node is NodeView inView &&
-                edge.output.node is NodeView outView &&
-                viewToModel.TryGetValue(inView, out var movableIn) &&
-                viewToModel.TryGetValue(outView, out var movableOut))
+                edge.output.node is NodeView outView)
             {
-                inModel = movableIn as NodeModel;
-                outModel = movableOut as NodeModel;
-                
-                //Dictionary lookup guaranteed to output NodeView->NodeModel.
-                Debug.Assert(inModel != null, nameof(inModel) + " != null");
-                Debug.Assert(outModel != null, nameof(outModel) + " != null");
-                if(inModel.View.TryGetPortToModel(edge.input, out inputPort) &&
-                   outModel.View.TryGetPortToModel(edge.output, out outputPort))
+                inModel = inView.nodeModel;
+                outModel = outView.nodeModel;
+                if(inView.TryGetPortToModel(edge.input, out inputPort) &&
+                   outView.TryGetPortToModel(edge.output, out outputPort))
                         return true;
             }
 
@@ -705,8 +705,7 @@ namespace GraphFramework.Editor
             foreach (var elem in elements)
             {
                 if (!(elem is MovableView view)) continue;
-                if (!viewToModel.TryGetValue(view, out var model)) continue;
-                model.UpdatePosition();
+                view.GetModel().UpdatePosition();
             }
         }
 
@@ -719,16 +718,14 @@ namespace GraphFramework.Editor
                 switch (elem)
                 {
                     case NodeView view:
-                        if (viewToModel.TryGetValue(view, out var nodeModel))
-                            DeleteNode(nodeModel as NodeModel);
+                        DeleteNode(view.nodeModel);
                         continue;
                     case Edge edge:
                         if (edgeToModel.TryGetValue(edge, out var edgeModel))
                             DeleteEdge(edge, edgeModel);
                         continue;
                     case StackView sView:
-                        if (viewToModel.TryGetValue(sView, out var stackModel))
-                            DeleteStack(stackModel as StackModel);
+                        DeleteStack(sView.stackModel);
                         continue;
                 }
             }
@@ -800,7 +797,8 @@ namespace GraphFramework.Editor
             foreach (var port in ports.ToList())
             {
                 if (startPort == port || startPort.node == port.node) continue;
-                if (startPort.portType != port.portType && startPort.portType != anyType) continue;
+                if (startPort.portType != port.portType && 
+                    !(startPort.portType == anyType || port.portType == anyType)) continue;
                 compPorts.Add(port);
             }
 

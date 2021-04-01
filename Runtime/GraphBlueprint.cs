@@ -2,16 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using GraphFramework.Runtime;
+using Graphify.Runtime;
 using UnityEngine;
 
 namespace GraphFramework
 {
-    public abstract class GraphBlueprint : ScriptableObject
+    public abstract class GraphBlueprint : ScriptableObject, HasAssetGuid
     {
         [SerializeField, HideInInspector]
         public RuntimeNode rootNode;
         [SerializeField]
         public List<RuntimeNode> nodes = new List<RuntimeNode>();
+        [SerializeReference] 
+        public GraphBlueprint parentGraph = null;
+        [SerializeReference] 
+        public readonly List<GraphBlueprint> childGraphs = new List<GraphBlueprint>();
         [NonSerialized] 
         private int currentVirtualGraphIndex = int.MinValue;
         [NonSerialized] 
@@ -19,7 +24,16 @@ namespace GraphFramework
         [NonSerialized] 
         private bool graphInitialized = false;
         [NonSerialized] 
-        internal readonly List<Link> cachedLinks = new List<Link>();
+        private readonly List<Link> cachedLinks = new List<Link>();
+        [field: SerializeField]
+        public string AssetGuid { get; set; }
+        public string editorGraphGuid;
+
+        public void Bootstrap(string editorGuid)
+        {
+            editorGraphGuid = editorGuid;
+            AssetGuid = Guid.NewGuid().ToString();
+        }
 
         /// <summary>
         /// An initialization you can use to frontload the graph.

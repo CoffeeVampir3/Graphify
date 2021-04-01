@@ -14,10 +14,10 @@ namespace GraphFramework.Editor
     [Serializable]
     public class NodeModel : MovableModel
     {
-        [SerializeReference]
+        [SerializeReference] 
         protected internal RuntimeNode RuntimeData;
-        [SerializeReference]
-        protected internal List<PortModel> portModels = new List<PortModel>();
+        [SerializeReference] 
+        internal List<PortModel> portModels = new List<PortModel>();
         [SerializeReference] 
         protected internal StackModel stackedOn = null;
         [SerializeReference] 
@@ -26,8 +26,22 @@ namespace GraphFramework.Editor
         private string nodeTitle = "Untitled.";
         [SerializeField] 
         private Rect position = Rect.zero;
-        [field: NonSerialized]
+        [field: NonSerialized] 
         public NodeView View { get; private set; }
+
+        internal List<PortModel> AllPortModels()
+        {
+            List<PortModel> models = new List<PortModel>(portModels);
+            foreach (var model in portModels)
+            {
+                if (model is DynamicPortModel dynPort)
+                {
+                    models.AddRange(dynPort.dynamicPorts);
+                }
+            }
+
+            return models;
+        }
 
         #region Creation & Cloning
         
