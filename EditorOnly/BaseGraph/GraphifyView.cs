@@ -519,7 +519,7 @@ namespace GraphFramework.Editor
             //this is a more efficient data format.
             var graphKnownGuidToLink = new Dictionary<string, Link>();
             var untraversedLinks = new List<Link>(graphModel.links);
-            var traversedLinks = new List<Link>(graphModel.links);
+            var traversedLinks = new List<Link>(graphModel.links.Count);
             bool anyLinksRemoved = false;
             
             for (var i = 0; i < graphModel.links.Count; i++)
@@ -555,15 +555,16 @@ namespace GraphFramework.Editor
                     }
                 }
 
-                for (var index = 0; index < node.portModels.Count; index++)
+                var allPortModels = node.AllPortModels();
+                for (var index = 0; index < allPortModels.Count; index++)
                 {
-                    DeleteUndoneLinks(node.portModels[index]);
+                    DeleteUndoneLinks(allPortModels[index]);
                 }
             }
 
             if (anyLinksRemoved || untraversedLinks.Count <= 0)
                 return;
-
+            
             //If we didn't remove any connections, we're going to probe for restored connections
             //by checking to see if there's any connections we didn't traverse. If any exist,
             //those connections are the "redone" connections.
