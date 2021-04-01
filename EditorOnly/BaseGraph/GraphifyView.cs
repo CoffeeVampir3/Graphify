@@ -773,7 +773,8 @@ namespace GraphFramework.Editor
             foreach (var port in ports.ToList())
             {
                 if (startPort == port || startPort.node == port.node) continue;
-                if (startPort.portType != port.portType && startPort.portType != anyType) continue;
+                if (startPort.portType != port.portType && 
+                    !(startPort.portType == anyType || port.portType == anyType)) continue;
                 compPorts.Add(port);
             }
 
