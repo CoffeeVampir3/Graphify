@@ -93,10 +93,11 @@ namespace GraphFramework.Editor
                     "Attempted to clean links from: " + portName + " but it had a corrupted link record!");
                 return;
             }
-            
-            for (int i = basePort.links.ToArray().Length - 1; i >= 0; i--)
+
+            var portLinks = basePort.links.ToArray();
+            for (int i = portLinks.Length - 1; i >= 0; i--)
             {
-                if (port.linkGuids.Contains(basePort.links[i].GUID))
+                if (port.linkGuids.Contains(portLinks[i].GUID))
                 {
                     basePort.links.RemoveAt(i);
                     parentGraph.DeletePortEdges(port);
