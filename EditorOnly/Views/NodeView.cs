@@ -11,8 +11,6 @@ namespace GraphFramework.Editor
     {
         public readonly NodeModel nodeModel;
         private readonly Dictionary<Port, PortModel> portToModel = new Dictionary<Port, PortModel>();
-        //Lookup via string because undo/redo creates a different copy.
-        private readonly Dictionary<string, Port> modelGuidToPort = new Dictionary<string, Port>();
         private readonly Dictionary<string, DynamicPortModel> nameToDynamicPort =
             new Dictionary<string, DynamicPortModel>();
 
@@ -55,15 +53,6 @@ namespace GraphFramework.Editor
         {
             return portToModel.TryGetValue(p, out model);
         }
-        
-        /// <summary>
-        /// Takes a model GUID and spits out it's related port.
-        /// Lookup is via GUID because undo/redo creates a different copy.
-        /// </summary>
-        public bool TryGetModelToPort(string modelGUID, out Port p)
-        {
-            return modelGuidToPort.TryGetValue(modelGUID, out p);
-        }
 
         private void CreatePortsFromModelList(List<PortModel> ports)
         {
@@ -101,20 +90,16 @@ namespace GraphFramework.Editor
 
         protected internal Port CreatePort(PortModel model)
         {
-            var port = InstantiatePort(model.orientation, model.direction, 
-                model.capacity, model.portValueType.type);
+            var port = model.CreateView(this);
             portToModel.Add(port, model);
-            modelGuidToPort.Add(model.portGUID, port);
             return port;
         }
 
         protected internal void RemovePort(PortModel model)
         {
-            if (!TryGetModelToPort(model.portGUID, out var port))
-                return;
+            var port = model.view;
             port.parent.Remove(port);
             portToModel.Remove(port);
-            modelGuidToPort.Remove(model.portGUID);
         }
 
         #endregion
@@ -194,6 +179,11 @@ namespace GraphFramework.Editor
             CreateEditorFromNodeData();
             
             OnDirty();
+        }
+
+        public MovableModel GetModel()
+        {
+            return nodeModel;
         }
     }
 }
