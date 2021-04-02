@@ -1,8 +1,13 @@
-﻿namespace GraphFramework
+﻿using UnityEngine;
+
+namespace GraphFramework
 {
     public class SubgraphNode : RuntimeNode
     {
-        public GraphBlueprint childGraph = null;
-        public GraphBlueprint parentGraph = null;
+        //Referenced via GUID so it's undo-safe.
+        [HideInInspector]
+        public string childBpGuid;
+        [HideInInspector]
+        public string parentBpGuid;
     }
 }

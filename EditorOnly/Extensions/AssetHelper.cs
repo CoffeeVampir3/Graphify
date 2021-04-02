@@ -35,7 +35,7 @@ namespace GraphFramework.Editor
         {
             var path = AssetDatabase.GetAssetPath(mainAsset);
 
-            var objs = AssetDatabase.LoadAllAssetRepresentationsAtPath(path);
+            var objs = AssetDatabase.LoadAllAssetsAtPath(path);
 
             foreach (var obj in objs)
             {
