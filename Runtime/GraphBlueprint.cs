@@ -14,10 +14,9 @@ namespace GraphFramework
         [SerializeReference] 
         public GraphBlueprint parentGraph = null;
         [SerializeReference] 
-        public readonly List<GraphBlueprint> childGraphs = new List<GraphBlueprint>();
+        public List<GraphBlueprint> childGraphs = new List<GraphBlueprint>();
         [SerializeField]
         public List<RuntimeNode> nodes = new List<RuntimeNode>();
-        
         [NonSerialized] 
         private int currentVirtualGraphIndex = int.MinValue;
         [NonSerialized] 
