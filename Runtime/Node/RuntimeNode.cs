@@ -12,7 +12,7 @@ namespace GraphFramework
         /// <summary>
         /// Evaluates a node for the given graph id.
         /// </summary>
-        internal RuntimeNode Evaluate(int graphIndex)
+        internal virtual RuntimeNode Evaluate(int graphIndex)
         {
             //Make sure we're looking up the right graph index when we lookup our port values.
             BasePort.CurrentGraphIndex = graphIndex;

@@ -101,6 +101,7 @@ namespace GraphFramework.Editor
                 var serializedAssets = AssetDatabase.LoadAllAssetRepresentationsAtPath(
                     AssetDatabase.GetAssetPath(graphModel));
                 var runtimeNodes = new HashSet<RuntimeNode>();
+                runtimeNodes.Add(graphModel.rootNodeModel.RuntimeData);
 
                 foreach (var descendentModel in allGraphs)
                 {
@@ -108,14 +109,15 @@ namespace GraphFramework.Editor
                     {
                         runtimeNodes.Add(model.RuntimeData);
                     }
+
+                    //Don't forget about roots!
+                    runtimeNodes.Add(descendentModel.rootNodeModel.RuntimeData);
                 }
+                
                 foreach (var asset in serializedAssets)
                 {
                     if (!(asset is RuntimeNode modelRuntimeNode)) continue;
                     if (runtimeNodes.Contains(modelRuntimeNode)) continue;
-                    //The root node is not in graphModel.nodeModels so we need to account
-                    //for it.
-                    if (modelRuntimeNode is RootNode) continue;
                     AssetDatabase.RemoveObjectFromAsset(modelRuntimeNode);
                 }
             }
@@ -506,15 +508,12 @@ namespace GraphFramework.Editor
             {
                 CreateStackFromModelInternal(model);
             }
-
-            NodeModel.PreGraphBuild();
+            
             //Update root node model ports and build the root node.
-            graphModel.rootNodeModel.UpdatePorts();
             CreateNodeFromModelAsRoot(graphModel.rootNodeModel);
 
             foreach (var model in graphModel.nodeModels.ToArray())
             {
-                model.UpdatePorts();
                 CreateNodeFromModelInternal(model);
             }
 

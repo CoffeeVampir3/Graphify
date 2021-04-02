@@ -74,13 +74,16 @@ namespace GraphFramework.Editor
             return AssetHelper.FindNestedAssetOfType<GraphBlueprint>(parent, guid);
         }
 
-        public GraphModel CreateChildGraph(GraphModel parentModel, NodeModel parentNode, Type blueprintType)
+        public GraphModel CreateChildGraph(GraphModel parentModel, NodeModel parentNode, SubgraphNode subNode, Type blueprintType)
         {
             GraphModel graphModel = CreateInstance<GraphModel>();
             GraphBlueprint graphBlueprint = CreateInstance(blueprintType) as GraphBlueprint;
             if (graphBlueprint == null)
                 return null;
 
+            NodeModel childNode = parentNode.Clone(parentModel);
+            subNode.childNode = childNode.RuntimeData;
+            
             graphModel.AssetGuid = Guid.NewGuid().ToString();
 
             graphModel.name = AssetGuid;
@@ -100,7 +103,7 @@ namespace GraphFramework.Editor
                 AssetDatabase.StartAssetEditing();
                 AssetDatabase.AddObjectToAsset(graphModel, parentModel);
                 AssetDatabase.AddObjectToAsset(graphBlueprint, parentModel);
-                graphModel.rootNodeModel = parentNode;
+                graphModel.rootNodeModel = childNode;
                 graphModel.serializedGraphBlueprint.rootNode = graphModel.rootNodeModel.RuntimeData;
                 EditorUtility.SetDirty(graphModel.rootNodeModel.RuntimeData);
             }
