@@ -545,6 +545,8 @@ namespace GraphFramework.Editor
             var traversedLinks = new List<Link>(graphModel.links.Count);
             bool anyLinksRemoved = false;
             HashSet<RuntimeNode> bpRuntimeNodes = new HashSet<RuntimeNode>(graphModel.serializedGraphBlueprint.nodes);
+            HashSet<GraphBlueprint> bpChildBlueprints = new HashSet<GraphBlueprint>(graphModel.serializedGraphBlueprint.childGraphs);
+            BlueprintHelper bpHelper = new BlueprintHelper(graphModel.serializedGraphBlueprint);
             
             for (var i = 0; i < graphModel.links.Count; i++)
             {
@@ -558,9 +560,9 @@ namespace GraphFramework.Editor
                 //Synchronize the blueprint if a node is deleted then undone.
                 if (!bpRuntimeNodes.Contains(node.RuntimeData))
                 {
-                    graphModel.serializedGraphBlueprint.nodes.Add(node.RuntimeData);
+                    bpHelper.AddNode(node.RuntimeData);
                 }
-                
+
                 //Deletes links that the undo operation we just performed ideally would of deleted,
                 //but it's not capable of doing that, so we do it manually.
                 void DeleteUndoneLinks(PortModel port)
@@ -591,14 +593,16 @@ namespace GraphFramework.Editor
                     DeleteUndoneLinks(allPortModels[index]);
                 }
             }
-            
+
             //Synchronize deleted then undone graphs.
             foreach (var child in graphModel.childGraphs)
             {
-                if(!graphModel.serializedGraphBlueprint.childGraphs.Contains(child.serializedGraphBlueprint))
-                    graphModel.serializedGraphBlueprint.childGraphs.Add(child.serializedGraphBlueprint);
+                if (bpChildBlueprints.Contains(child.serializedGraphBlueprint)) continue;
+                bpHelper.AddGraph(child.serializedGraphBlueprint);
             }
-
+            
+            bpHelper.Apply();
+            
             if (anyLinksRemoved || untraversedLinks.Count <= 0)
                 return;
             
