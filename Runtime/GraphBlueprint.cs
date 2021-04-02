@@ -11,12 +11,13 @@ namespace GraphFramework
     {
         [SerializeField, HideInInspector]
         public RuntimeNode rootNode;
-        [SerializeField]
-        public List<RuntimeNode> nodes = new List<RuntimeNode>();
         [SerializeReference] 
         public GraphBlueprint parentGraph = null;
         [SerializeReference] 
         public readonly List<GraphBlueprint> childGraphs = new List<GraphBlueprint>();
+        [SerializeField]
+        public List<RuntimeNode> nodes = new List<RuntimeNode>();
+        
         [NonSerialized] 
         private int currentVirtualGraphIndex = int.MinValue;
         [NonSerialized] 
@@ -94,7 +95,7 @@ namespace GraphFramework
                     if (port == null)
                     {
                         #if UNITY_EDITOR
-                        Debug.LogError(node?.name + " was skipped during graph + " + this.name + " because it was null.");
+                        Debug.LogError(node?.name + " was skipped during graph + " + this.name + " because the port relating to " + field.Name + " was null.");
                         #endif
                         continue;
                     }

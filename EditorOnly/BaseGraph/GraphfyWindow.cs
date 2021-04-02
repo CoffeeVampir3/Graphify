@@ -172,7 +172,7 @@ namespace GraphFramework.Editor
                 if (blueprint == null)
                     return;
                 
-                var model = GraphModel.GetModelFromBlueprintPath(blueprint);
+                var model = GraphModel.GetModelFromBlueprint(blueprint);
                 if (model == null)
                 {
                     model = GraphModel.BootstrapController(blueprint);

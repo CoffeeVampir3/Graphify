@@ -11,7 +11,7 @@ namespace GraphFramework.Editor
     public class GraphifyView : GraphView
     { 
         protected internal GraphfyWindow parentWindow;
-        protected internal GraphModel graphModel;
+        public GraphModel graphModel;
         protected readonly GraphSearchWindow searchWindow;
         protected readonly NavigationBlackboard navigationBlackboard;
         protected GraphSettings settings;
@@ -70,21 +70,44 @@ namespace GraphFramework.Editor
         {
         }
 
+        private static void RecursiveChildDescent(GraphModel model, ref List<GraphModel> models)
+        {
+            foreach (var child in model.childGraphs)
+            {
+                models.Add(child);
+                RecursiveChildDescent(child, ref models);
+            }
+        }
+
         /// <summary>
         /// Called when the graph window is about to close. No guarantee your data is stable by the time
         /// this is called, make sure to check null.
         /// </summary>
         protected internal virtual void OnGraphClosed(DetachFromPanelEvent panelEvent)
         {
-            //Cleans up junk that undo can leave behind in very specific edge cases.
+            //Cleans up junk that will linger if we don't manually remove the assets.
+            //This is a cleaner way to control the subnested assets because of how undo works.
             void CleanUndoRemnants()
             {
+                //Go to the top most graph model.
+                while (graphModel.parentGraph != null)
+                {
+                    graphModel = graphModel.parentGraph;
+                }
+                
+                List<GraphModel> allGraphs = new List<GraphModel> {graphModel};
+                RecursiveChildDescent(graphModel, ref allGraphs);
+
                 var serializedAssets = AssetDatabase.LoadAllAssetRepresentationsAtPath(
                     AssetDatabase.GetAssetPath(graphModel));
                 var runtimeNodes = new HashSet<RuntimeNode>();
-                foreach (var model in graphModel.nodeModels)
+
+                foreach (var descendentModel in allGraphs)
                 {
-                    runtimeNodes.Add(model.RuntimeData);
+                    foreach (var model in descendentModel.nodeModels)
+                    {
+                        runtimeNodes.Add(model.RuntimeData);
+                    }
                 }
                 foreach (var asset in serializedAssets)
                 {
@@ -92,7 +115,7 @@ namespace GraphFramework.Editor
                     if (runtimeNodes.Contains(modelRuntimeNode)) continue;
                     //The root node is not in graphModel.nodeModels so we need to account
                     //for it.
-                    if (modelRuntimeNode == graphModel.rootNodeModel.RuntimeData) continue;
+                    if (modelRuntimeNode is RootNode) continue;
                     AssetDatabase.RemoveObjectFromAsset(modelRuntimeNode);
                 }
             }
@@ -513,7 +536,7 @@ namespace GraphFramework.Editor
         /// both possibilities deductively, first we assume this was a delete operation. If
         /// nothing was deleted, we then check if any items were restored.
         /// </summary>
-        private void PostUndoSyncNodePortConnections()
+        private void PostUndoSync()
         {
             //Map guid->connection since we're going to be doing lots of lookups and
             //this is a more efficient data format.
@@ -521,6 +544,7 @@ namespace GraphFramework.Editor
             var untraversedLinks = new List<Link>(graphModel.links);
             var traversedLinks = new List<Link>(graphModel.links.Count);
             bool anyLinksRemoved = false;
+            HashSet<RuntimeNode> bpRuntimeNodes = new HashSet<RuntimeNode>(graphModel.serializedGraphBlueprint.nodes);
             
             for (var i = 0; i < graphModel.links.Count; i++)
             {
@@ -531,6 +555,12 @@ namespace GraphFramework.Editor
             for (var modelIndex = 0; modelIndex < graphModel.nodeModels.Count; modelIndex++)
             {
                 var node = graphModel.nodeModels[modelIndex];
+                //Synchronize the blueprint if a node is deleted then undone.
+                if (!bpRuntimeNodes.Contains(node.RuntimeData))
+                {
+                    graphModel.serializedGraphBlueprint.nodes.Add(node.RuntimeData);
+                }
+                
                 //Deletes links that the undo operation we just performed ideally would of deleted,
                 //but it's not capable of doing that, so we do it manually.
                 void DeleteUndoneLinks(PortModel port)
@@ -561,6 +591,13 @@ namespace GraphFramework.Editor
                     DeleteUndoneLinks(allPortModels[index]);
                 }
             }
+            
+            //Synchronize deleted then undone graphs.
+            foreach (var child in graphModel.childGraphs)
+            {
+                if(!graphModel.serializedGraphBlueprint.childGraphs.Contains(child.serializedGraphBlueprint))
+                    graphModel.serializedGraphBlueprint.childGraphs.Add(child.serializedGraphBlueprint);
+            }
 
             if (anyLinksRemoved || untraversedLinks.Count <= 0)
                 return;
@@ -586,7 +623,7 @@ namespace GraphFramework.Editor
             //the editor graph can be null for a moment here. (It can get called more than once
             //for a single undo operation.) It do be like it is sometimes.
             if (graphModel == null) return;
-            PostUndoSyncNodePortConnections();
+            PostUndoSync();
             BuildGraph();
         }
 

@@ -51,14 +51,30 @@ namespace GraphFramework.Editor
             serializedGraphBlueprint.childGraphs.Add(blueprint);
         }
 
-        public static GraphModel GetModelFromBlueprintPath(GraphBlueprint blueprint)
+        public void DeleteChildGraph(GraphModel childGraph)
+        {
+            GraphBlueprint childBlueprint = childGraph.serializedGraphBlueprint;
+            GraphBlueprint parentBlueprint = serializedGraphBlueprint;
+
+            parentBlueprint.childGraphs.Remove(childBlueprint);
+            childGraph.parentGraph.childGraphs.Remove(childGraph);
+        }
+
+        public static GraphModel GetModelFromBlueprint(GraphBlueprint blueprint)
         {
             if (blueprint == null)
                 return null;
             return AssetHelper.FindNestedAssetOfType<GraphModel>(blueprint, blueprint.editorGraphGuid);
         }
 
-        public GraphModel CreateChildGraph(NodeModel parentNode, Type blueprintType)
+        public static GraphBlueprint GetBlueprintByGuid(GraphModel parent, string guid)
+        {
+            if (parent == null)
+                return null;
+            return AssetHelper.FindNestedAssetOfType<GraphBlueprint>(parent, guid);
+        }
+
+        public GraphModel CreateChildGraph(GraphModel parentModel, NodeModel parentNode, Type blueprintType)
         {
             GraphModel graphModel = CreateInstance<GraphModel>();
             GraphBlueprint graphBlueprint = CreateInstance(blueprintType) as GraphBlueprint;
@@ -82,8 +98,8 @@ namespace GraphFramework.Editor
             try
             {
                 AssetDatabase.StartAssetEditing();
-                AssetDatabase.AddObjectToAsset(graphModel, parentNode.RuntimeData);
-                AssetDatabase.AddObjectToAsset(graphBlueprint, parentNode.RuntimeData);
+                AssetDatabase.AddObjectToAsset(graphModel, parentModel);
+                AssetDatabase.AddObjectToAsset(graphBlueprint, parentModel);
                 graphModel.rootNodeModel = parentNode;
                 graphModel.serializedGraphBlueprint.rootNode = graphModel.rootNodeModel.RuntimeData;
                 EditorUtility.SetDirty(graphModel.rootNodeModel.RuntimeData);

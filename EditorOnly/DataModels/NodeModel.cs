@@ -74,8 +74,12 @@ namespace GraphFramework.Editor
         public void CreateRuntimeData(GraphModel graphModel, Type runtimeDataType)
         {
             RuntimeData = ScriptableObject.CreateInstance(runtimeDataType) as RuntimeNode;
-            
             Debug.Assert(RuntimeData != null, nameof(RuntimeData) + " runtime data type was somehow null, something horrible has happened please report a bug.");
+            
+            if (RuntimeData is SubgraphNode)
+            {
+                CreateSubgraphNode(graphModel);
+            }
             RuntimeData.name = nodeTitle;
             AssetDatabase.AddObjectToAsset(RuntimeData, graphModel);
             EditorUtility.SetDirty(graphModel);
@@ -95,6 +99,34 @@ namespace GraphFramework.Editor
             graphModel.serializedGraphBlueprint.nodes.Add(RuntimeData);
         }
 
+        public void CreateSubgraphNode(GraphModel graphModel)
+        {
+            var sn = RuntimeData as SubgraphNode;
+            sn.parentBpGuid = graphModel.serializedGraphBlueprint.AssetGuid;
+
+            var parentBlueprint = GraphModel.GetBlueprintByGuid(graphModel, sn.parentBpGuid);
+            var parentModel = GraphModel.GetModelFromBlueprint(parentBlueprint);
+            
+            if (parentModel == null) return;
+            var child = parentModel.CreateChildGraph(graphModel , 
+                this, graphModel.serializedGraphBlueprint.GetType());
+            
+            SerializedObject so = new SerializedObject(sn);
+            so.FindProperty(nameof(sn.childBpGuid)).stringValue = child.serializedGraphBlueprint.AssetGuid;
+            so.ApplyModifiedProperties();
+        }
+
+        public void DeleteSubgraphNode(GraphModel graphModel)
+        {
+            var sn = RuntimeData as SubgraphNode;
+            var childBlueprint = GraphModel.GetBlueprintByGuid(graphModel, sn.childBpGuid);
+            var model = GraphModel.GetModelFromBlueprint(childBlueprint);
+            graphModel.DeleteChildGraph(model);
+            
+            Undo.DestroyObjectImmediate(model);
+            Undo.DestroyObjectImmediate(childBlueprint);
+        }
+
         public void Delete(GraphModel graphModel)
         {
             foreach (var model in portModels)
@@ -104,7 +136,11 @@ namespace GraphFramework.Editor
                     dynPort.DeleteAllLinks();
                 }
             }
-            
+
+            if (RuntimeData is SubgraphNode)
+            {
+                DeleteSubgraphNode(graphModel);
+            }
             graphModel.serializedGraphBlueprint.nodes.Remove(RuntimeData);
         }
 
