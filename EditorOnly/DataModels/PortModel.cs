@@ -20,9 +20,6 @@ namespace GraphFramework.Editor
         protected internal List<string> linkGuids = new List<string>();
         [SerializeField] 
         protected internal string portName;
-        //Lookup is done via GUID because undo/redo creates a different copy.
-        [SerializeField] 
-        protected internal string portGUID;
         [SerializeField] 
         protected internal int dynamicIndex;
         [SerializeField]
@@ -44,8 +41,7 @@ namespace GraphFramework.Editor
             Direction direction, 
             Port.Capacity capacity,
             Type portValueType,
-            FieldInfo fieldInfo, 
-            string portGuid,
+            FieldInfo fieldInfo,
             int dynamicIndex = -1)
         {
             this.orientation = orientation;
@@ -54,7 +50,6 @@ namespace GraphFramework.Editor
             this.portValueType = new SerializableType(portValueType);
             this.serializedValueFieldInfo = new SerializedFieldInfo(fieldInfo);
             this.portName = ObjectNames.NicifyVariableName(fieldInfo.Name);
-            this.portGUID = portGuid;
             this.portCompleteType = new SerializableType(fieldInfo.FieldType);
             this.dynamicIndex = dynamicIndex;
         }

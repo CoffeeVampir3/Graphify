@@ -49,7 +49,7 @@ namespace GraphFramework.Editor
         {
             var model = new NodeModel {nodeTitle = initialName};
             model.CreateRuntimeData(graphModel, runtimeDataType);
-            model.CreatePortModelsFromReflection(false);
+            model.CreatePortModelsFromReflection();
 
             return model;
         }
@@ -124,9 +124,14 @@ namespace GraphFramework.Editor
         public void DeleteSubgraphNode(GraphModel graphModel)
         {
             var sn = RuntimeData as SubgraphNode;
+            if (sn == null)
+                return;
+            
             var childBlueprint = GraphModel.GetBlueprintByGuid(graphModel, sn.childBpGuid);
             var model = GraphModel.GetModelFromBlueprint(childBlueprint);
             graphModel.DeleteChildGraph(model);
+            var parentBp = GraphModel.GetBlueprintByGuid(graphModel, sn.parentBpGuid);
+            parentBp.nodes.Remove(sn.childNode);
             
             Undo.DestroyObjectImmediate(model);
             Undo.DestroyObjectImmediate(childBlueprint);
@@ -226,6 +231,10 @@ namespace GraphFramework.Editor
                 existingFieldNames.Add(port.serializedValueFieldInfo.FieldName);
             }
 
+            //If there's a mismatch between existing fields and actual fields, this accounts for
+            //added fields.
+            anyChanges |= existingFieldNames.Count != actualFieldNames.Count;
+
             changedTypeCache[RuntimeData.GetType()] = anyChanges;
 
             if (!anyChanges) 
@@ -267,14 +276,12 @@ namespace GraphFramework.Editor
                 Debug.LogError("Attempted to construct port that is not assignable to value port.");
                 return null;
             }
-            
+
             if (fieldNames != null && fieldNames.Contains(field.Name))
             {
                 //This field previously existed and did not change.
                 return null;
             }
-
-            var guid = Guid.NewGuid().ToString();
 
             var portValueType = field.FieldType.GetGenericArguments();
             //If we add more port types this should become a factory.
@@ -282,7 +289,7 @@ namespace GraphFramework.Editor
             {
                 var dynamicRange = field.GetCustomAttribute<DynamicRange>();
                 var dynModel = new DynamicPortModel(Orientation.Horizontal, unityDirection, 
-                    CapacityToUnity(cap), portValueType.FirstOrDefault(), field, guid);
+                    CapacityToUnity(cap), portValueType.FirstOrDefault(), field);
                 if (dynamicRange != null)
                 {
                     dynModel.minSize = dynamicRange.min;
@@ -292,7 +299,7 @@ namespace GraphFramework.Editor
                 return dynModel;
             }
             var pm = new PortModel(Orientation.Horizontal, unityDirection, 
-                CapacityToUnity(cap), portValueType.FirstOrDefault(),field, guid);
+                CapacityToUnity(cap), portValueType.FirstOrDefault(),field);
             portCreationAction.Invoke(pm);
             return pm;
         }
@@ -356,6 +363,8 @@ namespace GraphFramework.Editor
                 if (!clearLinks || portModel == null) continue;
                 ClearPort(portModel);
             }
+            
+            portModels = portModels.OrderBy(e => e.portName).ToList();
         }
         
         #endregion
