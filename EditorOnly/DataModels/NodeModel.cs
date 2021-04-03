@@ -7,7 +7,6 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using GraphFramework.Attributes;
 using GraphFramework.EditorOnly.Attributes;
-using Sirenix.Serialization;
 using Direction = GraphFramework.Attributes.Direction;
 
 namespace GraphFramework.Editor
