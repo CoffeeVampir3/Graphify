@@ -49,14 +49,21 @@ namespace GraphFramework
 
         internal void CacheSubgraph(int graphId, bool reset, ref List<Link> links)
         {
-            foreach (var node in nodes)
+            for (var index = nodes.Count - 1; index >= 0; index--)
             {
+                var node = nodes[index];
+                if (node == null)
+                {
+                    nodes.RemoveAt(index);
+                    continue;
+                }
+                
                 var type = node.GetType();
                 foreach (var field in type.GetFields())
                 {
-                    if (!typeof(BasePort).IsAssignableFrom(field.FieldType)) 
+                    if (!typeof(BasePort).IsAssignableFrom(field.FieldType))
                         continue;
-                    
+
                     var port = field.GetValue(node) as BasePort;
                     if (port == null)
                     {
@@ -66,11 +73,12 @@ namespace GraphFramework
                     #endif
                         continue;
                     }
+
                     foreach (var link in port.links)
                     {
                         links.Add(link);
                         link.BindRemote();
-                        if(reset)
+                        if (reset)
                             link.Reset(graphId);
                     }
                 }

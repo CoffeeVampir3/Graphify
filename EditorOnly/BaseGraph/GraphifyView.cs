@@ -506,9 +506,7 @@ namespace GraphFramework.Editor
             {
                 var field = port.serializedValueFieldInfo.FieldFromInfo;
                 if (field == null)
-                {
                     continue;
-                }
 
                 var data = field.GetValue(nm.RuntimeData);
 

@@ -162,8 +162,7 @@ namespace GraphFramework.Editor
                 for (int i = dynamicPorts.Count; i < newSize; i++)
                 {
                     PortModel model = new PortModel(orientation, direction,
-                        capacity, portValueType.type, serializedValueFieldInfo.FieldFromInfo, 
-                        Guid.NewGuid().ToString(), i);
+                        capacity, portValueType.type, serializedValueFieldInfo.FieldFromInfo, i);
                     dynamicPorts.Add(model);
                     Port p = nodeView.CreatePort(model);
                     p.portName = dynamicPorts[i].portName + "-" + i;
@@ -182,9 +181,8 @@ namespace GraphFramework.Editor
         }
         
         public DynamicPortModel(Orientation orientation, Direction direction, 
-            Port.Capacity capacity, Type portValueType, FieldInfo fieldInfo, 
-            string portGuid) : 
-            base(orientation, direction, capacity, portValueType, fieldInfo, portGuid)
+            Port.Capacity capacity, Type portValueType, FieldInfo fieldInfo) : 
+            base(orientation, direction, capacity, portValueType, fieldInfo)
         {
         }
     }
