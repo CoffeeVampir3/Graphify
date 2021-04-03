@@ -82,7 +82,7 @@ namespace GraphFramework.Editor
                 return null;
 
             NodeModel childNode = parentNode.Clone(parentModel);
-            subNode.childNode = childNode.RuntimeData;
+            subNode.childNode = childNode.RuntimeData as SubgraphNode;
             
             graphModel.AssetGuid = Guid.NewGuid().ToString();
 

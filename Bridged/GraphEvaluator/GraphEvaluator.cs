@@ -14,6 +14,7 @@ namespace GraphFramework
         private RuntimeNode currentNode = null;
         private RuntimeNode nextNode = null;
         private RuntimeNode previousNode = null;
+        private Context rootContext;
 
         public RuntimeNode Current => currentNode;
         public RuntimeNode Next => nextNode;
@@ -27,6 +28,7 @@ namespace GraphFramework
         public void Initialize()
         {
             virtualizedGraph = graphBlueprint.CreateVirtualGraph();
+            rootContext = new Context(null, graphBlueprint.rootNode, virtualizedGraph.virtualId);
             Reset();
         }
         
@@ -70,7 +72,7 @@ namespace GraphFramework
             }
 
             RuntimeNode tempPrev = currentNode;
-            nextNode = currentNode.Evaluate(virtualizedGraph.virtualId);
+            nextNode = currentNode.Evaluate(rootContext);
             
             //This is our gateway into editor code, using this method we can get 100% of the
             //editor linker branch to compile out.
