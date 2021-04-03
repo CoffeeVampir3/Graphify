@@ -302,14 +302,14 @@ namespace GraphFramework.Editor
             var oldModelToCopiedModel = new Dictionary<NodeModel, NodeModel>();
             foreach (var viewGuid in box.viewGuids)
             {
-                if (!(GetElementByGuid(viewGuid) is NodeView nv)) continue;
+                if (!(GetElementByGuid(viewGuid) is NodeView nv) || nv.nodeModel.RuntimeData is SubgraphNode) continue;
                 var model = nv.nodeModel;
                 var clone = model.Clone(graphModel);
                 oldModelToCopiedModel.Add(model, clone);
                 CreateNewNode(clone);
                 
                 //Dynamic port model copy, since the ICollectible thing is mystery.
-                foreach (var modelPort in model.AllPortModels())
+                foreach (var modelPort in model.portModels)
                 {
                     if (!(modelPort is DynamicPortModel dynPm)) continue;
                     var clonePort = clone.AllPortModels()
@@ -317,11 +317,12 @@ namespace GraphFramework.Editor
                     if (clonePort == null)
                         continue;
                     clonePort.Resize(dynPm.dynamicPorts.Count);
-                    for (var index = 0; index < dynPm.dynamicPorts.Count; index++)
+                    foreach (var port in dynPm.dynamicPorts)
                     {
-                        var port = dynPm.dynamicPorts[index];
                         foreach (var portCon in port.view.connections)
                         {
+                            if (box.edgeGuids.Contains(portCon.viewDataKey))
+                                continue;
                             box.edgeGuids.Add(portCon.viewDataKey);
                         }
                     }
@@ -498,6 +499,46 @@ namespace GraphFramework.Editor
             runtimeNodeToView.Clear();
             edgeToModel.Clear();
         }
+
+        private void SynchronizeNodeChange(NodeModel nm, ref HashSet<string> changedFieldNames)
+        {
+            foreach (var port in nm.portModels)
+            {
+                var field = port.serializedValueFieldInfo.FieldFromInfo;
+                if (field == null)
+                {
+                    continue;
+                }
+
+                var data = field.GetValue(nm.RuntimeData);
+
+                if (!(data is BasePort bp)) continue;
+                for (var index = bp.Links.Count - 1; index >= 0; index--)
+                {
+                    var link = bp.Links[index];
+                    if (!changedFieldNames.Contains(link.RemoteFieldName) &&
+                        !changedFieldNames.Contains(link.LocalFieldName)) continue;
+                    bp.Links.RemoveAt(index);
+                }
+            }
+        }
+
+        private void SynchronizeChanges(ref NodeModel[] models, ref HashSet<string> changedFieldNames)
+        {
+            SynchronizeNodeChange(graphModel.rootNodeModel, ref changedFieldNames);
+            foreach (var model in models)
+            {
+                SynchronizeNodeChange(model, ref changedFieldNames);
+            }
+
+            for (var index = graphModel.links.Count - 1; index >= 0; index--)
+            {
+                var link = graphModel.links[index];
+                if (!changedFieldNames.Contains(link.RemoteFieldName) &&
+                    !changedFieldNames.Contains(link.LocalFieldName)) continue;
+                graphModel.links.RemoveAt(index);
+            }
+        }
         
         private void BuildGraph()
         {
@@ -509,12 +550,24 @@ namespace GraphFramework.Editor
                 CreateStackFromModelInternal(model);
             }
             
+            NodeModel.ClearChangeTrackingCache();
+
+            HashSet<string> changedFieldNames = new HashSet<string>();
+            bool anyChanges = graphModel.rootNodeModel.TrackChanges(ref changedFieldNames);
             //Update root node model ports and build the root node.
             CreateNodeFromModelAsRoot(graphModel.rootNodeModel);
 
-            foreach (var model in graphModel.nodeModels.ToArray())
+            var models = graphModel.nodeModels.ToArray();
+
+            foreach (var model in models)
             {
+                anyChanges |= model.TrackChanges(ref changedFieldNames);
                 CreateNodeFromModelInternal(model);
+            }
+
+            if (anyChanges)
+            {
+                SynchronizeChanges(ref models, ref changedFieldNames);
             }
 
             foreach (var model in graphModel.edgeModels.ToArray())
