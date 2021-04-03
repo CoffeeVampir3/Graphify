@@ -231,6 +231,10 @@ namespace GraphFramework.Editor
                 existingFieldNames.Add(port.serializedValueFieldInfo.FieldName);
             }
 
+            //If there's a mismatch between existing fields and actual fields, this accounts for
+            //added fields.
+            anyChanges |= existingFieldNames.Count != actualFieldNames.Count;
+
             changedTypeCache[RuntimeData.GetType()] = anyChanges;
 
             if (!anyChanges) 
@@ -359,6 +363,8 @@ namespace GraphFramework.Editor
                 if (!clearLinks || portModel == null) continue;
                 ClearPort(portModel);
             }
+            
+            portModels = portModels.OrderBy(e => e.portName).ToList();
         }
         
         #endregion
