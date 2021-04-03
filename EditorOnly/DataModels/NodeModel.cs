@@ -109,11 +109,16 @@ namespace GraphFramework.Editor
             
             if (parentModel == null) return;
             var child = parentModel.CreateChildGraph(graphModel , 
-                this, graphModel.serializedGraphBlueprint.GetType());
+                this, sn, graphModel.serializedGraphBlueprint.GetType());
             
             SerializedObject so = new SerializedObject(sn);
             so.FindProperty(nameof(sn.childBpGuid)).stringValue = child.serializedGraphBlueprint.AssetGuid;
             so.ApplyModifiedProperties();
+
+            SerializedObject on = new SerializedObject(child.rootNodeModel.RuntimeData);
+            on.FindProperty(nameof(sn.childBpGuid)).stringValue = graphModel.serializedGraphBlueprint.AssetGuid;
+            on.FindProperty(nameof(sn.childBpGuid)).stringValue = child.serializedGraphBlueprint.AssetGuid;
+            on.ApplyModifiedProperties();
         }
 
         public void DeleteSubgraphNode(GraphModel graphModel)
@@ -156,92 +161,6 @@ namespace GraphFramework.Editor
                 vp.Clear();
             }
         }
-        
-        #region Change Tracking
-        
-        private readonly Dictionary<string, string> fieldNameToOldGuid = 
-            new Dictionary<string, string>();
-        private static readonly Dictionary<Type, bool> filthyPortsDictionary = 
-            new Dictionary<Type, bool>();
-
-        protected internal static void PreGraphBuild()
-        {
-            filthyPortsDictionary.Clear();
-        }
-        protected internal void UpdatePorts()
-        {
-
-            foreach (var port in portModels)
-            {
-                if (port is DynamicPortModel dynModel)
-                {
-                    var field = dynModel.serializedValueFieldInfo.FieldFromInfo;
-                    if (field == null) continue;
-                    var dynamicRange = field.GetCustomAttribute<DynamicRange>();
-                    if (dynamicRange == null) continue;
-                    dynModel.minSize = dynamicRange.min;
-                    dynModel.maxSize = dynamicRange.max;
-                }
-            }
-            
-            //Fast path, we examine cached changes so this doesn't take an eternity.
-            if (filthyPortsDictionary.TryGetValue(RuntimeData.GetType(), out var shouldChange))
-            {
-                if (!shouldChange) return;
-                fieldNameToOldGuid.Clear();
-                for (int i = portModels.Count - 1; i >= 0; i--)
-                {
-                    PortModel port = portModels[i];
-                    fieldNameToOldGuid.Add(port.serializedValueFieldInfo.FieldName, port.portGUID);
-                }
-                portModels.Clear();
-                CreatePortModelsFromReflection(false, true);
-                return;
-            }
-            
-            var fieldInfo = GetFieldInfoFor(RuntimeData.GetType());
-            HashSet<string> fieldNames = new HashSet<string>();
-            Dictionary<string, Type> stringToType = new Dictionary<string, Type>();
-            bool anyChanges = false;
-            
-            foreach (var info in fieldInfo.fieldInfo)
-            {
-                fieldNames.Add(info.Name);
-                stringToType.Add(info.Name, info.FieldType);
-            }
-            fieldNameToOldGuid.Clear();
-            for (int i = portModels.Count - 1; i >= 0; i--)
-            {
-                PortModel port = portModels[i];
-                fieldNameToOldGuid.Add(port.serializedValueFieldInfo.FieldName, port.portGUID);
-                //Field removed or renamed
-                if (!fieldNames.Contains(port.serializedValueFieldInfo.FieldName))
-                {
-                    anyChanges = true;
-                    break;
-                }
-
-                if (!stringToType.TryGetValue(port.serializedValueFieldInfo.FieldName, out var newType)) 
-                    continue;
-                
-                //Field type changed.
-                if (port.portCompleteType.type != newType)
-                {
-                    anyChanges = true;
-                    break;
-                }
-            }
-
-            //Field added
-            anyChanges |= fieldInfo.fieldInfo.Count != portModels.Count;
-            filthyPortsDictionary.Add(RuntimeData.GetType(), anyChanges);
-
-            if (!anyChanges) return;
-            portModels.Clear();
-            CreatePortModelsFromReflection(false, true);
-        }
-        
-        #endregion
 
         protected internal UnityEditor.Experimental.GraphView.Port.Capacity CapacityToUnity(Capacity cap)
         {
@@ -253,7 +172,7 @@ namespace GraphFramework.Editor
             return Port.Capacity.Multi;
         }
 
-        protected internal PortModel CreatePortModel(FieldInfo field, Direction dir, Capacity cap, bool update)
+        protected internal PortModel CreatePortModel(FieldInfo field, Direction dir, Capacity cap)
         {
             Action<PortModel> portCreationAction;
             UnityEditor.Experimental.GraphView.Direction unityDirection;
@@ -273,15 +192,9 @@ namespace GraphFramework.Editor
                 Debug.LogError("Attempted to construct port that is not assignable to value port.");
             }
             
-            if (update && fieldNameToOldGuid.TryGetValue(field.Name, out var guid))
-            {
-                //Empty
-            }
-            else
-            {
-                guid = Guid.NewGuid().ToString();
-            }
-            
+
+            var guid = Guid.NewGuid().ToString();
+
             var portValueType = field.FieldType.GetGenericArguments();
             //If we add more port types this should become a factory.
             if (typeof(DynamicValuePort).IsAssignableFrom(field.FieldType))
@@ -349,7 +262,7 @@ namespace GraphFramework.Editor
         /// Analyses the reflection data and creates the appropriate ports based on it automagically.
         /// </summary>
         /// <param name="clearLinks">Copied models should use true, clears all port links if true.</param>
-        protected internal void CreatePortModelsFromReflection(bool clearLinks = false, bool update = false)
+        protected internal void CreatePortModelsFromReflection(bool clearLinks = false)
         {
             var fieldsAndData = GetFieldInfoFor(RuntimeData.GetType());
             
@@ -358,7 +271,7 @@ namespace GraphFramework.Editor
                 var field = fieldsAndData.fieldInfo[i];
                 var cap = fieldsAndData.caps[i];
                 var dir = fieldsAndData.directions[i];
-                var portModel = CreatePortModel(field, dir, cap, update);
+                var portModel = CreatePortModel(field, dir, cap);
                 if (!clearLinks) continue;
                 ClearPort(portModel);
             }

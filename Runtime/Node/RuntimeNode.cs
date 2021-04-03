@@ -12,18 +12,18 @@ namespace GraphFramework
         /// <summary>
         /// Evaluates a node for the given graph id.
         /// </summary>
-        internal RuntimeNode Evaluate(int graphIndex)
+        internal virtual RuntimeNode Evaluate(Context evContext)
         {
             //Make sure we're looking up the right graph index when we lookup our port values.
-            BasePort.CurrentGraphIndex = graphIndex;
-            return OnEvaluate(graphIndex);
+            BasePort.CurrentGraphIndex = evContext.graphId;
+            return OnEvaluate(evContext.graphId);
         }
 
         /// <summary>
         /// Evaluates a node. Because of how virtualization works, if you need to store context-sensitive data
         /// in the node, use the provided contextId to store the values in a dictionary or lookup scheme.
         /// </summary>
-        protected virtual RuntimeNode OnEvaluate(int contextId)
+        protected internal virtual RuntimeNode OnEvaluate(int contextId)
         {
             return null;
         }

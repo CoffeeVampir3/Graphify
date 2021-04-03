@@ -24,7 +24,7 @@ namespace GraphFramework
         [NonSerialized] 
         private bool graphInitialized = false;
         [NonSerialized] 
-        private readonly List<Link> cachedLinks = new List<Link>();
+        private List<Link> cachedLinks;
         [field: SerializeField]
         public string AssetGuid { get; set; }
         public string editorGraphGuid;
@@ -43,29 +43,47 @@ namespace GraphFramework
             if (graphInitialized)
                 return;
             
+            cachedLinks = new List<Link>(100);
+            BuildCache(0, false, ref cachedLinks);
+        }
+
+        internal void CacheSubgraph(int graphId, bool reset, ref List<Link> links)
+        {
             foreach (var node in nodes)
             {
                 var type = node.GetType();
                 foreach (var field in type.GetFields())
                 {
-                    if (typeof(BasePort).IsAssignableFrom(field.FieldType))
+                    if (!typeof(BasePort).IsAssignableFrom(field.FieldType)) 
+                        continue;
+                    
+                    var port = field.GetValue(node) as BasePort;
+                    if (port == null)
                     {
-                        var port = field.GetValue(node) as BasePort;
-                        if (port == null)
-                        {
-                            #if UNITY_EDITOR
-                            Debug.LogError(node?.name + " was skipped during graph + " + this.name + " because it was null.");
-                            #endif
-                            continue;
-                        }
-
-                        foreach (var link in port.links)
-                        {
-                            cachedLinks.Add(link);
-                            link.BindRemote();
-                        }
+                    #if UNITY_EDITOR
+                        Debug.LogError(node?.name + " was skipped during graph + " + this.name +
+                                       " because the port relating to " + field.Name + " was null.");
+                    #endif
+                        continue;
+                    }
+                    foreach (var link in port.links)
+                    {
+                        links.Add(link);
+                        link.BindRemote();
+                        if(reset)
+                            link.Reset(graphId);
                     }
                 }
+            }
+        }
+
+        private void BuildCache(int graphId, bool reset, ref List<Link> links)
+        {
+            foreach (var child in childGraphs)
+            {
+                Debug.Log(this.name + " " + "Initialized!");
+                child.CacheSubgraph(graphId, reset, ref links);
+                child.BuildCache(graphId, reset, ref links);
             }
 
             graphInitialized = true;
@@ -82,30 +100,8 @@ namespace GraphFramework
                 return;
             }
 
-            foreach (var node in nodes)
-            {
-                var type = node.GetType();
-                foreach (var field in type.GetFields())
-                {
-                    if (!typeof(BasePort).IsAssignableFrom(field.FieldType)) 
-                        continue;
-                    
-                    var port = field.GetValue(node) as BasePort;
-                    if (port == null)
-                    {
-                        #if UNITY_EDITOR
-                        Debug.LogError(node?.name + " was skipped during graph + " + this.name + " because the port relating to " + field.Name + " was null.");
-                        #endif
-                        continue;
-                    }
-                    foreach (var link in port.links)
-                    {
-                        cachedLinks.Add(link);
-                        link.BindRemote();
-                        link.Reset(graphId);
-                    }
-                }
-            }
+            cachedLinks = new List<Link>(100);
+            BuildCache(graphId, true, ref cachedLinks);
         }
 
         /// <summary>
