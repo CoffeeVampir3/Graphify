@@ -7,6 +7,7 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using GraphFramework.Attributes;
 using GraphFramework.EditorOnly.Attributes;
+using Sirenix.Serialization;
 using Direction = GraphFramework.Attributes.Direction;
 
 namespace GraphFramework.Editor
@@ -49,7 +50,7 @@ namespace GraphFramework.Editor
         {
             var model = new NodeModel {nodeTitle = initialName};
             model.CreateRuntimeData(graphModel, runtimeDataType);
-            model.CreatePortModelsFromReflection();
+            model.CreatePortModelsFromReflection(false);
 
             return model;
         }
@@ -162,6 +163,81 @@ namespace GraphFramework.Editor
             }
         }
 
+        protected internal static readonly Dictionary<Type, bool> changedTypeCache = 
+            new Dictionary<Type, bool>();
+        protected internal static readonly Dictionary<Type, HashSet<string>> existingFieldNamesCache =
+            new Dictionary<Type, HashSet<string>>();
+        protected internal static readonly Dictionary<Type, HashSet<int>> changedFieldIndexCache =
+            new Dictionary<Type, HashSet<int>>();
+
+        public static void ClearChangeTrackingCache()
+        {
+            changedTypeCache.Clear();
+            existingFieldNamesCache.Clear();
+            changedFieldIndexCache.Clear();
+        }
+
+        protected internal bool TrackChanges(ref HashSet<string> changedFieldNames)
+        {
+            if (changedTypeCache.TryGetValue(RuntimeData.GetType(), out var changed))
+            {
+                if (!changed)
+                    return false;
+                
+                var cachedFieldNames = existingFieldNamesCache[RuntimeData.GetType()];
+                var changedIndices = changedFieldIndexCache[RuntimeData.GetType()];
+                for (int i = portModels.Count - 1; i >= 0; i--)
+                {
+                    if (changedIndices.Contains(i))
+                    {
+                        portModels.RemoveAt(i);
+                    }
+                }
+                CreatePortModelsFromReflection(false, cachedFieldNames);
+                return true;
+            }
+
+            HashSet<string> actualFieldNames = new HashSet<string>();
+            HashSet<string> existingFieldNames = new HashSet<string>();
+            HashSet<int> changedFieldIndices = new HashSet<int>();
+            bool anyChanges = false;
+            
+            var fieldInfo = GetFieldInfoFor(RuntimeData.GetType());
+            Dictionary<string, Type> stringToType = new Dictionary<string, Type>();
+            foreach (var info in fieldInfo.fieldInfo)
+            {
+                actualFieldNames.Add(info.Name);
+                stringToType.Add(info.Name, info.FieldType);
+            }
+            
+            for (int i = portModels.Count - 1; i >= 0; i--)
+            {
+                PortModel port = portModels[i];
+                if (!actualFieldNames.Contains(port.serializedValueFieldInfo.FieldName) ||
+                    !stringToType.TryGetValue(port.serializedValueFieldInfo.FieldName, out var newType) ||
+                    port.portCompleteType.type != newType)
+                {
+                    anyChanges = true;
+                    changedFieldNames.Add(port.serializedValueFieldInfo.FieldName);
+                    changedFieldIndices.Add(i);
+                    portModels.RemoveAt(i);
+                    continue;
+                }
+
+                existingFieldNames.Add(port.serializedValueFieldInfo.FieldName);
+            }
+
+            changedTypeCache[RuntimeData.GetType()] = anyChanges;
+
+            if (!anyChanges) 
+                return false;
+            
+            existingFieldNamesCache[RuntimeData.GetType()] = existingFieldNames;
+            changedFieldIndexCache[RuntimeData.GetType()] = changedFieldIndices;
+            CreatePortModelsFromReflection(false, existingFieldNames);
+            return true;
+        }
+
         protected internal UnityEditor.Experimental.GraphView.Port.Capacity CapacityToUnity(Capacity cap)
         {
             if (cap == Capacity.Single)
@@ -172,7 +248,7 @@ namespace GraphFramework.Editor
             return Port.Capacity.Multi;
         }
 
-        protected internal PortModel CreatePortModel(FieldInfo field, Direction dir, Capacity cap)
+        protected internal PortModel CreatePortModel(FieldInfo field, Direction dir, Capacity cap, HashSet<string> fieldNames)
         {
             Action<PortModel> portCreationAction;
             UnityEditor.Experimental.GraphView.Direction unityDirection;
@@ -190,8 +266,14 @@ namespace GraphFramework.Editor
             if (!typeof(BasePort).IsAssignableFrom(field.FieldType))
             {
                 Debug.LogError("Attempted to construct port that is not assignable to value port.");
+                return null;
             }
             
+            if (fieldNames != null && fieldNames.Contains(field.Name))
+            {
+                //This field previously existed and did not change.
+                return null;
+            }
 
             var guid = Guid.NewGuid().ToString();
 
@@ -262,17 +344,17 @@ namespace GraphFramework.Editor
         /// Analyses the reflection data and creates the appropriate ports based on it automagically.
         /// </summary>
         /// <param name="clearLinks">Copied models should use true, clears all port links if true.</param>
-        protected internal void CreatePortModelsFromReflection(bool clearLinks = false)
+        protected internal void CreatePortModelsFromReflection(bool clearLinks = false, HashSet<string> fieldNames = null)
         {
             var fieldsAndData = GetFieldInfoFor(RuntimeData.GetType());
             
-            for (int i = 0; i < fieldsAndData.fieldInfo.Count; i++)
+            for (int i = fieldsAndData.fieldInfo.Count - 1; i >= 0; i--)
             {
                 var field = fieldsAndData.fieldInfo[i];
                 var cap = fieldsAndData.caps[i];
                 var dir = fieldsAndData.directions[i];
-                var portModel = CreatePortModel(field, dir, cap);
-                if (!clearLinks) continue;
+                var portModel = CreatePortModel(field, dir, cap, fieldNames);
+                if (!clearLinks || portModel == null) continue;
                 ClearPort(portModel);
             }
         }

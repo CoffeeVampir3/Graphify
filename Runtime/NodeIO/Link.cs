@@ -76,6 +76,9 @@ namespace GraphFramework
         /// The node this link is connected to.
         /// </summary>
         public RuntimeNode Node => linkedTo;
+
+        internal string RemoteFieldName => remoteLinkBinder.portField.FieldName;
+        internal string LocalFieldName => localLinkBinder.portField.FieldName;
         
         /// <summary>
         /// Resets the value of this link for the given graph Id to their initial value.

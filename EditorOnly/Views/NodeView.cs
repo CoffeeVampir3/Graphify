@@ -41,6 +41,7 @@ namespace GraphFramework.Editor
         public void OnRenamed(string newName)
         {
             this.nodeModel.NodeTitle = newName;
+            this.nodeModel.RuntimeData.name = newName;
             OnDirty();
         }
 
