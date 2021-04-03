@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace GraphFramework
 {
@@ -6,8 +7,11 @@ namespace GraphFramework
     public class SubgraphNode : RuntimeNode
     {
         //Referenced via GUID so it's undo-safe.
+        [HideInInspector]
         public string childBpGuid;
+        [HideInInspector]
         public string parentBpGuid;
+        [HideInInspector]
         public SubgraphNode childNode;
 
         internal override RuntimeNode Evaluate(Context evContext)
