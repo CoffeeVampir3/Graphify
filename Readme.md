@@ -12,7 +12,7 @@ Say goodbye to recompiling! With Graphify you're able to visualize a graph while
 
 # Installing:
 
-Install via UPM using `https://github.com/CoffeeVampir3/Graphify.git#upm` with the built-in unity package manager:
+Install via UPM using `https://github.com/CoffeeVampir3/Graphify.git#upm` with the built-in unity package manager (Unity 2020+)
 
 ![Upm Example](https://github.com/CoffeeVampir3/Graphify/blob/ef05af37d1a312db094ca1da1c3d81497fde12ee/packageManagerExample.png?raw=true) -> ![Upm Add Example](https://github.com/CoffeeVampir3/Graphify/blob/ef05af37d1a312db094ca1da1c3d81497fde12ee/packageManagerExample2.png?raw=true)
 
