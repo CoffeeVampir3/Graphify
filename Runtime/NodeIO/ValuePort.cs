@@ -131,5 +131,27 @@ namespace GraphFramework
             #endif
             return virtualizedMutablePortValues.TryGetValue(graphId, out value);
         }
+        
+        bool PortWithValue<T>.TryGetValueAs<SomeType>(int graphId, Link link, out SomeType value)
+        {
+            //Guard clause for editor adding new links in editor.
+            #if UNITY_EDITOR
+            if (link.BindRemote())
+            {
+                link.Reset(graphId);
+            }
+            #endif
+            if (virtualizedMutablePortValues.TryGetValue(graphId, out var res))
+            {
+                if (res is SomeType moreSpecificType)
+                {
+                    value = moreSpecificType;
+                    return true;
+                }
+            }
+
+            value = default;
+            return false;
+        }
     }
 }
