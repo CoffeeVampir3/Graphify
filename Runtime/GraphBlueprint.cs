@@ -47,7 +47,7 @@ namespace GraphFramework
             BuildCache(0, false, ref cachedLinks);
         }
 
-        internal void CacheSubgraph(int graphId, bool reset, ref List<Link> links)
+        internal void Cache(int graphId, bool reset, ref List<Link> links)
         {
             for (var index = nodes.Count - 1; index >= 0; index--)
             {
@@ -87,10 +87,11 @@ namespace GraphFramework
 
         private void BuildCache(int graphId, bool reset, ref List<Link> links)
         {
+            Cache(graphId, reset, ref links);
             foreach (var child in childGraphs)
             {
                 Debug.Log(this.name + " " + "Initialized!");
-                child.CacheSubgraph(graphId, reset, ref links);
+                child.Cache(graphId, reset, ref links);
                 child.BuildCache(graphId, reset, ref links);
             }
 
