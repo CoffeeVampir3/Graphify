@@ -85,6 +85,30 @@ namespace GraphFramework
         }
 
         /// <summary>
+        /// Tries to get the value of the given link as a covariant type type of <SomeType> and outs it as T
+        /// </summary>
+        public bool TryGetCovariant<SomeType>(Link link, out T value)
+        {
+            #if UNITY_EDITOR
+            if (link.BindRemote())
+            {
+                link.Reset(CurrentGraphIndex);
+            }
+            #endif
+            if (link.distantEndValueKey is PortWithValue<SomeType> valuePort)
+            {
+                valuePort.TryGetValue(CurrentGraphIndex, link, out var temp);
+                if (temp is T val)
+                {
+                    value = val;
+                    return true;
+                }
+            }
+            value = default;
+            return false;
+        }
+
+        /// <summary>
         /// Returns the value of the first link or default.
         /// </summary>
         public T FirstValue()
