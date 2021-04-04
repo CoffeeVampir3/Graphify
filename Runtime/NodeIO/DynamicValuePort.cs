@@ -87,33 +87,5 @@ namespace GraphFramework
             value = default;
             return false;
         }
-        
-        bool PortWithValue<T>.TryGetValueAs<SomeType>(int graphId, Link link, out SomeType value)
-        {
-            //Guard clause for editor adding new links in editor.
-            #if UNITY_EDITOR
-            if (link.BindRemote())
-            {
-                link.Reset(graphId);
-            }
-            #endif
-            if (link.remoteDynamicIndex < 0 || link.remoteDynamicIndex >= portValues.Count)
-            {
-                value = default;
-                return false;
-            }
-            if (virtualizedMutablePortValues.TryGetValue(graphId, out var valueList))
-            {
-                var v = valueList[link.remoteDynamicIndex];
-                if (v is SomeType moreSpecificType)
-                {
-                    value = moreSpecificType;
-                }
-                value = default;
-                return true;
-            }
-            value = default;
-            return false;
-        }
     }
 }
