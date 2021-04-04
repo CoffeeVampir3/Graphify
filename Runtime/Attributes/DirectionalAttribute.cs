@@ -6,6 +6,7 @@ namespace GraphFramework.Attributes
     {
         public Capacity capacity;
         public Direction direction;
+        public ConnectionRules rules;
         public bool showBackingValue = false;
     }
 
@@ -19,5 +20,12 @@ namespace GraphFramework.Attributes
     {
         Input,
         Output
+    }
+
+    public enum ConnectionRules
+    {
+        Exact,
+        Inherited,
+        None
     }
 }

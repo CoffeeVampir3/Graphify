@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using GraphFramework.Attributes;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -878,6 +880,40 @@ namespace GraphFramework.Editor
 
         #region Default Connection Edge Rules
 
+        private readonly Dictionary<string, ConnectionRules> ruleCache = 
+            new Dictionary<string, ConnectionRules>();
+
+        private ConnectionRules GetRules(Port p)
+        {
+            var parentView = p.GetFirstAncestorOfType<NodeView>();
+            if (parentView == null || 
+                !parentView.TryGetPortToModel(p, out var portModel))
+                return ConnectionRules.Exact;
+
+            if (ruleCache.TryGetValue(portModel.serializedValueFieldInfo.FieldName, out var rules))
+            {
+                return rules;
+            }
+
+            var field = portModel.serializedValueFieldInfo.FieldFromInfo;
+            if(field == null)
+                return ConnectionRules.Exact;
+            
+            var attr = field.GetCustomAttribute<DirectionalAttribute>();
+            if(attr == null)
+                return ConnectionRules.Exact;
+
+            ruleCache.Add(portModel.serializedValueFieldInfo.FieldName, attr.rules);
+            return attr.rules;
+        }
+
+        private static ConnectionRules GetStrictestRule(ConnectionRules first, ConnectionRules second)
+        {
+            int v1 = (int) first;
+            int v2 = (int) second;
+            return (ConnectionRules)Mathf.Min(v1, v2);
+        }
+
         private static readonly Type anyType = typeof(Any);
         /// <summary>
         /// These default rules allow only exact types to connect to eachother.
@@ -885,12 +921,29 @@ namespace GraphFramework.Editor
         public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
         {
             var compPorts = new List<Port>();
+            var startRules = GetRules(startPort);
 
+            Type sType = startPort.portType;
             foreach (var port in ports.ToList())
             {
+                var pType = port.portType;
                 if (startPort == port || startPort.node == port.node) continue;
-                if (startPort.portType != port.portType && 
-                    !(startPort.portType == anyType || port.portType == anyType)) continue;
+                if ((sType == anyType || pType == anyType))
+                {
+                    compPorts.Add(port);
+                    continue;
+                }
+                var connectingRules = GetRules(port);
+                var strictestRule = GetStrictestRule(startRules, connectingRules);
+                switch (strictestRule)
+                {
+                    case ConnectionRules.Exact:
+                        if (sType != pType) continue;
+                        break;
+                    case ConnectionRules.Inherited:
+                        if (!pType.IsAssignableFrom(sType) && !sType.IsAssignableFrom(pType)) continue;
+                        break;
+                }
                 compPorts.Add(port);
             }
 

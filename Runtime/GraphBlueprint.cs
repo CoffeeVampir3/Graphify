@@ -90,7 +90,6 @@ namespace GraphFramework
             Cache(graphId, reset, ref links);
             foreach (var child in childGraphs)
             {
-                Debug.Log(this.name + " " + "Initialized!");
                 child.Cache(graphId, reset, ref links);
                 child.BuildCache(graphId, reset, ref links);
             }
