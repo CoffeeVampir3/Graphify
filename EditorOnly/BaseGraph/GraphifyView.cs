@@ -52,9 +52,9 @@ namespace GraphFramework.Editor
             searchWindow = ScriptableObject.CreateInstance<GraphSearchWindow>();
             InitializeSearchWindow();
 
-            navigationBlackboard = new NavigationBlackboard(this);
-            navigationBlackboard.SetPosition(new Rect(0, 150, 100, 300));
-            Add(navigationBlackboard);
+            //navigationBlackboard = new NavigationBlackboard(this);
+            //navigationBlackboard.SetPosition(new Rect(0, 150, 100, 300));
+            //Add(navigationBlackboard);
         }
         
         //Thanks @Mert Kirimgeri for his lovely youtube series on GraphView API.
@@ -165,6 +165,11 @@ namespace GraphFramework.Editor
             viewTransform.scale = graphModel.viewZoom;
             graphModel.view = this;
             BuildGraph();
+
+            if (graphModel.serializedGraphBlueprint.dataBlackboard != null)
+            {
+                Add(new DataBlackboardView(graphModel.serializedGraphBlueprint.dataBlackboard));
+            }
         }
 
         /// <summary>

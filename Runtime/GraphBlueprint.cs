@@ -13,6 +13,8 @@ namespace GraphFramework
         public RuntimeNode rootNode;
         [SerializeReference] 
         public GraphBlueprint parentGraph = null;
+        [SerializeField] 
+        public DataBlackboard dataBlackboard;
         [SerializeReference] 
         public List<GraphBlueprint> childGraphs = new List<GraphBlueprint>();
         [SerializeField]
