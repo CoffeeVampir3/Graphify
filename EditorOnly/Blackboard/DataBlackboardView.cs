@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Linq;
+using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -9,7 +9,8 @@ namespace GraphFramework.Editor
     {
         private readonly DataBlackboard bbData;
         private readonly ScrollView scrollView;
-        
+        private bool isDrawn = false;
+
         public DataBlackboardView(DataBlackboard blackboard)
         {
             bbData = blackboard;
@@ -21,27 +22,44 @@ namespace GraphFramework.Editor
             blackboardNameLabel.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
 
             var btn = this.Q<Button>();
-            btn.RegisterCallback<ClickEvent>(e =>
+            btn.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
+            ToolbarMenu tm = new ToolbarMenu {text = "New Property: "};
+            btn.parent.Add(tm);
+            
+            var drawTypes = FieldFactory.GetDrawableTypes();
+            foreach (var item in drawTypes)
             {
-                var drawTypes = FieldFactory.GetDrawableTypes();
+                if (item == typeof(Enum))
+                    continue;
+                tm.menu.AppendAction(item.Name, e =>
+                {
+                    object obj;
+                    if (item == typeof(string))
+                    {
+                        obj = "";
+                    }
+                    else
+                    {
+                        obj = Activator.CreateInstance(item);
+                    }
+                    var randomGuid = Guid.NewGuid().ToString();
+                    if (obj == null)
+                    {
+                        Debug.Log(item.Name);
+                        Debug.Log("Null activator.");
+                        return;
+                    }
+                    bbData[randomGuid] = obj;
+                    RequestUpdateBlackboard();
+                });
+            }
 
-                int index = UnityEngine.Random.Range(0, drawTypes.Count);
-                var randomType = drawTypes.ElementAt(index);
-
-                var thing = Activator.CreateInstance(randomType);
-                var randomGuid = Guid.NewGuid().ToString();
-                
-                Debug.Log("Created: " + thing.GetType() + " with guid: " + randomGuid);
-
-                bbData[randomGuid] = thing;
-            });
-            btn.parent.style.flexGrow = 1;
-            btn.style.flexGrow = 1;
-            btn.style.flexDirection = new StyleEnum<FlexDirection>(FlexDirection.Row);
+            tm.parent.style.minHeight = 22;
+            tm.style.minHeight = 17;
+            tm.style.minWidth = 17;
             
             scrollView = new ScrollView();
-
-            contentContainer.Add(scrollView);
+            Add(scrollView);
             RegisterCallback<GeometryChangedEvent>(OnGeoChange);
             RegisterCallback<GeometryChangedEvent>(OnGeoInit);
         }
@@ -53,13 +71,29 @@ namespace GraphFramework.Editor
         
         private void OnGeoInit(GeometryChangedEvent geo)
         {
+            isDrawn = true;
+            UpdateBlackboard();
+            UnregisterCallback<GeometryChangedEvent>(OnGeoInit);
+        }
+        
+        private void RequestUpdateBlackboard()
+        {
+            if (!isDrawn)
+            {
+                schedule.Execute(RequestUpdateBlackboard).StartingIn(100);
+            }
+
+            UpdateBlackboard();
+        }
+
+        private void UpdateBlackboard()
+        {
             scrollView.Clear();
             foreach (var item in bbData.Members)
             {
                 scrollView.Add(BlackboardFieldFactory.Create(
                     item.Key, item.Value.GetType(), item.Value, bbData));
             }
-            UnregisterCallback<GeometryChangedEvent>(OnGeoInit);
         }
     }
 }

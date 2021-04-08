@@ -49,7 +49,7 @@ namespace GraphFramework
             BuildCache(0, false, ref cachedLinks);
         }
 
-        internal void Cache(int graphId, bool reset, ref List<Link> links)
+        private void Cache(int graphId, bool reset, ref List<Link> links)
         {
             for (var index = nodes.Count - 1; index >= 0; index--)
             {

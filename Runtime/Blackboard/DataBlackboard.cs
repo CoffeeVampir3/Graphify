@@ -15,12 +15,12 @@ namespace GraphFramework
         public object[] serializedObjects;
         [SerializeField] 
         public string[] serializedKeys;
+        
+        //then we handle all the edge cases object mysteriously doesn't work on ~,~
         [SerializeField] 
         public UnityEngine.Object[] unityObjects;
         [SerializeField] 
         public string[] serializedUnityKeys;
-        //Curves and gradients are not serialized correctly by SerializeReference[object]
-        //So we handle these very special cases q-q
         [SerializeField] 
         public AnimationCurve[] serializedCurves;
         [SerializeField] 
@@ -29,6 +29,10 @@ namespace GraphFramework
         public Gradient[] serializedGradients;
         [SerializeField] 
         public string[] serializedGradientKeys;
+        [SerializeField]
+        public string[] serializedStrings;
+        [SerializeField] 
+        public string[] serializedStringKeys;
 
         private readonly Dictionary<string, object> data = new Dictionary<string, object>();
         public IReadOnlyDictionary<string, object> Members => data;
@@ -84,14 +88,16 @@ namespace GraphFramework
         
         public void OnBeforeSerialize()
         {
-            var objects = new List<object>(128);
-            var objectKeys = new List<string>(128);
-            var unityObjs = new List<UnityEngine.Object>(64);
-            var unityKeys = new List<string>(64);
-            var curves = new List<AnimationCurve>(16);
-            var curveKeys = new List<string>(16);
-            var gradients = new List<Gradient>(16);
-            var gradientKeys = new List<string>(16);
+            var objects = new List<object>(16);
+            var objectKeys = new List<string>(16);
+            var strings = new List<string>(16);
+            var stringKeys = new List<string>(16);
+            var unityObjs = new List<UnityEngine.Object>(16);
+            var unityKeys = new List<string>(16);
+            var curves = new List<AnimationCurve>(8);
+            var curveKeys = new List<string>(8);
+            var gradients = new List<Gradient>(8);
+            var gradientKeys = new List<string>(8);
             var hashedKeys = new HashSet<string>();
             
             foreach (var item in data)
@@ -116,6 +122,10 @@ namespace GraphFramework
                         curves.Add(curve);
                         curveKeys.Add(item.Key);
                         continue;
+                    case string str:
+                        strings.Add(str);
+                        stringKeys.Add(item.Key);
+                        continue;
                     default:
                         objects.Add(item.Value);
                         objectKeys.Add(item.Key);
@@ -136,6 +146,8 @@ namespace GraphFramework
             serializedCurveKeys = null;
             serializedGradients = null;
             serializedGradientKeys = null;
+            serializedStrings = null;
+            serializedStringKeys = null;
             
             serializedObjects = objects.ToArray();
             serializedKeys = objectKeys.ToArray();
@@ -145,6 +157,8 @@ namespace GraphFramework
             serializedGradientKeys = gradientKeys.ToArray();
             serializedCurves = curves.ToArray();
             serializedCurveKeys = curveKeys.ToArray();
+            serializedStrings = strings.ToArray();
+            serializedStringKeys = stringKeys.ToArray();
             
             #if UNITY_EDITOR
             EditorUtility.SetDirty(this);
@@ -153,10 +167,18 @@ namespace GraphFramework
 
         public void OnAfterDeserialize()
         {
+            data.Clear();
             for (var i = 0; i < serializedObjects.Length; i++)
             {
                 var item = serializedObjects[i];
                 var key = serializedKeys[i];
+                data.Add(key, item);
+            }
+
+            for (var i = 0; i < serializedStrings.Length; i++)
+            {
+                var item = serializedStrings[i];
+                var key = serializedStringKeys[i];
                 data.Add(key, item);
             }
 
