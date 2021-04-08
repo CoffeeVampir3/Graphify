@@ -1,6 +1,5 @@
 ﻿using System;
 using UnityEditor;
-using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace GraphFramework.Editor
@@ -27,19 +26,34 @@ namespace GraphFramework.Editor
                 if (string.IsNullOrWhiteSpace(e.newValue))
                     return;
 
-                if (bb.blackboardDictionary.ContainsKey(e.newValue))
+                var newKey = e.newValue;
+                //Ensures we don't add duplicate keys while also hopefully being useful
+                tryagain:
+                if (bb.Members.ContainsKey(newKey))
                 {
-                    Debug.LogWarning("Attempted to move key but their is already an item with that name!");
-                    var newKey = Guid.NewGuid().ToString();
-                    var oldKey = relatedField.userData as string;
-                    relatedField.userData = newKey;
-                    textField.SetValueWithoutNotify(newKey);
-                    bb.MoveRenamedItem(oldKey, newKey);
-                    return;
+                    char lastDig = newKey[newKey.Length - 1];
+                    if (!char.IsDigit(lastDig))
+                    {
+                        newKey += "1";
+                    }
+                    else
+                    {
+                        if (lastDig == '9')
+                        {
+                            newKey += "1";
+                            goto tryagain;
+                        }
+
+                        newKey = newKey.Substring(0, newKey.Length - 1);
+                        newKey += (char)(lastDig + 1);
+                    }
+                    goto tryagain;
                 }
                 
-                relatedField.userData = e.newValue;
-                bb.MoveRenamedItem(e.previousValue, e.newValue);
+                //related field uses data holds our lookup key value when it sets its value.
+                relatedField.userData = newKey;
+                textField.SetValueWithoutNotify(newKey);
+                bb.MoveRenamedItem(e.previousValue, newKey);
             });
             
             fv.Add(textField);

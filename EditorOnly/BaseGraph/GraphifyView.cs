@@ -87,6 +87,8 @@ namespace GraphFramework.Editor
         /// </summary>
         protected internal virtual void OnGraphClosed(DetachFromPanelEvent panelEvent)
         {
+            UnloadGraph();
+            
             //Cleans up junk that will linger if we don't manually remove the assets.
             //This is a cleaner way to control the subnested assets because of how undo works.
             void CleanUndoRemnants()
@@ -177,6 +179,10 @@ namespace GraphFramework.Editor
         /// </summary>
         protected internal virtual void UnloadGraph()
         {
+            if (graphModel != null && graphModel.serializedGraphBlueprint.dataBlackboard != null)
+            {
+                EditorUtility.SetDirty(graphModel.serializedGraphBlueprint.dataBlackboard);
+            }
             ClearGraph();
             graphModel = null;
         }

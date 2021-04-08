@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 [assembly: InternalsVisibleTo("GraphFramework.GraphifyEditor")]
 namespace GraphFramework
@@ -16,11 +19,23 @@ namespace GraphFramework
         public UnityEngine.Object[] unityObjects;
         [SerializeField] 
         public string[] serializedUnityKeys;
-        protected internal readonly Dictionary<string, object> blackboardDictionary = new Dictionary<string, object>();
+        //Curves and gradients are not serialized correctly by SerializeReference[object]
+        //So we handle these very special cases q-q
+        [SerializeField] 
+        public AnimationCurve[] serializedCurves;
+        [SerializeField] 
+        public string[] serializedCurveKeys;
+        [SerializeField]
+        public Gradient[] serializedGradients;
+        [SerializeField] 
+        public string[] serializedGradientKeys;
+
+        private readonly Dictionary<string, object> data = new Dictionary<string, object>();
+        public IReadOnlyDictionary<string, object> Members => data;
 
         public bool TryGetValue<T>(string lookupKey, out T val)
         {
-            if (!blackboardDictionary.TryGetValue(lookupKey, out var objValue) || 
+            if (!data.TryGetValue(lookupKey, out var objValue) || 
                 !(objValue is T tVal))
             {
                 val = default;
@@ -33,55 +48,106 @@ namespace GraphFramework
 
         public bool MoveRenamedItem(string originalKey, string newKey)
         {
-            if (!blackboardDictionary.TryGetValue(originalKey, out var val))
+            if (!data.TryGetValue(originalKey, out var val))
             {
                 return false;
             }
-            if(blackboardDictionary.ContainsKey(originalKey))
-                blackboardDictionary.Remove(originalKey);
-            if (blackboardDictionary.ContainsKey(newKey))
+            if(data.ContainsKey(originalKey))
+                data.Remove(originalKey);
+            
+            #if UNITY_EDITOR
+                EditorUtility.SetDirty(this);
+            #endif
+            if (data.ContainsKey(newKey))
             {
                 return false;
             }
 
-            blackboardDictionary.Add(newKey, val);
+            data.Add(newKey, val);
             return true;
         }
 
         public object this[string key]
         {
-            get => blackboardDictionary[key];
+            get => data[key];
             set
             {
-                if (blackboardDictionary.ContainsKey(key))
-                    blackboardDictionary[key] = value;
+                if (data.ContainsKey(key))
+                    data[key] = value;
                 else
-                    blackboardDictionary.Add(key, value);
+                    data.Add(key, value);
+                #if UNITY_EDITOR
+                    EditorUtility.SetDirty(this);
+                #endif
             }
         }
-
+        
         public void OnBeforeSerialize()
         {
-            List<object> objects = new List<object>(100);
-            List<string> objectKeys = new List<string>(100);
-            List<UnityEngine.Object> unityObjs = new List<Object>(100);
-            List<string> unityKeys = new List<string>(100);
-            foreach (var item in blackboardDictionary)
+            var objects = new List<object>(100);
+            var objectKeys = new List<string>(100);
+            var unityObjs = new List<UnityEngine.Object>(100);
+            var unityKeys = new List<string>(100);
+            var curves = new List<AnimationCurve>(100);
+            var curveKeys = new List<string>(100);
+            var gradients = new List<Gradient>(100);
+            var gradientKeys = new List<string>(100);
+            var hashedKeys = new HashSet<string>();
+            
+            foreach (var item in data)
             {
-                if (item.Value is UnityEngine.Object uObj)
+                if (hashedKeys.Contains(item.Key))
                 {
-                    unityObjs.Add(uObj);
-                    unityKeys.Add(item.Key);
+                    Debug.LogWarning("Attempted to serialize multiple of the same key named: " + item.Key);
                     continue;
                 }
-                objects.Add(item.Value);
-                objectKeys.Add(item.Key);
+                hashedKeys.Add(item.Key);
+                switch (item.Value)
+                {
+                    case UnityEngine.Object uObj:
+                        unityObjs.Add(uObj);
+                        unityKeys.Add(item.Key);
+                        continue;
+                    case Gradient grad:
+                        gradients.Add(grad);
+                        gradientKeys.Add(item.Key);
+                        continue;
+                    case AnimationCurve curve:
+                        curves.Add(curve);
+                        curveKeys.Add(item.Key);
+                        continue;
+                    default:
+                        objects.Add(item.Value);
+                        objectKeys.Add(item.Key);
+                        continue;
+                }
             }
+            
+            #if UNITY_EDITOR
+            EditorUtility.SetDirty(this);
+            #endif
 
+            serializedObjects = null;
+            serializedKeys = null;
+            serializedUnityKeys = null;
+            unityObjects = null;
+            serializedCurves = null;
+            serializedCurveKeys = null;
+            serializedGradients = null;
+            serializedGradientKeys = null;
+            
             serializedObjects = objects.ToArray();
             serializedKeys = objectKeys.ToArray();
             unityObjects = unityObjs.ToArray();
             serializedUnityKeys = unityKeys.ToArray();
+            serializedGradients = gradients.ToArray();
+            serializedGradientKeys = gradientKeys.ToArray();
+            serializedCurves = curves.ToArray();
+            serializedCurveKeys = curveKeys.ToArray();
+            
+            #if UNITY_EDITOR
+            EditorUtility.SetDirty(this);
+            #endif
         }
 
         public void OnAfterDeserialize()
@@ -90,14 +156,30 @@ namespace GraphFramework
             {
                 var item = serializedObjects[i];
                 var key = serializedKeys[i];
-                blackboardDictionary.Add(key, item);
+                data.Add(key, item);
             }
+
             for (var i = 0; i < unityObjects.Length; i++)
             {
                 var item = unityObjects[i];
                 var key = serializedUnityKeys[i];
-                blackboardDictionary.Add(key, item);
+                data.Add(key, item);
+            }
+            
+            for (var i = 0; i < serializedCurves.Length; i++)
+            {
+                var item = serializedCurves[i];
+                var key = serializedCurveKeys[i];
+                data.Add(key, item);
+            }
+            
+            for (var i = 0; i < serializedGradients.Length; i++)
+            {
+                var item = serializedGradients[i];
+                var key = serializedGradientKeys[i];
+                data.Add(key, item);
             }
         }
+
     }
 }

@@ -16,10 +16,9 @@ namespace GraphFramework.Editor
             
             AddToClassList("customBB");
             var blackboardSubNameLabel = this.Q<Label>("subTitleLabel");
-            blackboardSubNameLabel.text = "";
             blackboardSubNameLabel.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
             var blackboardNameLabel = this.Q<Label>("titleLabel");
-            blackboardNameLabel.text = "Data Blackboard";
+            blackboardNameLabel.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
 
             var btn = this.Q<Button>();
             btn.RegisterCallback<ClickEvent>(e =>
@@ -36,14 +35,17 @@ namespace GraphFramework.Editor
 
                 bbData[randomGuid] = thing;
             });
+            btn.parent.style.flexGrow = 1;
+            btn.style.flexGrow = 1;
+            btn.style.flexDirection = new StyleEnum<FlexDirection>(FlexDirection.Row);
             
             scrollView = new ScrollView();
 
-            Add(scrollView);
+            contentContainer.Add(scrollView);
             RegisterCallback<GeometryChangedEvent>(OnGeoChange);
             RegisterCallback<GeometryChangedEvent>(OnGeoInit);
         }
-        
+
         private void OnGeoChange(GeometryChangedEvent geo)
         {
             scrollView.style.minHeight = resolvedStyle.height;
@@ -52,7 +54,7 @@ namespace GraphFramework.Editor
         private void OnGeoInit(GeometryChangedEvent geo)
         {
             scrollView.Clear();
-            foreach (var item in bbData.blackboardDictionary)
+            foreach (var item in bbData.Members)
             {
                 scrollView.Add(BlackboardFieldFactory.Create(
                     item.Key, item.Value.GetType(), item.Value, bbData));
