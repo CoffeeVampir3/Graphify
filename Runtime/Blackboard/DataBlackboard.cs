@@ -84,14 +84,14 @@ namespace GraphFramework
         
         public void OnBeforeSerialize()
         {
-            var objects = new List<object>(100);
-            var objectKeys = new List<string>(100);
-            var unityObjs = new List<UnityEngine.Object>(100);
-            var unityKeys = new List<string>(100);
-            var curves = new List<AnimationCurve>(100);
-            var curveKeys = new List<string>(100);
-            var gradients = new List<Gradient>(100);
-            var gradientKeys = new List<string>(100);
+            var objects = new List<object>(128);
+            var objectKeys = new List<string>(128);
+            var unityObjs = new List<UnityEngine.Object>(64);
+            var unityKeys = new List<string>(64);
+            var curves = new List<AnimationCurve>(16);
+            var curveKeys = new List<string>(16);
+            var gradients = new List<Gradient>(16);
+            var gradientKeys = new List<string>(16);
             var hashedKeys = new HashSet<string>();
             
             foreach (var item in data)
@@ -127,6 +127,7 @@ namespace GraphFramework
             EditorUtility.SetDirty(this);
             #endif
 
+            //Seems to be needed to prod the serialized object to actually do something.
             serializedObjects = null;
             serializedKeys = null;
             serializedUnityKeys = null;
@@ -180,6 +181,5 @@ namespace GraphFramework
                 data.Add(key, item);
             }
         }
-
     }
 }
