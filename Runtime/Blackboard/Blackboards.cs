@@ -23,7 +23,7 @@ namespace GraphFramework
             return false;
         }
         
-        public static bool Query<T>(string queryKey, out object item)
+        public static bool Query<T>(string queryKey, out T item)
         {
             foreach (var board in virtGraph.parentGraphBlueprint.pooledBlackboards)
             {
@@ -32,7 +32,8 @@ namespace GraphFramework
                     return true;
                 }
             }
-            item = null;
+
+            item = default;
             return false;
         }
     }
