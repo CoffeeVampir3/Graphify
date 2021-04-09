@@ -8,7 +8,7 @@ using UnityEditor;
 [assembly: InternalsVisibleTo("GraphFramework.GraphifyEditor")]
 namespace GraphFramework
 {
-    [CreateAssetMenu]
+    [CreateAssetMenu(menuName = "Graphify/Blackboard")]
     public class DataBlackboard : ScriptableObject, IDataBlackboard, ISerializationCallbackReceiver
     {
         [SerializeReference] 
