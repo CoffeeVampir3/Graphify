@@ -133,8 +133,8 @@ namespace GraphFramework
             {
                 currentVirtualGraphIndex++;
             }
-
-            VirtualGraph vg = new VirtualGraph(this, nextGraphIndex);
+            
+            VirtualGraph vg = new VirtualGraph(this, localBlackboard, nextGraphIndex);
             InitializeId(vg.virtualId);
             
             return vg;

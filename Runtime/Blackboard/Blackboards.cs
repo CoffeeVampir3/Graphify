@@ -1,23 +1,19 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using GraphFramework.Runtime;
 
 namespace GraphFramework
 {
     public static class Blackboards
     {
-        private static GraphBlueprint blueprint;
-        public static DataBlackboard Local => blueprint.localBlackboard;
-        public static DataBlackboard Global => blueprint.globalBlackboard;
+        internal static VirtualGraph virtGraph = null;
+        public static Dictionary<string, object> Local => virtGraph.localBlackboardCopy;
+        public static Dictionary<string, object> Global => virtGraph.parentGraphBlueprint.globalBlackboard.data;
         
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void SetBlackboardContext(VirtualGraph virtGraph)
-        {
-            blueprint = virtGraph.parentGraphBlueprint;
-        }
 
         public static bool Query(string queryKey, out object item)
         {
-            foreach (var board in blueprint.pooledBlackboards)
+            foreach (var board in virtGraph.parentGraphBlueprint.pooledBlackboards)
             {
                 if (board.TryGetValue(queryKey, out item))
                 {
@@ -30,7 +26,7 @@ namespace GraphFramework
         
         public static bool Query<T>(string queryKey, out object item)
         {
-            foreach (var board in blueprint.pooledBlackboards)
+            foreach (var board in virtGraph.parentGraphBlueprint.pooledBlackboards)
             {
                 if (board.TryGetValue(queryKey, out item))
                 {
