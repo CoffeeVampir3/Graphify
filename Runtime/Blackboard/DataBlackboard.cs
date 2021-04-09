@@ -11,30 +11,35 @@ namespace GraphFramework
     [CreateAssetMenu(menuName = "Graphify/Blackboard")]
     public class DataBlackboard : ScriptableObject, IDataBlackboard, ISerializationCallbackReceiver
     {
-        [SerializeReference] 
+        [SerializeReference, HideInInspector] 
         public object[] serializedObjects;
-        [SerializeField] 
+        [SerializeField, HideInInspector] 
         public string[] serializedKeys;
         //then we handle all the edge cases object mysteriously doesn't work on ~,~
-        [SerializeField] 
+        [SerializeField, HideInInspector] 
         public UnityEngine.Object[] unityObjects;
-        [SerializeField] 
+        [SerializeField, HideInInspector] 
         public string[] serializedUnityKeys;
-        [SerializeField] 
+        [SerializeField, HideInInspector] 
         public AnimationCurve[] serializedCurves;
-        [SerializeField] 
+        [SerializeField, HideInInspector] 
         public string[] serializedCurveKeys;
-        [SerializeField]
+        [SerializeField, HideInInspector]
         public Gradient[] serializedGradients;
-        [SerializeField] 
+        [SerializeField, HideInInspector] 
         public string[] serializedGradientKeys;
-        [SerializeField]
+        [SerializeField, HideInInspector]
         public string[] serializedStrings;
-        [SerializeField] 
+        [SerializeField, HideInInspector] 
         public string[] serializedStringKeys;
 
-        private readonly Dictionary<string, object> data = new Dictionary<string, object>();
+        internal Dictionary<string, object> data = new Dictionary<string, object>();
         public IReadOnlyDictionary<string, object> Members => data;
+
+        public Dictionary<string, object> Copy()
+        {
+            return new Dictionary<string, object>(data);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TryGetValue(string lookupKey, out object val)
