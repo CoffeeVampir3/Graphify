@@ -5,6 +5,7 @@ namespace GraphFramework
 {
     public static class Blackboards
     {
+        //Set in the graph evaluator init and runtime node eval.
         internal static VirtualGraph virtGraph = null;
         public static Dictionary<string, object> Local => virtGraph.localBlackboardCopy;
         public static Dictionary<string, object> Global => virtGraph.parentGraphBlueprint.globalBlackboard.data;
