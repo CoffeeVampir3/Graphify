@@ -17,10 +17,7 @@ namespace GraphFramework
             int graphId = evContext.virtGraph.virtualId;
             //Make sure we're looking up the right graph index when we lookup our port values.
             BasePort.CurrentGraphIndex = graphId;
-            Blackboards.SetBlackboardContext(
-                evContext.virtGraph.parentGraphBlueprint.localBlackboard,
-                evContext.virtGraph.parentGraphBlueprint.globalBlackboard,
-                evContext.virtGraph.parentGraphBlueprint.pooledBlackboards);
+            Blackboards.SetBlackboardContext(evContext.virtGraph);
             return OnEvaluate(graphId);
         }
 
