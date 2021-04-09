@@ -21,8 +21,10 @@ namespace GraphFramework.Runtime
             {
                 localBlackboardCopy = localBb.Copy();
             }
-
-            localBlackboardCopy = null;
+            else
+            { 
+                localBlackboardCopy = null;
+            }
         }
 
         ~VirtualGraph()
