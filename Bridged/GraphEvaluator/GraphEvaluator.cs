@@ -25,13 +25,13 @@ namespace GraphFramework
         [NonSerialized]
         private VirtualGraph virtualizedGraph;
         
-        public void Initialize()
+        public void Initialize(Action blackboardInitialization = null)
         {
             virtualizedGraph = graphBlueprint.CreateVirtualGraph();
             rootContext = new Context(null, graphBlueprint.rootNode, virtualizedGraph);
             Reset();
-
             Blackboards.virtGraph = virtualizedGraph;
+            blackboardInitialization?.Invoke();
         }
         
         public void Reset()
