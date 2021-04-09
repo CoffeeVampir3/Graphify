@@ -30,18 +30,20 @@ namespace GraphFramework
             virtualizedGraph = graphBlueprint.CreateVirtualGraph();
             rootContext = new Context(null, graphBlueprint.rootNode, virtualizedGraph);
             Reset();
+
+            Blackboards.virtGraph = virtualizedGraph;
         }
         
-    public void Reset()
-    {
-        currentNode = graphBlueprint.rootNode;
-        nextNode = null;
-        previousNode = null;
-        #if UNITY_EDITOR
-        if(virtualizedGraph != null)
-            EditorLinkedResetGraph(virtualizedGraph.virtualId);
-        #endif
-    }
+        public void Reset()
+        {
+            currentNode = graphBlueprint.rootNode;
+            nextNode = null;
+            previousNode = null;
+            #if UNITY_EDITOR
+            if(virtualizedGraph != null)
+                EditorLinkedResetGraph(virtualizedGraph.virtualId);
+            #endif
+        }
 
         #region Editor Link
         

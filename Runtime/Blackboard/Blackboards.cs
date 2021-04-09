@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using GraphFramework.Runtime;
 
 namespace GraphFramework
@@ -10,7 +9,6 @@ namespace GraphFramework
         public static Dictionary<string, object> Local => virtGraph.localBlackboardCopy;
         public static Dictionary<string, object> Global => virtGraph.parentGraphBlueprint.globalBlackboard.data;
         
-
         public static bool Query(string queryKey, out object item)
         {
             foreach (var board in virtGraph.parentGraphBlueprint.pooledBlackboards)
