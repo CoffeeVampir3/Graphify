@@ -5,6 +5,22 @@ GridBackground {
     --spacing: 25;
 }
 
+.dataBlackboard-item > #unity-content {
+    background-color: rgba(45, 45, 45, .8);
+}
+
+.dataBlackboard-foldout {
+    padding-bottom: 30;
+}
+
+.dataBlackboard-item.dataBlackboard-valuefield {
+    flex-direction: row;
+}
+
+.dataBlackboard-field.dataBlackboard-textfield {
+    background-color: rgba(45, 45, 45, .8);
+}
+
 .unity-toolbar {
     background-color: rgba(30, 30, 30, 0);
 }

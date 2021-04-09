@@ -5,7 +5,7 @@
     /// </summary>
     public class VirtualGraph
     {
-        private readonly GraphBlueprint parentGraphBlueprint;
+        internal readonly GraphBlueprint parentGraphBlueprint;
         public readonly int virtualId;
         
         // Do not attempt to construct virtual graphs outside of the graph controller,

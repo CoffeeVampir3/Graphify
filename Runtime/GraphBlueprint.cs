@@ -13,6 +13,12 @@ namespace GraphFramework
         public RuntimeNode rootNode;
         [SerializeReference] 
         public GraphBlueprint parentGraph = null;
+        [SerializeField] 
+        public DataBlackboard localBlackboard;
+        [SerializeField] 
+        public List<DataBlackboard> pooledBlackboards;
+        [SerializeField] 
+        public DataBlackboard globalBlackboard;
         [SerializeReference] 
         public List<GraphBlueprint> childGraphs = new List<GraphBlueprint>();
         [SerializeField]
@@ -47,7 +53,7 @@ namespace GraphFramework
             BuildCache(0, false, ref cachedLinks);
         }
 
-        internal void Cache(int graphId, bool reset, ref List<Link> links)
+        private void Cache(int graphId, bool reset, ref List<Link> links)
         {
             for (var index = nodes.Count - 1; index >= 0; index--)
             {
@@ -68,7 +74,7 @@ namespace GraphFramework
                     if (port == null)
                     {
                     #if UNITY_EDITOR
-                        Debug.LogError(node?.name + " was skipped during graph + " + this.name +
+                        Debug.LogError(node?.name + " was skipped during graph + " + name +
                                        " because the port relating to " + field.Name + " was null.");
                     #endif
                         continue;

@@ -16,6 +16,7 @@ namespace GraphFramework.Editor
         public GraphModel graphModel;
         protected readonly GraphSearchWindow searchWindow;
         protected readonly NavigationBlackboard navigationBlackboard;
+        protected DataBlackboardView dataBlackboard;
         protected GraphSettings settings;
         
         //Edge -> EdgeModel
@@ -54,7 +55,7 @@ namespace GraphFramework.Editor
 
             navigationBlackboard = new NavigationBlackboard(this);
             navigationBlackboard.SetPosition(new Rect(0, 150, 100, 300));
-            Add(navigationBlackboard);
+            //Add(navigationBlackboard);
         }
         
         //Thanks @Mert Kirimgeri for his lovely youtube series on GraphView API.
@@ -87,6 +88,8 @@ namespace GraphFramework.Editor
         /// </summary>
         protected internal virtual void OnGraphClosed(DetachFromPanelEvent panelEvent)
         {
+            UnloadGraph();
+            
             //Cleans up junk that will linger if we don't manually remove the assets.
             //This is a cleaner way to control the subnested assets because of how undo works.
             void CleanUndoRemnants()
@@ -165,6 +168,39 @@ namespace GraphFramework.Editor
             viewTransform.scale = graphModel.viewZoom;
             graphModel.view = this;
             BuildGraph();
+
+            if (graphModel.serializedGraphBlueprint.localBlackboard != null)
+            {
+                dataBlackboard = new DataBlackboardView(
+                    graphModel.serializedGraphBlueprint.localBlackboard, this);
+                currentBlackboard = dataBlackboard;
+                Add(dataBlackboard);
+            }
+            else
+            {
+                currentBlackboard = navigationBlackboard;
+                Add(navigationBlackboard);
+            }
+        }
+
+        private Blackboard currentBlackboard;
+        internal void SwitchBlackboard()
+        {
+            if (currentBlackboard == dataBlackboard)
+            {
+                currentBlackboard = navigationBlackboard;
+                navigationBlackboard.SetPosition(dataBlackboard.GetPosition());
+                Remove(dataBlackboard);
+                Add(navigationBlackboard);
+            }
+            else
+            {
+                if (dataBlackboard == null) return;
+                currentBlackboard = dataBlackboard;
+                dataBlackboard.SetPosition(navigationBlackboard.GetPosition());
+                Remove(navigationBlackboard);
+                Add(dataBlackboard);
+            }
         }
 
         /// <summary>
@@ -172,6 +208,10 @@ namespace GraphFramework.Editor
         /// </summary>
         protected internal virtual void UnloadGraph()
         {
+            if (graphModel != null && graphModel.serializedGraphBlueprint.localBlackboard != null)
+            {
+                EditorUtility.SetDirty(graphModel.serializedGraphBlueprint.localBlackboard);
+            }
             ClearGraph();
             graphModel = null;
         }

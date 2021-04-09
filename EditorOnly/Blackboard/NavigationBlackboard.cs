@@ -22,9 +22,13 @@ namespace GraphFramework.Editor
             blackboardNameLabel.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
 
             var btn = this.Q<Button>();
-            btn.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
+            btn.Clear();
+            btn.text = ">";
+            btn.style.minHeight = 17;
+            btn.style.minWidth = 17;
+            btn.clicked += gv.SwitchBlackboard;
 
-            RegisterCallback<GeometryChangedEvent>(OnGeoInit);
+            RegisterCallback<GeometryChangedEvent>(OnGeoChange);
             listBase.style.flexGrow = 1;
             listBase.style.flexShrink = 1;
             listBase.AddToClassList("list-base");
@@ -33,7 +37,7 @@ namespace GraphFramework.Editor
             schedule.Execute(DelayedRefresh).Every(125);
         }
 
-        private void OnGeoInit(GeometryChangedEvent geo)
+        private void OnGeoChange(GeometryChangedEvent geo)
         {
             listBase.style.minHeight = resolvedStyle.height;
         }

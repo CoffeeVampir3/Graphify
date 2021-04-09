@@ -1,16 +1,18 @@
-﻿namespace GraphFramework
+﻿using GraphFramework.Runtime;
+
+namespace GraphFramework
 {
     internal class Context
     {
         public readonly Context parent;
         public readonly RuntimeNode contextRoot;
-        public readonly int graphId;
+        public readonly VirtualGraph virtGraph;
 
-        public Context(Context parent, RuntimeNode contextRoot, int graphId)
+        public Context(Context parent, RuntimeNode contextRoot, VirtualGraph virtGraph)
         {
             this.parent = parent;
             this.contextRoot = contextRoot;
-            this.graphId = graphId;
+            this.virtGraph = virtGraph;
         }
     }
 }
