@@ -6,16 +6,19 @@ namespace GraphFramework.Editor
 {
     public static class BlackboardFieldFactory
     {
-        public static VisualElement Create(string fieldKey, Type t, object someObject, DataBlackboard bb)
+        public static VisualElement Create(string fieldKey, Type t, 
+            object someObject, DataBlackboard bb, Action updateViewAction)
         {
             var field = FieldFactory.Create(t, someObject, bb, fieldKey);
 
             var labelName = ObjectNames.NicifyVariableName(t.Name);
             Foldout fv = new Foldout {text = labelName};
             TextField textField = new TextField();
+            Button deleteBtn = new Button {text = "-"};
             textField.SetValueWithoutNotify(fieldKey);
 
             textField.userData = field;
+            deleteBtn.userData = field;
             textField.RegisterValueChangedCallback(e =>
             {
                 if (!(textField.userData is BindableElement relatedField))
@@ -55,7 +58,29 @@ namespace GraphFramework.Editor
                 textField.SetValueWithoutNotify(newKey);
                 bb.MoveRenamedItem(e.previousValue, newKey);
             });
-            
+
+            deleteBtn.clicked += () =>
+            {
+                if (!(textField.userData is BindableElement relatedField))
+                {
+                    return;
+                }
+
+                bb.Remove(relatedField.userData as string);
+                updateViewAction.Invoke();
+            };
+
+            var m = fv.Q<VisualElement>("unity-checkmark");
+
+            fv.style.alignSelf = new StyleEnum<Align>(Align.FlexStart);
+            deleteBtn.style.alignSelf = new StyleEnum<Align>(Align.FlexEnd);
+
+            m.parent.ClearClassList();
+            m.parent.style.flexShrink = 1;
+            m.parent.style.flexGrow = 1;
+            m.parent.style.flexDirection = new StyleEnum<FlexDirection>(FlexDirection.Row);
+            m.parent.style.justifyContent = new StyleEnum<Justify>(Justify.FlexStart);
+            m.parent.Add(deleteBtn);
             fv.Add(textField);
             fv.Add(field);
 

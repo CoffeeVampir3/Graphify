@@ -54,6 +54,12 @@ namespace GraphFramework
             val = tVal;
             return true;
         }
+
+        public void Remove(string key)
+        {
+            if (data.ContainsKey(key))
+                data.Remove(key);
+        }
         
         public object this[string key]
         {
