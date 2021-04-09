@@ -12,35 +12,29 @@ namespace GraphFramework
     public class DataBlackboard : ScriptableObject, IDataBlackboard, ISerializationCallbackReceiver
     {
         [SerializeReference, HideInInspector] 
-        public object[] serializedObjects;
+        private object[] serializedObjects;
         [SerializeField, HideInInspector] 
-        public string[] serializedKeys;
+        private string[] serializedKeys;
         //then we handle all the edge cases object mysteriously doesn't work on ~,~
         [SerializeField, HideInInspector] 
-        public UnityEngine.Object[] unityObjects;
+        private UnityEngine.Object[] unityObjects;
         [SerializeField, HideInInspector] 
-        public string[] serializedUnityKeys;
+        private string[] serializedUnityKeys;
         [SerializeField, HideInInspector] 
-        public AnimationCurve[] serializedCurves;
+        private AnimationCurve[] serializedCurves;
         [SerializeField, HideInInspector] 
-        public string[] serializedCurveKeys;
+        private string[] serializedCurveKeys;
         [SerializeField, HideInInspector]
-        public Gradient[] serializedGradients;
+        private Gradient[] serializedGradients;
         [SerializeField, HideInInspector] 
-        public string[] serializedGradientKeys;
+        private string[] serializedGradientKeys;
         [SerializeField, HideInInspector]
-        public string[] serializedStrings;
+        private string[] serializedStrings;
         [SerializeField, HideInInspector] 
-        public string[] serializedStringKeys;
-
-        internal Dictionary<string, object> data = new Dictionary<string, object>();
+        private string[] serializedStringKeys;
+        internal readonly Dictionary<string, object> data = new Dictionary<string, object>();
         public IReadOnlyDictionary<string, object> Members => data;
-
-        public Dictionary<string, object> Copy()
-        {
-            return new Dictionary<string, object>(data);
-        }
-
+        
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TryGetValue(string lookupKey, out object val)
         {
@@ -60,8 +54,28 @@ namespace GraphFramework
             val = tVal;
             return true;
         }
+        
+        public object this[string key]
+        {
+            get => data[key];
+            set
+            {
+                if (data.ContainsKey(key))
+                    data[key] = value;
+                else
+                    data.Add(key, value);
+                #if UNITY_EDITOR
+                EditorUtility.SetDirty(this);
+                #endif
+            }
+        }
 
-        public bool MoveRenamedItem(string originalKey, string newKey)
+        internal Dictionary<string, object> Copy()
+        {
+            return new Dictionary<string, object>(data);
+        }
+
+        internal bool MoveRenamedItem(string originalKey, string newKey)
         {
             if (!data.TryGetValue(originalKey, out var val))
             {
@@ -82,21 +96,6 @@ namespace GraphFramework
             return true;
         }
 
-        public object this[string key]
-        {
-            get => data[key];
-            set
-            {
-                if (data.ContainsKey(key))
-                    data[key] = value;
-                else
-                    data.Add(key, value);
-                #if UNITY_EDITOR
-                    EditorUtility.SetDirty(this);
-                #endif
-            }
-        }
-        
         public void OnBeforeSerialize()
         {
             var objects = new List<object>(16);
