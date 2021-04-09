@@ -14,7 +14,11 @@ namespace GraphFramework
         [SerializeReference] 
         public GraphBlueprint parentGraph = null;
         [SerializeField] 
-        public DataBlackboard dataBlackboard;
+        public DataBlackboard localBlackboard;
+        [SerializeField] 
+        public List<DataBlackboard> pooledBlackboards;
+        [SerializeField] 
+        public DataBlackboard globalBlackboard;
         [SerializeReference] 
         public List<GraphBlueprint> childGraphs = new List<GraphBlueprint>();
         [SerializeField]
@@ -70,7 +74,7 @@ namespace GraphFramework
                     if (port == null)
                     {
                     #if UNITY_EDITOR
-                        Debug.LogError(node?.name + " was skipped during graph + " + this.name +
+                        Debug.LogError(node?.name + " was skipped during graph + " + name +
                                        " because the port relating to " + field.Name + " was null.");
                     #endif
                         continue;

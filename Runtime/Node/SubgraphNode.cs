@@ -16,19 +16,19 @@ namespace GraphFramework
 
         internal override RuntimeNode Evaluate(Context evContext)
         {
-            BasePort.CurrentGraphIndex = evContext.graphId;
+            BasePort.CurrentGraphIndex = evContext.virtGraph.virtualId;
             
             //Parent 
             if (childNode == null) return null;
             
             var childEval = 
-                childNode.Evaluate(new Context(evContext, this, evContext.graphId));
+                childNode.Evaluate(new Context(evContext, this, evContext.virtGraph));
             if (childEval != null)
             {
                 return childEval;
             }
 
-            return OnEvaluate(evContext.graphId);
+            return OnEvaluate(evContext.virtGraph.virtualId);
 
         }
     }

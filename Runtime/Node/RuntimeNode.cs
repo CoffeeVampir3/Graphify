@@ -14,9 +14,14 @@ namespace GraphFramework
         /// </summary>
         internal virtual RuntimeNode Evaluate(Context evContext)
         {
+            int graphId = evContext.virtGraph.virtualId;
             //Make sure we're looking up the right graph index when we lookup our port values.
-            BasePort.CurrentGraphIndex = evContext.graphId;
-            return OnEvaluate(evContext.graphId);
+            BasePort.CurrentGraphIndex = graphId;
+            Blackboards.SetBlackboardContext(
+                evContext.virtGraph.parentGraphBlueprint.localBlackboard,
+                evContext.virtGraph.parentGraphBlueprint.globalBlackboard,
+                evContext.virtGraph.parentGraphBlueprint.pooledBlackboards);
+            return OnEvaluate(graphId);
         }
 
         /// <summary>

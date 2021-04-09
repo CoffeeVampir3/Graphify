@@ -11,7 +11,7 @@ namespace GraphFramework.Editor
         private readonly ScrollView scrollView;
         private bool isDrawn = false;
 
-        public DataBlackboardView(DataBlackboard blackboard)
+        public DataBlackboardView(DataBlackboard blackboard, GraphifyView view)
         {
             bbData = blackboard;
             
@@ -22,9 +22,11 @@ namespace GraphFramework.Editor
             blackboardNameLabel.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
 
             var btn = this.Q<Button>();
-            btn.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
+            btn.Clear();
+            btn.text = "<";
             ToolbarMenu tm = new ToolbarMenu {text = "New Property: "};
             btn.parent.Add(tm);
+            btn.clicked += view.SwitchBlackboard;
             
             var drawTypes = FieldFactory.GetDrawableTypes();
             foreach (var item in drawTypes)
@@ -57,6 +59,8 @@ namespace GraphFramework.Editor
             tm.parent.style.minHeight = 22;
             tm.style.minHeight = 17;
             tm.style.minWidth = 17;
+            btn.style.minHeight = 17;
+            btn.style.minWidth = 17;
             
             scrollView = new ScrollView();
             Add(scrollView);

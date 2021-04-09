@@ -15,7 +15,6 @@ namespace GraphFramework
         public object[] serializedObjects;
         [SerializeField] 
         public string[] serializedKeys;
-        
         //then we handle all the edge cases object mysteriously doesn't work on ~,~
         [SerializeField] 
         public UnityEngine.Object[] unityObjects;
@@ -37,6 +36,13 @@ namespace GraphFramework
         private readonly Dictionary<string, object> data = new Dictionary<string, object>();
         public IReadOnlyDictionary<string, object> Members => data;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool TryGetValue(string lookupKey, out object val)
+        {
+            return data.TryGetValue(lookupKey, out val);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TryGetValue<T>(string lookupKey, out T val)
         {
             if (!data.TryGetValue(lookupKey, out var objValue) || 

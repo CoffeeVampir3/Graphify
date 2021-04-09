@@ -28,7 +28,7 @@ namespace GraphFramework
         public void Initialize()
         {
             virtualizedGraph = graphBlueprint.CreateVirtualGraph();
-            rootContext = new Context(null, graphBlueprint.rootNode, virtualizedGraph.virtualId);
+            rootContext = new Context(null, graphBlueprint.rootNode, virtualizedGraph);
             Reset();
         }
         

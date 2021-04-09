@@ -16,6 +16,7 @@ namespace GraphFramework.Editor
         public GraphModel graphModel;
         protected readonly GraphSearchWindow searchWindow;
         protected readonly NavigationBlackboard navigationBlackboard;
+        protected DataBlackboardView dataBlackboard;
         protected GraphSettings settings;
         
         //Edge -> EdgeModel
@@ -52,8 +53,8 @@ namespace GraphFramework.Editor
             searchWindow = ScriptableObject.CreateInstance<GraphSearchWindow>();
             InitializeSearchWindow();
 
-            //navigationBlackboard = new NavigationBlackboard(this);
-            //navigationBlackboard.SetPosition(new Rect(0, 150, 100, 300));
+            navigationBlackboard = new NavigationBlackboard(this);
+            navigationBlackboard.SetPosition(new Rect(0, 150, 100, 300));
             //Add(navigationBlackboard);
         }
         
@@ -168,9 +169,37 @@ namespace GraphFramework.Editor
             graphModel.view = this;
             BuildGraph();
 
-            if (graphModel.serializedGraphBlueprint.dataBlackboard != null)
+            if (graphModel.serializedGraphBlueprint.localBlackboard != null)
             {
-                Add(new DataBlackboardView(graphModel.serializedGraphBlueprint.dataBlackboard));
+                dataBlackboard = new DataBlackboardView(
+                    graphModel.serializedGraphBlueprint.localBlackboard, this);
+                currentBlackboard = dataBlackboard;
+                Add(dataBlackboard);
+            }
+            else
+            {
+                currentBlackboard = navigationBlackboard;
+                Add(navigationBlackboard);
+            }
+        }
+
+        private Blackboard currentBlackboard;
+        internal void SwitchBlackboard()
+        {
+            if (currentBlackboard == dataBlackboard)
+            {
+                currentBlackboard = navigationBlackboard;
+                navigationBlackboard.SetPosition(dataBlackboard.GetPosition());
+                Remove(dataBlackboard);
+                Add(navigationBlackboard);
+            }
+            else
+            {
+                if (dataBlackboard == null) return;
+                currentBlackboard = dataBlackboard;
+                dataBlackboard.SetPosition(navigationBlackboard.GetPosition());
+                Remove(navigationBlackboard);
+                Add(dataBlackboard);
             }
         }
 
@@ -179,9 +208,9 @@ namespace GraphFramework.Editor
         /// </summary>
         protected internal virtual void UnloadGraph()
         {
-            if (graphModel != null && graphModel.serializedGraphBlueprint.dataBlackboard != null)
+            if (graphModel != null && graphModel.serializedGraphBlueprint.localBlackboard != null)
             {
-                EditorUtility.SetDirty(graphModel.serializedGraphBlueprint.dataBlackboard);
+                EditorUtility.SetDirty(graphModel.serializedGraphBlueprint.localBlackboard);
             }
             ClearGraph();
             graphModel = null;

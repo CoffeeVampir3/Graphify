@@ -22,7 +22,11 @@ namespace GraphFramework.Editor
             blackboardNameLabel.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
 
             var btn = this.Q<Button>();
-            btn.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
+            btn.Clear();
+            btn.text = ">";
+            btn.style.minHeight = 17;
+            btn.style.minWidth = 17;
+            btn.clicked += gv.SwitchBlackboard;
 
             RegisterCallback<GeometryChangedEvent>(OnGeoChange);
             listBase.style.flexGrow = 1;
