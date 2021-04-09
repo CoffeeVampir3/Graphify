@@ -10,7 +10,7 @@ namespace GraphFramework.Runtime
         internal readonly GraphBlueprint parentGraphBlueprint;
         internal readonly Dictionary<string, object> localBlackboardCopy;
         public readonly int virtualId;
-        
+
         // Do not attempt to construct virtual graphs outside of the graph controller,
         // the parent graph controller must allocate the port virtualizations first.
         internal VirtualGraph(GraphBlueprint parent, DataBlackboard localBb, int id)

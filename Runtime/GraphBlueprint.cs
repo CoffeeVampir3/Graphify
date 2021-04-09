@@ -14,11 +14,11 @@ namespace GraphFramework
         [SerializeReference] 
         public GraphBlueprint parentGraph = null;
         [SerializeField] 
-        public DataBlackboard localBlackboard;
+        internal DataBlackboard localBlackboard;
         [SerializeField] 
-        public List<DataBlackboard> pooledBlackboards;
+        internal List<DataBlackboard> pooledBlackboards;
         [SerializeField] 
-        public DataBlackboard globalBlackboard;
+        internal DataBlackboard globalBlackboard;
         [SerializeReference] 
         public List<GraphBlueprint> childGraphs = new List<GraphBlueprint>();
         [SerializeField]
