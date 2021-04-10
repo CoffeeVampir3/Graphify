@@ -18,6 +18,14 @@ GridBackground {
     align-self: center;
 }
 
+.unity-toggle__input:checked > .--delBtn{
+    visibility: visible;
+}
+
+.unity-toggle__input > .--delBtn{
+    visibility: hidden;
+}
+
 .dataBlackboard-item > #unity-content {
     background-color: rgba(45, 45, 45, .8);
 }
