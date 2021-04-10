@@ -7,21 +7,15 @@ namespace GraphFramework.Editor
 {
     public class BlackboardField : VisualElement
     {
-        private readonly Foldout fv;
-        private readonly TextField textField;
-        private readonly Button deleteBtn;
-        private readonly VisualElement svParent;
-
         public BlackboardField(string fieldKey, Type t, 
             object someObject, DataBlackboard bb, Action updateViewAction, VisualElement svParent)
         {
             var field = FieldFactory.Create(t, someObject, bb, fieldKey);
 
             var labelName = ObjectNames.NicifyVariableName(t.Name);
-            fv = new Foldout {text = labelName};
-            textField = new TextField();
-            deleteBtn = new Button {text = "-"};
-            this.svParent = svParent;
+            var fv = new Foldout {text = labelName};
+            var textField = new TextField();
+            var deleteBtn = new Button {text = "-"};
             textField.SetValueWithoutNotify(fieldKey);
 
             textField.userData = field;
