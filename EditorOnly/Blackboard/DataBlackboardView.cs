@@ -96,7 +96,9 @@ namespace GraphFramework.Editor
             foreach (var item in bbData.Members)
             {
                 scrollView.Add(BlackboardFieldFactory.Create(
-                    item.Key, item.Value.GetType(), item.Value, bbData, RequestUpdateBlackboard));
+                    item.Key, item.Value.GetType(), 
+                    item.Value, bbData, 
+                    RequestUpdateBlackboard, scrollView));
             }
         }
     }
