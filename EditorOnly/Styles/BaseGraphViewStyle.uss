@@ -5,12 +5,25 @@ GridBackground {
     --spacing: 25;
 }
 
+.--delBtn {
+    position: absolute;
+    border-color: black;
+    border-radius: 2px;
+    border-width: 1px;
+    background-color: rgba(45, 45, 45, 1);
+    font-size: 16px;
+    -unity-text-align: middle-center;
+    height: 16px;
+    width: 16px;
+    align-self: center;
+}
+
 .dataBlackboard-item > #unity-content {
     background-color: rgba(45, 45, 45, .8);
 }
 
 .dataBlackboard-foldout {
-    padding-bottom: 30;
+    padding-bottom: 30px;
 }
 
 .dataBlackboard-item.dataBlackboard-valuefield {
