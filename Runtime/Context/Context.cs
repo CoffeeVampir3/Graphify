@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using GraphFramework.Runtime;
-using UnityEngine;
 
 namespace GraphFramework
 {
@@ -23,9 +22,7 @@ namespace GraphFramework
 
         public RuntimeNode Pop()
         {
-            Debug.Log(contextStack.Count);
             var m = contextStack.Pop();
-            Debug.Log(contextStack.Count);
             return m;
         }
     }

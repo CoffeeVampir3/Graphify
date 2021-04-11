@@ -87,7 +87,6 @@ namespace GraphFramework
 
             if (nextNode == null && rootContext.Count > 0)
             {
-                Debug.Log(rootContext.Count);
                 nextNode = rootContext.Pop();
             }
 
