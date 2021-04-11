@@ -9,7 +9,7 @@ namespace GraphFramework.Editor
 {
     internal static class NodeRegistrationResolver
     {
-        private static readonly Type rootNodeType = typeof(RootNode);
+        private static readonly Type rootNodeType = typeof(IRootNode);
 
         /// <summary>
         /// Returns a list of all nodes registered to the provided graph controller type.
@@ -50,7 +50,8 @@ namespace GraphFramework.Editor
             {
                 //Whoops! Too many RootNodes registered!
                 string s = enumerable.Aggregate("", (current, root) => current + ("\n" + root.Name));
-                Debug.LogWarning("Warning, multiple root nodes are registered to graph controller named: " + graphControllerType + "Registered types: " + s);
+                Debug.LogError("Multiple root nodes are registered to blueprint named: " + graphControllerType + "Registered types: " + s + " you may only have one root node registered per blueprint!");
+                return null;
             }
 
             return enumerable.FirstOrDefault();

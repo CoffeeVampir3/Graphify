@@ -3,7 +3,7 @@
     /// <summary>
     /// Defines a node as a root node.
     /// </summary>
-    public interface RootNode
+    public interface IRootNode
     {
     }
 }
