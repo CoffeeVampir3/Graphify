@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Reflection;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
@@ -201,23 +202,27 @@ namespace GraphFramework.Editor
                 return true;
             }
 
-            HashSet<string> actualFieldNames = new HashSet<string>();
+            Dictionary<string, int> fieldNamesToFieldInfo =
+                new Dictionary<string, int>();
             HashSet<string> existingFieldNames = new HashSet<string>();
             HashSet<int> changedFieldIndices = new HashSet<int>();
             bool anyChanges = false;
             
-            var fieldInfo = GetFieldInfoFor(RuntimeData.GetType());
+            var fieldData = GetFieldInfoFor(RuntimeData.GetType());
             Dictionary<string, Type> stringToType = new Dictionary<string, Type>();
-            foreach (var info in fieldInfo.fieldInfo)
+            for (int j = 0; j < fieldData.fieldInfo.Count; j++)
             {
-                actualFieldNames.Add(info.Name);
-                stringToType.Add(info.Name, info.FieldType);
+                var fieldInfo = fieldData.fieldInfo[j];
+                fieldNamesToFieldInfo.Add(fieldInfo.Name, j);
+                stringToType.Add(fieldInfo.Name, fieldInfo.FieldType);
             }
             
             for (int i = portModels.Count - 1; i >= 0; i--)
             {
                 PortModel port = portModels[i];
-                if (!actualFieldNames.Contains(port.serializedValueFieldInfo.FieldName) ||
+                if (!fieldNamesToFieldInfo.TryGetValue(port.serializedValueFieldInfo.FieldName, out var fiIndex) ||
+                    CapacityToUnity(fieldData.caps[fiIndex]) != port.capacity ||
+                    DirectionToUnity(fieldData.directions[fiIndex]) != port.direction ||
                     !stringToType.TryGetValue(port.serializedValueFieldInfo.FieldName, out var newType) ||
                     port.portCompleteType.type != newType)
                 {
@@ -233,7 +238,7 @@ namespace GraphFramework.Editor
 
             //If there's a mismatch between existing fields and actual fields, this accounts for
             //added fields.
-            anyChanges |= existingFieldNames.Count != actualFieldNames.Count;
+            anyChanges |= existingFieldNames.Count != fieldNamesToFieldInfo.Count;
 
             changedTypeCache[RuntimeData.GetType()] = anyChanges;
 
@@ -248,12 +253,12 @@ namespace GraphFramework.Editor
 
         protected internal UnityEditor.Experimental.GraphView.Port.Capacity CapacityToUnity(Capacity cap)
         {
-            if (cap == Capacity.Single)
-            {
-                return Port.Capacity.Single;
-            }
-
-            return Port.Capacity.Multi;
+            return cap == Capacity.Single ? Port.Capacity.Single : Port.Capacity.Multi;
+        }
+        
+        protected internal UnityEditor.Experimental.GraphView.Direction DirectionToUnity(Direction dir)
+        {
+            return dir == Direction.Input ? UnityEditor.Experimental.GraphView.Direction.Input : UnityEditor.Experimental.GraphView.Direction.Output;
         }
 
         protected internal PortModel CreatePortModel(FieldInfo field, Direction dir, Capacity cap, HashSet<string> fieldNames)
