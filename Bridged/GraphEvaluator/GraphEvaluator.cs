@@ -1,6 +1,5 @@
 ﻿using System;
 using GraphFramework.Runtime;
-using UnityEngine;
 
 namespace GraphFramework
 {
