@@ -28,36 +28,17 @@ namespace GraphFramework
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SetLocalValue(int index, T val)
+        public void SetLocalValue(List<T> val)
         {
-            var cur = virtualizedMutablePortValues[CurrentGraphIndex];
-            if (cur.Count == 0 || index >= cur.Count)
-            {
-                List<T> newList = new List<T>(index+5);
-                newList.AddRange(cur);
-                virtualizedMutablePortValues[CurrentGraphIndex] = newList;
-            }
-            virtualizedMutablePortValues[CurrentGraphIndex][index] = val;
+            virtualizedMutablePortValues[CurrentGraphIndex] = val;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public T GetLocalValue(int index)
+        public List<T> GetLocalValue(int index)
         {
-            var cur = virtualizedMutablePortValues[CurrentGraphIndex];
-            if (index >= cur.Count)
-                return default;
-            return virtualizedMutablePortValues[CurrentGraphIndex][index];
+            return virtualizedMutablePortValues[CurrentGraphIndex];
         }
-        
-        /// <summary>
-        /// The local value of this port.
-        /// </summary>
-        public T this[int index]
-        {
-            set => SetLocalValue(index, value);
-            get => GetLocalValue(index);
-        }
-        
+
         /// <summary>
         /// Tries to get the value of the given link or default.
         /// </summary>
