@@ -17,7 +17,9 @@ namespace GraphFramework
         private bool isRunning = false;
         internal override RuntimeNode Evaluate(Context evContext)
         {
-            BasePort.CurrentGraphIndex = evContext.virtGraph.virtualId;
+            int graphId = evContext.virtGraph.virtualId;
+            BasePort.CurrentGraphIndex = graphId;
+            Blackboards.virtGraph = evContext.virtGraph;
 
             //We returned up the stack
             if (isRunning)
