@@ -102,7 +102,7 @@ namespace GraphFramework
             value = default;
             return false;
         }
-
+        
         bool PortWithValue<T>.TryGetValue(int graphId, Link link, out T value)
         {
             //Guard clause for editor adding new links in editor.
@@ -112,11 +112,6 @@ namespace GraphFramework
                 link.Reset(graphId);
             }
             #endif
-            if (link.remoteDynamicIndex < 0 || link.remoteDynamicIndex >= portValues.Count)
-            {
-                value = default;
-                return false;
-            }
             if (virtualizedMutablePortValues.TryGetValue(graphId, out var valueList))
             {
                 value = valueList[link.remoteDynamicIndex];
