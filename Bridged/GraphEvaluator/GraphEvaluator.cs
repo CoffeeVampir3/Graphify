@@ -1,5 +1,6 @@
 ﻿using System;
 using GraphFramework.Runtime;
+using UnityEngine;
 
 namespace GraphFramework
 {
@@ -28,7 +29,7 @@ namespace GraphFramework
         public void Initialize(Action blackboardInitialization = null)
         {
             virtualizedGraph = graphBlueprint.CreateVirtualGraph();
-            rootContext = new Context(null, graphBlueprint.rootNode, virtualizedGraph);
+            rootContext = new Context(graphBlueprint.rootNode, virtualizedGraph);
             Reset();
             Blackboards.virtGraph = virtualizedGraph;
             blackboardInitialization?.Invoke();
@@ -66,7 +67,7 @@ namespace GraphFramework
         /// Evaluates the current node and walks the graph to whatever node is returned by
         /// the evaluated node. Returns the next node that will be evaluated or null if none.
         /// </summary>
-        public virtual RuntimeNode Step()
+        public RuntimeNode Step()
         {
             if (nextNode != null)
             {
@@ -84,9 +85,12 @@ namespace GraphFramework
             EvaluateEditor();
             #endif
 
-            if (nextNode == null)
-                return null;
-            
+            if (nextNode == null && rootContext.Count > 0)
+            {
+                Debug.Log(rootContext.Count);
+                nextNode = rootContext.Pop();
+            }
+
             previousNode = tempPrev;
             return nextNode;
         }

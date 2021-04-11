@@ -14,22 +14,33 @@ namespace GraphFramework
         [HideInInspector]
         public SubgraphNode childNode;
 
+        private bool isRunning = false;
         internal override RuntimeNode Evaluate(Context evContext)
         {
             BasePort.CurrentGraphIndex = evContext.virtGraph.virtualId;
-            
-            //Parent 
-            if (childNode == null) return null;
-            
-            var childEval = 
-                childNode.Evaluate(new Context(evContext, this, evContext.virtGraph));
-            if (childEval != null)
+
+            //We returned up the stack
+            if (isRunning)
             {
+                isRunning = false;
+                return OnEvaluate(evContext);
+            }
+            //We are the parent 
+            if (childNode != null)
+            {
+                evContext.Push(this);
+                var childEval = childNode.Evaluate(evContext);
+                isRunning = true;
                 return childEval;
             }
+            
+            //We are the child
+            if (childNode == null)
+            {
+                return OnEvaluate(evContext);
+            }
 
-            return OnEvaluate(evContext.virtGraph.virtualId);
-
+            return null;
         }
     }
 }
