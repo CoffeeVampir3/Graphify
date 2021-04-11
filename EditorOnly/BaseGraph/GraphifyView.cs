@@ -55,7 +55,6 @@ namespace GraphFramework.Editor
 
             navigationBlackboard = new NavigationBlackboard(this);
             navigationBlackboard.SetPosition(new Rect(0, 150, 100, 300));
-            //Add(navigationBlackboard);
         }
         
         //Thanks @Mert Kirimgeri for his lovely youtube series on GraphView API.
@@ -126,6 +125,15 @@ namespace GraphFramework.Editor
                     AssetDatabase.RemoveObjectFromAsset(modelRuntimeNode);
                 }
             }
+            if (graphModel == null)
+            {
+                //Fallback in case our model was nullified on closure.
+                if (parentWindow != null)
+                {
+                    graphModel = parentWindow.DomainSafeGraphView();
+                }
+            }
+            
             if(graphModel != null)
             {
                 graphModel.viewPosition = viewTransform.position;

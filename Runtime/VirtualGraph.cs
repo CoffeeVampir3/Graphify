@@ -17,14 +17,7 @@ namespace GraphFramework.Runtime
         {
             parentGraphBlueprint = parent;
             virtualId = id;
-            if (localBb != null)
-            {
-                localBlackboardCopy = localBb.Copy();
-            }
-            else
-            { 
-                localBlackboardCopy = null;
-            }
+            localBlackboardCopy = localBb != null ? localBb.Copy() : null;
         }
 
         ~VirtualGraph()

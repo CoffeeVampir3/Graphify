@@ -9,11 +9,19 @@ namespace GraphFramework.Editor
 {
     public class GraphfyWindow : EditorWindow
     {
-        [SerializeReference]
-        protected GraphifyView graphView;
+        [SerializeReference] protected GraphifyView graphView;
         private bool isWindowLoaded = false;
         private Action OnWindowLayoutFinished = null;
         private string domainSafeWorkingAssetPath;
+
+        public GraphModel DomainSafeGraphView()
+        {
+            var blueprint = AssetDatabase.LoadAssetAtPath<GraphBlueprint>(domainSafeWorkingAssetPath);
+            if (blueprint == null)
+                return null;
+
+            return GraphModel.GetModelFromBlueprint(blueprint);
+        }
 
         /// <summary>
         /// Loads the provided graph model to this window.
