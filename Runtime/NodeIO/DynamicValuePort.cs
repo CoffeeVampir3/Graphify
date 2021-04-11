@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace GraphFramework
@@ -20,9 +21,31 @@ namespace GraphFramework
         protected internal readonly Dictionary<int, List<T>> virtualizedMutablePortValues = 
             new Dictionary<int, List<T>>();
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Reset(int graphId)
         {
             virtualizedMutablePortValues[graphId] = portValues;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void SetLocalValue(int index, T val)
+        {
+            virtualizedMutablePortValues[CurrentGraphIndex][index] = val;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public T GetLocalValue(int index)
+        {
+            return virtualizedMutablePortValues[CurrentGraphIndex][index];
+        }
+        
+        /// <summary>
+        /// The local value of this port.
+        /// </summary>
+        public T this[int index]
+        {
+            set => SetLocalValue(index, value);
+            get => GetLocalValue(index);
         }
         
         /// <summary>
