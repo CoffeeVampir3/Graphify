@@ -17,7 +17,7 @@ namespace GraphFramework.Editor
         protected override bool AcceptsElement(GraphElement element, ref int proposedIndex, int maxIndex)
         {
             //Root node cannot be stacked because of a graph view bug allowing it to be deleted.
-            if (element is NodeView view && !(view.nodeModel.RuntimeData is RootNode))
+            if (element is NodeView view && !(view.nodeModel.RuntimeData is IRootNode))
             {
                 return stackModel.IsTypeAllowed(view.nodeModel.RuntimeData.GetType());
             }
