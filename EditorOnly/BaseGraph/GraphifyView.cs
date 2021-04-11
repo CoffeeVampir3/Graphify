@@ -142,6 +142,8 @@ namespace GraphFramework.Editor
                 EditorUtility.SetDirty(graphModel.serializedGraphBlueprint);
                 CleanUndoRemnants();
             }
+            
+            AssetDatabase.WriteImportSettingsIfDirty(AssetDatabase.GetAssetPath(graphModel));
             AssetDatabase.SaveAssets();
         }
 
