@@ -77,6 +77,8 @@ namespace GraphFramework
         /// </summary>
         public RuntimeNode Node => linkedTo;
 
+        internal RuntimeNode LocalNode => localLinkBinder.node;
+
         internal string RemoteFieldName => remoteLinkBinder.portField.FieldName;
         internal string LocalFieldName => localLinkBinder.portField.FieldName;
         

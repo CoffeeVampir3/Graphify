@@ -556,8 +556,14 @@ namespace GraphFramework.Editor
                 for (var index = bp.Links.Count - 1; index >= 0; index--)
                 {
                     var link = bp.Links[index];
+                    if (link.Node == null || link.LocalNode == null)
+                    {
+                        bp.Links.RemoveAt(index);
+                        continue;
+                    }
                     if (!changedFieldNames.Contains(link.RemoteFieldName) &&
-                        !changedFieldNames.Contains(link.LocalFieldName)) continue;
+                        !changedFieldNames.Contains(link.LocalFieldName) &&
+                        link.Node != null) continue;
                     bp.Links.RemoveAt(index);
                 }
             }
@@ -565,15 +571,29 @@ namespace GraphFramework.Editor
 
         private void SynchronizeChanges(ref NodeModel[] models, ref HashSet<string> changedFieldNames)
         {
+            for (int i = graphModel.serializedGraphBlueprint.nodes.Count - 1; i >= 0; i--)
+            {
+                if (graphModel.serializedGraphBlueprint.nodes[i] == null)
+                {
+                    graphModel.serializedGraphBlueprint.nodes.RemoveAt(i);
+                }
+            }
             SynchronizeNodeChange(graphModel.rootNodeModel, ref changedFieldNames);
             foreach (var model in models)
             {
+                if (model == null)
+                    continue;
                 SynchronizeNodeChange(model, ref changedFieldNames);
             }
 
             for (var index = graphModel.links.Count - 1; index >= 0; index--)
             {
                 var link = graphModel.links[index];
+                if (link.Node == null || link.LocalNode == null)
+                {
+                    graphModel.links.RemoveAt(index);
+                    continue;
+                }
                 if (!changedFieldNames.Contains(link.RemoteFieldName) &&
                     !changedFieldNames.Contains(link.LocalFieldName)) continue;
                 graphModel.links.RemoveAt(index);
@@ -597,10 +617,19 @@ namespace GraphFramework.Editor
             //Update root node model ports and build the root node.
             CreateNodeFromModelAsRoot(graphModel.rootNodeModel);
 
-            var models = graphModel.nodeModels.ToArray();
-
-            foreach (var model in models)
+            var models = new NodeModel[graphModel.nodeModels.Count];
+            for (int i = graphModel.nodeModels.Count - 1; i >= 0; i--)
             {
+                var model = graphModel.nodeModels[i];
+                if (model.RuntimeData == null)
+                {
+                    graphModel.nodeModels.RemoveAt(i);
+                    anyChanges = true;
+                    models[i] = null;
+                    continue;
+                }
+
+                models[i] = model;
                 anyChanges |= model.TrackChanges(ref changedFieldNames);
                 CreateNodeFromModelInternal(model);
             }
