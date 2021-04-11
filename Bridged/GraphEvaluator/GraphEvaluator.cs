@@ -28,7 +28,7 @@ namespace GraphFramework
         public void Initialize(Action blackboardInitialization = null)
         {
             virtualizedGraph = graphBlueprint.CreateVirtualGraph();
-            rootContext = new Context(graphBlueprint.rootNode, virtualizedGraph);
+            rootContext = new Context(virtualizedGraph);
             Reset();
             Blackboards.virtGraph = virtualizedGraph;
             blackboardInitialization?.Invoke();
@@ -84,7 +84,7 @@ namespace GraphFramework
             EvaluateEditor();
             #endif
 
-            if (nextNode == null && rootContext.Count > 0)
+            if (nextNode == null && rootContext.Count() > 0)
             {
                 nextNode = rootContext.Pop();
             }
