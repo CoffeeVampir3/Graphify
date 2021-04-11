@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.NetworkInformation;
 using System.Reflection;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
@@ -188,7 +187,6 @@ namespace GraphFramework.Editor
             {
                 if (!changed)
                     return false;
-                
                 var cachedFieldNames = existingFieldNamesCache[RuntimeData.GetType()];
                 var changedIndices = changedFieldIndexCache[RuntimeData.GetType()];
                 for (int i = portModels.Count - 1; i >= 0; i--)
