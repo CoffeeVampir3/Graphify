@@ -4,11 +4,15 @@
 
 Graphify is an ultra-lightweight Unity Api for quickly and easily making anything into a graph! It's 100% built using Unity's new UI Toolkit, and allows users to easily extend the graph using their own UI Toolkit code. Graphify has been designed for speed, consistenting of a virtualization scheme and fast evaluation means you can create and run thousands of graphs at a time with no issues.
 
-## Realtime Playmode Debugging and Editing
+# Features:
 
-![Animated Playmode Example](https://github.com/CoffeeVampir3/Graphify/blob/7c5460cafd562dbcda706d300d151158997d7031/bWRdpX42Gy.gif)
-
-Say goodbye to recompiling! With Graphify you're able to visualize a graph while it's running in playmode, and make permenant changes to it in real time!
+1. Graph & Node automatic creation, visualization, and serialization.
+2. Edit graphs realtime in play mode without needing to recompile.
+3. Runtime structure and evaluation API for using the graphs at runtime.
+4. Total seperation of editor code and runtime code. No editor code gets compiled into your build.
+5. Subgraph-nodes (Nodes which are themselves a graph) 
+6. Copy & Paste and Undo.
+7. Scoped Blackboard API
 
 # Installing:
 
