@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using GraphFramework.Runtime;
 
 namespace GraphFramework
@@ -19,6 +20,7 @@ namespace GraphFramework
         public RuntimeNode Current => currentNode;
         public RuntimeNode Next => nextNode;
         public RuntimeNode Prev => previousNode;
+        public Dictionary<string, object> LocalBlackboard => virtualizedGraph.localBlackboardCopy;
         
         //Allows you to look at specific graphs operating, rather than all of them at once.
         public bool shouldLinkEditor = false;
