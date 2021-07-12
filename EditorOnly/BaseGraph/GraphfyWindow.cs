@@ -125,6 +125,18 @@ namespace GraphFramework.Editor
                 LoadGraphControllerInternal(domainSafeWorkingAssetPath);
             };
         }
+        
+        private void OnDisable()
+        {
+            isWindowLoaded = false;
+            graphView = null;
+        }
+        
+        private void OnDestroy()
+        {
+            isWindowLoaded = false;
+            graphView = null;
+        }
 
         private void InitializeView()
         {
