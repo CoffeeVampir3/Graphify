@@ -41,7 +41,6 @@ namespace GraphFramework.Editor
         
         public void AddGraph(GraphBlueprint graph)
         {
-            Debug.Log(bpGraphs.arraySize);
             bpGraphs.InsertArrayElementAtIndex(bpGraphs.arraySize);
             SerializedProperty sp = bpGraphs.GetArrayElementAtIndex(bpGraphs.arraySize - 1);
             sp.objectReferenceValue = graph;
