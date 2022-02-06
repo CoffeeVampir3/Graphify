@@ -21,6 +21,8 @@ namespace GraphFramework
             if (type != null)
             {
                 serializedTypeName = type.AssemblyQualifiedName;
+            } else {
+                serializedTypeName = "";
             }
         }
 
